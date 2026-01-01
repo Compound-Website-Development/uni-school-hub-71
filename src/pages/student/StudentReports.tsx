@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -322,13 +323,15 @@ const StudentReports = () => {
               <div>
                 <p className="font-medium text-foreground">Full Academic Transcript</p>
                 <p className="text-sm text-muted-foreground">
-                  Available upon graduation. Contains all terms and cumulative records.
+                  View your complete academic history across all terms.
                 </p>
               </div>
-              <Button variant="outline" disabled>
-                <span className="material-symbols-outlined mr-2">lock</span>
-                Not Available Yet
-              </Button>
+              <Link to="/student/transcript">
+                <Button variant="outline">
+                  <span className="material-symbols-outlined mr-2">history_edu</span>
+                  View Transcript
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

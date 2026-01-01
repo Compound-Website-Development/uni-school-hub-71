@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,44 +6,60 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signIn, user, userRole, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   
-  const [studentForm, setStudentForm] = useState({ studentId: "", password: "" });
-  const [staffForm, setStaffForm] = useState({ email: "", password: "" });
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
 
-  const handleStudentLogin = async (e: React.FormEvent) => {
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user && !authLoading) {
+      if (userRole === 'student') {
+        navigate('/student');
+      } else if (userRole === 'teacher' || userRole === 'admin') {
+        navigate('/staff');
+      }
+    }
+  }, [user, userRole, authLoading, navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Demo login - navigate to student dashboard
-    setTimeout(() => {
-      setIsLoading(false);
+    const { error } = await signIn(loginForm.email, loginForm.password);
+    
+    setIsLoading(false);
+    
+    if (error) {
       toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
+        title: "Login Failed",
+        description: error.message || "Invalid credentials. Please try again.",
+        variant: "destructive",
       });
-      navigate("/student");
-    }, 1000);
+      return;
+    }
+    
+    toast({
+      title: "Welcome back!",
+      description: "You have successfully logged in.",
+    });
   };
 
-  const handleStaffLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // Demo login - navigate to staff dashboard
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
-      });
-      navigate("/staff");
-    }, 1000);
-  };
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-surface flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <span className="material-symbols-outlined animate-spin text-primary text-3xl">progress_activity</span>
+          <span className="text-muted-foreground">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-surface flex items-center justify-center p-4">
@@ -65,7 +81,7 @@ const Login = () => {
           <CardHeader>
             <CardTitle>Welcome Back</CardTitle>
             <CardDescription>
-              Choose your account type to continue
+              Enter your credentials to continue
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -83,14 +99,15 @@ const Login = () => {
 
               {/* Student Login */}
               <TabsContent value="student">
-                <form onSubmit={handleStudentLogin} className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="studentId">Student ID</Label>
+                    <Label htmlFor="studentEmail">Email Address</Label>
                     <Input
-                      id="studentId"
-                      placeholder="Enter your student ID (e.g., 2026001)"
-                      value={studentForm.studentId}
-                      onChange={(e) => setStudentForm({ ...studentForm, studentId: e.target.value })}
+                      id="studentEmail"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={loginForm.email}
+                      onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                       required
                     />
                   </div>
@@ -100,8 +117,8 @@ const Login = () => {
                       id="studentPassword"
                       type="password"
                       placeholder="Enter your password"
-                      value={studentForm.password}
-                      onChange={(e) => setStudentForm({ ...studentForm, password: e.target.value })}
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                       required
                     />
                   </div>
@@ -143,15 +160,15 @@ const Login = () => {
 
               {/* Staff Login */}
               <TabsContent value="staff">
-                <form onSubmit={handleStaffLogin} className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="staffEmail">Email Address</Label>
                     <Input
                       id="staffEmail"
                       type="email"
                       placeholder="Enter your email"
-                      value={staffForm.email}
-                      onChange={(e) => setStaffForm({ ...staffForm, email: e.target.value })}
+                      value={loginForm.email}
+                      onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                       required
                     />
                   </div>
@@ -161,8 +178,8 @@ const Login = () => {
                       id="staffPassword"
                       type="password"
                       placeholder="Enter your password"
-                      value={staffForm.password}
-                      onChange={(e) => setStaffForm({ ...staffForm, password: e.target.value })}
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                       required
                     />
                   </div>
