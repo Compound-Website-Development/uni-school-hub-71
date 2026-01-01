@@ -1,0 +1,382 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+
+const Apply = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [formData, setFormData] = useState({
+    // Personal Info
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    gender: "",
+    nationality: "Gambian",
+    // Contact
+    email: "",
+    phone: "",
+    address: "",
+    village: "Jarreng",
+    // Academic
+    previousSchool: "",
+    lastGradeCompleted: "",
+    applyingForGrade: "",
+    programme: "",
+    // Guardian
+    guardianName: "",
+    guardianRelation: "",
+    guardianPhone: "",
+    guardianEmail: "",
+  });
+
+  const updateForm = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+      toast({
+        title: "Application Submitted!",
+        description: "You will receive an email with your application status within 5-7 business days.",
+      });
+      navigate("/");
+    }, 2000);
+  };
+
+  return (
+    <div className="min-h-screen bg-background py-8 px-4">
+      {/* Header */}
+      <div className="container mx-auto max-w-3xl">
+        <div className="flex items-center justify-between mb-8">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="bg-primary/10 p-2 rounded-lg">
+              <span className="material-symbols-outlined text-primary">school</span>
+            </div>
+            <span className="text-xl font-bold text-foreground">EduPortal</span>
+          </Link>
+          <Link to="/login">
+            <Button variant="outline" size="sm">
+              Already have an account?
+            </Button>
+          </Link>
+        </div>
+
+        {/* Progress Steps */}
+        <div className="flex items-center justify-center gap-2 mb-8">
+          {[1, 2, 3, 4].map((s) => (
+            <div key={s} className="flex items-center">
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-colors ${
+                  s === step
+                    ? "bg-primary text-primary-foreground"
+                    : s < step
+                    ? "bg-success text-success-foreground"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {s < step ? (
+                  <span className="material-symbols-outlined text-lg">check</span>
+                ) : (
+                  s
+                )}
+              </div>
+              {s < 4 && (
+                <div
+                  className={`w-12 h-1 mx-1 rounded ${
+                    s < step ? "bg-success" : "bg-muted"
+                  }`}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        <Card className="animate-fade-up">
+          <CardHeader>
+            <CardTitle>
+              {step === 1 && "Personal Information"}
+              {step === 2 && "Contact Details"}
+              {step === 3 && "Academic Information"}
+              {step === 4 && "Guardian Information"}
+            </CardTitle>
+            <CardDescription>
+              {step === 1 && "Tell us about yourself"}
+              {step === 2 && "How can we reach you?"}
+              {step === 3 && "Your educational background and goals"}
+              {step === 4 && "Parent or guardian contact details"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit}>
+              {/* Step 1: Personal Info */}
+              {step === 1 && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">First Name *</Label>
+                      <Input
+                        id="firstName"
+                        value={formData.firstName}
+                        onChange={(e) => updateForm("firstName", e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Input
+                        id="lastName"
+                        value={formData.lastName}
+                        onChange={(e) => updateForm("lastName", e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+                      <Input
+                        id="dateOfBirth"
+                        type="date"
+                        value={formData.dateOfBirth}
+                        onChange={(e) => updateForm("dateOfBirth", e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="gender">Gender *</Label>
+                      <Select value={formData.gender} onValueChange={(v) => updateForm("gender", v)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="nationality">Nationality</Label>
+                    <Input
+                      id="nationality"
+                      value={formData.nationality}
+                      onChange={(e) => updateForm("nationality", e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Contact Details */}
+              {step === 2 && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => updateForm("email", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+220 ..."
+                      value={formData.phone}
+                      onChange={(e) => updateForm("phone", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Home Address *</Label>
+                    <Textarea
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => updateForm("address", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="village">Village/Town</Label>
+                    <Input
+                      id="village"
+                      value={formData.village}
+                      onChange={(e) => updateForm("village", e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Academic Info */}
+              {step === 3 && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="previousSchool">Previous School *</Label>
+                    <Input
+                      id="previousSchool"
+                      placeholder="Name of your previous school"
+                      value={formData.previousSchool}
+                      onChange={(e) => updateForm("previousSchool", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="lastGrade">Last Grade Completed *</Label>
+                      <Select value={formData.lastGradeCompleted} onValueChange={(v) => updateForm("lastGradeCompleted", v)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select grade" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="grade-9">Grade 9</SelectItem>
+                          <SelectItem value="grade-10">Grade 10</SelectItem>
+                          <SelectItem value="grade-11">Grade 11</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="applyingFor">Applying For *</Label>
+                      <Select value={formData.applyingForGrade} onValueChange={(v) => updateForm("applyingForGrade", v)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select grade" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="grade-10">Grade 10 (Upper Secondary)</SelectItem>
+                          <SelectItem value="grade-11">Grade 11 (Upper Secondary)</SelectItem>
+                          <SelectItem value="grade-12">Grade 12 (Senior Secondary)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="programme">Programme of Study *</Label>
+                    <Select value={formData.programme} onValueChange={(v) => updateForm("programme", v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select programme" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sciences">Science Studies</SelectItem>
+                        <SelectItem value="humanities">Humanities Studies</SelectItem>
+                        <SelectItem value="commerce">Commerce Studies</SelectItem>
+                        <SelectItem value="arts">Arts Studies</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Guardian Info */}
+              {step === 4 && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="guardianName">Guardian Full Name *</Label>
+                    <Input
+                      id="guardianName"
+                      value={formData.guardianName}
+                      onChange={(e) => updateForm("guardianName", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="guardianRelation">Relationship to Student *</Label>
+                    <Select value={formData.guardianRelation} onValueChange={(v) => updateForm("guardianRelation", v)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select relationship" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="parent">Parent</SelectItem>
+                        <SelectItem value="guardian">Guardian</SelectItem>
+                        <SelectItem value="sibling">Sibling</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="guardianPhone">Guardian Phone Number *</Label>
+                    <Input
+                      id="guardianPhone"
+                      type="tel"
+                      placeholder="+220 ..."
+                      value={formData.guardianPhone}
+                      onChange={(e) => updateForm("guardianPhone", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="guardianEmail">Guardian Email (Optional)</Label>
+                    <Input
+                      id="guardianEmail"
+                      type="email"
+                      value={formData.guardianEmail}
+                      onChange={(e) => updateForm("guardianEmail", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="p-4 bg-muted rounded-lg mt-6">
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input type="checkbox" className="mt-1 rounded border-border" required />
+                      <span className="text-sm text-muted-foreground">
+                        I confirm that all information provided is accurate and complete. I understand that false information may result in rejection of my application.
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="flex justify-between mt-8">
+                {step > 1 ? (
+                  <Button type="button" variant="outline" onClick={() => setStep(step - 1)}>
+                    <span className="material-symbols-outlined mr-2">arrow_back</span>
+                    Previous
+                  </Button>
+                ) : (
+                  <div />
+                )}
+
+                {step < 4 ? (
+                  <Button type="button" onClick={() => setStep(step + 1)}>
+                    Next
+                    <span className="material-symbols-outlined ml-2">arrow_forward</span>
+                  </Button>
+                ) : (
+                  <Button type="submit" className="bg-gradient-primary" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <span className="material-symbols-outlined mr-2">send</span>
+                        Submit Application
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default Apply;
