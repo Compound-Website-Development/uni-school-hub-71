@@ -1,49 +1,127 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { StudentLayout } from "@/components/layout/StudentLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { FileText, Download, Eye, GraduationCap, Loader2 } from "lucide-react";
 
-const studentData = {
-  name: "BINTA BAH",
-  id: "34482024",
-  class: "GRADE 10 SAFFIAH 1",
-  programme: "HUMANITIES STUDIES",
-};
+interface Term {
+  id: string;
+  name: string;
+}
 
-const terms = [
-  { id: "term-3-2024", label: "2024/2025 - Third Term", available: true },
-  { id: "term-2-2024", label: "2024/2025 - Second Term", available: true },
-  { id: "term-1-2024", label: "2024/2025 - First Term", available: true },
-];
+interface Grade {
+  continuous_assessment: number | null;
+  exam_score: number | null;
+  total_score: number | null;
+  letter_grade: string | null;
+  remark: string | null;
+  subjects: { name: string } | null;
+}
 
-const gradesData = [
-  { subject: "CIVIC EDUCATION", ca: 14, exam: 54, total: 68, grade: "B+", remark: "VERY GOOD" },
-  { subject: "ENGLISH LANGUAGE", ca: 22, exam: 16, total: 38, grade: "F", remark: "FAIL" },
-  { subject: "GENERAL MATHEMATICS", ca: 17, exam: 11, total: 28, grade: "F", remark: "FAIL" },
-  { subject: "GOVERNMENT", ca: 20, exam: 52, total: 72, grade: "B+", remark: "VERY GOOD" },
-  { subject: "HISTORY", ca: 21, exam: 54, total: 75, grade: "A-", remark: "EXCELLENT" },
-  { subject: "ISLAMIC STUDIES", ca: 29, exam: 57, total: 86, grade: "A", remark: "EXCELLENT" },
-  { subject: "LITERATURE-IN-ENGLISH", ca: 24, exam: 39, total: 63, grade: "B", remark: "VERY GOOD" },
-  { subject: "PHYSICAL HEALTH EDUCATION", ca: 22, exam: 50, total: 72, grade: "B+", remark: "VERY GOOD" },
-  { subject: "SCIENCE", ca: 18, exam: 42, total: 60, grade: "B", remark: "VERY GOOD" },
-];
+interface TermResult {
+  gpa: number | null;
+  class_position: number | null;
+  class_size: number | null;
+  teacher_comment: string | null;
+  principal_comment: string | null;
+}
 
 const StudentReports = () => {
   const { toast } = useToast();
-  const [selectedTerm, setSelectedTerm] = useState("term-3-2024");
+  const { studentData } = useAuth();
+  const [terms, setTerms] = useState<Term[]>([]);
+  const [selectedTerm, setSelectedTerm] = useState<string>("");
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [termResult, setTermResult] = useState<TermResult | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  useEffect(() => {
+    const fetchTerms = async () => {
+      try {
+        const { data } = await supabase
+          .from("terms")
+          .select("id, name")
+          .order("created_at", { ascending: false });
+
+        if (data && data.length > 0) {
+          setTerms(data);
+          setSelectedTerm(data[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching terms:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTerms();
+  }, []);
+
+  useEffect(() => {
+    const fetchGradesForTerm = async () => {
+      if (!studentData?.id || !selectedTerm) return;
+
+      try {
+        // Fetch grades for selected term
+        const { data: gradesData } = await supabase
+          .from("grades")
+          .select(`
+            continuous_assessment,
+            exam_score,
+            total_score,
+            letter_grade,
+            remark,
+            subjects (name)
+          `)
+          .eq("student_id", studentData.id)
+          .eq("term_id", selectedTerm);
+
+        if (gradesData) {
+          setGrades(gradesData);
+        }
+
+        // Fetch term result
+        const { data: result } = await supabase
+          .from("term_results")
+          .select(`
+            gpa,
+            class_position,
+            class_size,
+            teacher_comment,
+            principal_comment
+          `)
+          .eq("student_id", studentData.id)
+          .eq("term_id", selectedTerm)
+          .eq("is_published", true)
+          .maybeSingle();
+
+        setTermResult(result);
+      } catch (error) {
+        console.error("Error fetching grades:", error);
+      }
+    };
+
+    fetchGradesForTerm();
+  }, [studentData?.id, selectedTerm]);
+
   const generatePDF = () => {
+    if (!studentData) return;
+    
     setIsGenerating(true);
     
     try {
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
+      const selectedTermName = terms.find(t => t.id === selectedTerm)?.name || "Term";
       
       // Header
       doc.setFontSize(16);
@@ -69,67 +147,68 @@ const StudentReports = () => {
       doc.text("Student Information", 20, 55);
       
       doc.setFont("helvetica", "normal");
-      doc.text(`Student ID: ${studentData.id}`, 20, 63);
-      doc.text(`Student Name: ${studentData.name}`, 20, 70);
-      doc.text(`Class: ${studentData.class}`, 20, 77);
-      doc.text(`Programme: ${studentData.programme}`, 20, 84);
-      doc.text(`Term: 2024/2025 ACADEMIC YEAR THIRD TERM`, 20, 91);
+      doc.text(`Student ID: ${studentData.student_id}`, 20, 63);
+      doc.text(`Student Name: ${studentData.first_name} ${studentData.last_name}`, 20, 70);
+      doc.text(`Term: ${selectedTermName}`, 20, 77);
       
       // Academic Records
       doc.setFont("helvetica", "bold");
-      doc.text("ACADEMIC RECORDS", 20, 105);
+      doc.text("ACADEMIC RECORDS", 20, 91);
       
       // Table
-      autoTable(doc, {
-        startY: 110,
-        head: [["Subject", "CA", "Exam", "Total", "Grade", "Remark"]],
-        body: gradesData.map(row => [
-          row.subject,
-          row.ca.toString(),
-          row.exam.toString(),
-          row.total.toString(),
-          row.grade,
-          row.remark,
-        ]),
-        headStyles: {
-          fillColor: [19, 127, 236],
-          textColor: [255, 255, 255],
-          fontStyle: "bold",
-        },
-        alternateRowStyles: {
-          fillColor: [245, 247, 250],
-        },
-        styles: {
-          fontSize: 9,
-          cellPadding: 3,
-        },
-        columnStyles: {
-          0: { cellWidth: 55 },
-          1: { cellWidth: 15, halign: "center" },
-          2: { cellWidth: 15, halign: "center" },
-          3: { cellWidth: 15, halign: "center" },
-          4: { cellWidth: 15, halign: "center" },
-          5: { cellWidth: 35, halign: "left" },
-        },
-      });
-      
-      // GPA & Position
-      const finalY = (doc as any).lastAutoTable.finalY + 10;
-      
-      doc.setFont("helvetica", "bold");
-      doc.text(`GPA: 2.55`, 20, finalY);
-      doc.text(`CGPA: 3.06`, 80, finalY);
-      doc.text(`Class Position: 12th OUT OF 44`, 140, finalY);
-      
-      // Comments
-      doc.text("Class Teacher's Comments:", 20, finalY + 15);
-      doc.setFont("helvetica", "normal");
-      doc.text("CREDIT.", 75, finalY + 15);
-      
-      // Signatures
-      doc.setFont("helvetica", "normal");
-      doc.text("Class Teacher's Signature: ___________________", 20, finalY + 30);
-      doc.text("Principal's Signature: ___________________", 110, finalY + 30);
+      if (grades.length > 0) {
+        autoTable(doc, {
+          startY: 96,
+          head: [["Subject", "CA", "Exam", "Total", "Grade", "Remark"]],
+          body: grades.map(row => [
+            row.subjects?.name || "N/A",
+            (row.continuous_assessment || 0).toString(),
+            (row.exam_score || 0).toString(),
+            (row.total_score || 0).toString(),
+            row.letter_grade || "N/A",
+            row.remark || "N/A",
+          ]),
+          headStyles: {
+            fillColor: [19, 127, 236],
+            textColor: [255, 255, 255],
+            fontStyle: "bold",
+          },
+          alternateRowStyles: {
+            fillColor: [245, 247, 250],
+          },
+          styles: {
+            fontSize: 9,
+            cellPadding: 3,
+          },
+          columnStyles: {
+            0: { cellWidth: 55 },
+            1: { cellWidth: 15, halign: "center" },
+            2: { cellWidth: 15, halign: "center" },
+            3: { cellWidth: 15, halign: "center" },
+            4: { cellWidth: 15, halign: "center" },
+            5: { cellWidth: 35, halign: "left" },
+          },
+        });
+        
+        // GPA & Position
+        const finalY = (doc as any).lastAutoTable.finalY + 10;
+        
+        if (termResult) {
+          doc.setFont("helvetica", "bold");
+          doc.text(`GPA: ${termResult.gpa?.toFixed(2) || "N/A"}`, 20, finalY);
+          doc.text(`Class Position: ${termResult.class_position || "N/A"} out of ${termResult.class_size || "N/A"}`, 80, finalY);
+          
+          // Comments
+          if (termResult.teacher_comment) {
+            doc.text("Class Teacher's Comments:", 20, finalY + 15);
+            doc.setFont("helvetica", "normal");
+            doc.text(termResult.teacher_comment, 75, finalY + 15);
+          }
+        }
+      } else {
+        doc.setFont("helvetica", "normal");
+        doc.text("No grades available for this term.", 20, 96);
+      }
       
       // Footer
       doc.setFontSize(8);
@@ -137,7 +216,7 @@ const StudentReports = () => {
       doc.text(`Generated on ${new Date().toLocaleDateString()}`, pageWidth / 2, 286, { align: "center" });
       
       // Save
-      doc.save(`Term_Report_${studentData.id}_${studentData.name.replace(/\s+/g, "_")}.pdf`);
+      doc.save(`Term_Report_${studentData.student_id}_${studentData.first_name}_${studentData.last_name}.pdf`);
       
       toast({
         title: "Report Downloaded!",
@@ -154,189 +233,182 @@ const StudentReports = () => {
     }
   };
 
+  const studentName = studentData 
+    ? `${studentData.first_name} ${studentData.last_name}`.toUpperCase()
+    : "STUDENT";
+
   return (
-    <DashboardLayout
-      userType="student"
-      userName={studentData.name}
-      userSubtitle={`ID: ${studentData.id}`}
-    >
-      <div className="max-w-4xl mx-auto space-y-6">
+    <StudentLayout title="Reports">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="animate-fade-up">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">
             Term Reports
           </h2>
           <p className="text-muted-foreground mt-1">
-            Download your academic reports in PDF format
+            Download your academic reports
           </p>
         </div>
 
         {/* Report Selection */}
-        <Card className="animate-fade-up animation-delay-100">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">description</span>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <FileText className="w-4 h-4 text-primary" />
               Select Report
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <label className="text-sm font-medium text-foreground mb-2 block">Academic Term</label>
-                <Select value={selectedTerm} onValueChange={setSelectedTerm}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select term" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {terms.map((term) => (
-                      <SelectItem key={term.id} value={term.id} disabled={!term.available}>
-                        {term.label}
-                        {!term.available && " (Not Available)"}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex items-end">
+          <CardContent className="space-y-4">
+            {loading ? (
+              <Skeleton className="h-10 w-full" />
+            ) : (
+              <>
+                <div>
+                  <label className="text-sm font-medium text-foreground mb-2 block">
+                    Academic Term
+                  </label>
+                  <Select value={selectedTerm} onValueChange={setSelectedTerm}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select term" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {terms.map((term) => (
+                        <SelectItem key={term.id} value={term.id}>
+                          {term.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
                 <Button 
                   onClick={generatePDF} 
-                  disabled={isGenerating}
-                  className="bg-gradient-primary w-full sm:w-auto"
+                  disabled={isGenerating || grades.length === 0}
+                  className="w-full"
                 >
                   {isGenerating ? (
                     <>
-                      <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Generating...
                     </>
                   ) : (
                     <>
-                      <span className="material-symbols-outlined mr-2">download</span>
+                      <Download className="w-4 h-4 mr-2" />
                       Download PDF
                     </>
                   )}
                 </Button>
-              </div>
-            </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
         {/* Report Preview */}
-        <Card className="animate-fade-up animation-delay-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">preview</span>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Eye className="w-4 h-4 text-primary" />
               Report Preview
             </CardTitle>
           </CardHeader>
           <CardContent>
             {/* Preview Header */}
-            <div className="bg-gradient-primary text-primary-foreground p-6 rounded-t-lg">
-              <h3 className="text-xl font-bold text-center">JARRENG VILLAGE SCHOOLS</h3>
-              <p className="text-center opacity-80 text-sm mt-1">Niamina East District, The Gambia</p>
-              <p className="text-center font-semibold mt-4">TERM REPORT</p>
+            <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground p-4 rounded-t-lg">
+              <h3 className="text-lg font-bold text-center">JARRENG VILLAGE SCHOOLS</h3>
+              <p className="text-center opacity-80 text-xs mt-1">Niamina East District, The Gambia</p>
+              <p className="text-center font-semibold mt-2 text-sm">TERM REPORT</p>
             </div>
             
             {/* Student Info */}
-            <div className="p-4 bg-secondary/30 border-b border-border">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="p-3 bg-secondary/30 border-b border-border">
+              <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
                   <span className="text-muted-foreground">Student ID:</span>
-                  <span className="ml-2 font-medium text-foreground">{studentData.id}</span>
+                  <span className="ml-1 font-medium text-foreground">
+                    {studentData?.student_id || "N/A"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Name:</span>
-                  <span className="ml-2 font-medium text-foreground">{studentData.name}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Class:</span>
-                  <span className="ml-2 font-medium text-foreground">{studentData.class}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Programme:</span>
-                  <span className="ml-2 font-medium text-foreground">{studentData.programme}</span>
+                  <span className="ml-1 font-medium text-foreground">{studentName}</span>
                 </div>
               </div>
             </div>
 
-            {/* Grades Table Preview */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-secondary">
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Subject</th>
-                    <th className="text-center py-3 px-4 text-sm font-semibold text-foreground">CA</th>
-                    <th className="text-center py-3 px-4 text-sm font-semibold text-foreground">Exam</th>
-                    <th className="text-center py-3 px-4 text-sm font-semibold text-foreground">Total</th>
-                    <th className="text-center py-3 px-4 text-sm font-semibold text-foreground">Grade</th>
-                    <th className="text-left py-3 px-4 text-sm font-semibold text-foreground">Remark</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {gradesData.slice(0, 5).map((row, idx) => (
-                    <tr key={idx} className="border-b border-border/50">
-                      <td className="py-3 px-4 text-sm font-medium text-foreground">{row.subject}</td>
-                      <td className="py-3 px-4 text-sm text-center text-muted-foreground">{row.ca}</td>
-                      <td className="py-3 px-4 text-sm text-center text-muted-foreground">{row.exam}</td>
-                      <td className="py-3 px-4 text-sm text-center font-semibold text-foreground">{row.total}</td>
-                      <td className="py-3 px-4 text-sm text-center font-bold text-primary">{row.grade}</td>
-                      <td className="py-3 px-4 text-sm text-muted-foreground">{row.remark}</td>
-                    </tr>
-                  ))}
-                  <tr className="bg-muted/30">
-                    <td colSpan={6} className="py-3 px-4 text-center text-sm text-muted-foreground">
-                      ... and {gradesData.length - 5} more subjects
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            {/* Grades Preview */}
+            {grades.length > 0 ? (
+              <div className="divide-y divide-border">
+                {grades.slice(0, 4).map((row, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3">
+                    <span className="text-sm font-medium text-foreground">
+                      {row.subjects?.name || "N/A"}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-muted-foreground">
+                        {row.total_score || 0}
+                      </span>
+                      <span className="text-sm font-bold text-primary">
+                        {row.letter_grade || "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                {grades.length > 4 && (
+                  <div className="p-3 text-center text-sm text-muted-foreground bg-muted/30">
+                    ... and {grades.length - 4} more subjects
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="p-6 text-center text-muted-foreground">
+                <FileText className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No grades available for this term</p>
+              </div>
+            )}
 
             {/* Summary */}
-            <div className="p-4 bg-secondary/30 rounded-b-lg flex flex-wrap gap-6">
-              <div>
-                <span className="text-sm text-muted-foreground">GPA:</span>
-                <span className="ml-2 text-lg font-bold text-primary">2.55</span>
+            {termResult && (
+              <div className="p-3 bg-secondary/30 rounded-b-lg flex items-center justify-between text-sm">
+                <div>
+                  <span className="text-muted-foreground">GPA:</span>
+                  <span className="ml-1 font-bold text-primary">
+                    {termResult.gpa?.toFixed(2) || "N/A"}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Position:</span>
+                  <span className="ml-1 font-bold text-amber-500">
+                    {termResult.class_position || "N/A"}/{termResult.class_size || "?"}
+                  </span>
+                </div>
               </div>
-              <div>
-                <span className="text-sm text-muted-foreground">CGPA:</span>
-                <span className="ml-2 text-lg font-bold text-success">3.06</span>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Position:</span>
-                <span className="ml-2 text-lg font-bold text-warning">12th/44</span>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
         {/* Transcript Card */}
-        <Card className="animate-fade-up animation-delay-300">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-success">school</span>
-              Academic Transcript
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-              <div>
-                <p className="font-medium text-foreground">Full Academic Transcript</p>
-                <p className="text-sm text-muted-foreground">
-                  View your complete academic history across all terms.
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-emerald-500/10 rounded-lg">
+                <GraduationCap className="w-6 h-6 text-emerald-500" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-foreground">Full Transcript</p>
+                <p className="text-xs text-muted-foreground">
+                  View complete academic history
                 </p>
               </div>
               <Link to="/student/transcript">
-                <Button variant="outline">
-                  <span className="material-symbols-outlined mr-2">history_edu</span>
-                  View Transcript
+                <Button variant="outline" size="sm">
+                  View
                 </Button>
               </Link>
             </div>
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </StudentLayout>
   );
 };
 
