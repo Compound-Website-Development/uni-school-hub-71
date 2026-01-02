@@ -23,6 +23,11 @@ interface StudentData {
   last_name: string;
   class_id: string | null;
   programme_id: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  guardian_name: string | null;
+  guardian_phone: string | null;
 }
 
 interface TeacherData {
