@@ -1,221 +1,339 @@
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { useState, useEffect } from "react";
+import { StudentLayout } from "@/components/layout/StudentLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GradeBadge } from "@/components/ui/grade-badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { TrendingUp, BarChart3, Trophy, FileText, History } from "lucide-react";
 
-const studentData = {
-  name: "Binta Bah",
-  id: "34482024",
-  class: "Grade 10",
-  programme: "Humanities Studies",
-};
+interface Grade {
+  id: string;
+  continuous_assessment: number | null;
+  exam_score: number | null;
+  total_score: number | null;
+  letter_grade: string | null;
+  remark: string | null;
+  subjects: { name: string } | null;
+  terms: { id: string; name: string } | null;
+}
 
-const gradesData = {
-  currentTerm: {
-    term: "2024/2025 Academic Year - Third Term",
-    gpa: 2.55,
-    subjects: [
-      { subject: "Islamic Studies", ca: 29, exam: 57, total: 86, grade: "A", remark: "EXCELLENT" },
-      { subject: "History", ca: 21, exam: 54, total: 75, grade: "A-", remark: "EXCELLENT" },
-      { subject: "Government", ca: 20, exam: 52, total: 72, grade: "B+", remark: "VERY GOOD" },
-      { subject: "Physical Health Education", ca: 22, exam: 50, total: 72, grade: "B+", remark: "VERY GOOD" },
-      { subject: "Civic Education", ca: 14, exam: 54, total: 68, grade: "B+", remark: "VERY GOOD" },
-      { subject: "Literature-in-English", ca: 24, exam: 39, total: 63, grade: "B", remark: "VERY GOOD" },
-      { subject: "Science", ca: 18, exam: 42, total: 60, grade: "B", remark: "VERY GOOD" },
-      { subject: "English Language", ca: 22, exam: 16, total: 38, grade: "F", remark: "FAIL" },
-      { subject: "General Mathematics", ca: 17, exam: 11, total: 28, grade: "F", remark: "FAIL" },
-    ],
-  },
-  previousTerms: [
-    {
-      term: "2024/2025 Academic Year - Second Term",
-      gpa: 3.10,
-      subjects: [
-        { subject: "Islamic Studies", ca: 30, exam: 55, total: 85, grade: "A", remark: "EXCELLENT" },
-        { subject: "History", ca: 25, exam: 50, total: 75, grade: "A-", remark: "EXCELLENT" },
-        { subject: "Government", ca: 22, exam: 48, total: 70, grade: "B+", remark: "VERY GOOD" },
-      ],
-    },
-    {
-      term: "2024/2025 Academic Year - First Term",
-      gpa: 3.52,
-      subjects: [
-        { subject: "Islamic Studies", ca: 28, exam: 60, total: 88, grade: "A", remark: "EXCELLENT" },
-        { subject: "History", ca: 26, exam: 52, total: 78, grade: "A-", remark: "EXCELLENT" },
-        { subject: "Government", ca: 24, exam: 50, total: 74, grade: "B+", remark: "VERY GOOD" },
-      ],
-    },
-  ],
-};
+interface TermResult {
+  gpa: number | null;
+  class_position: number | null;
+  class_size: number | null;
+  terms: { id: string; name: string } | null;
+}
+
+interface GroupedGrades {
+  [termId: string]: {
+    termName: string;
+    grades: Grade[];
+    gpa: number | null;
+  };
+}
 
 const StudentGrades = () => {
+  const { studentData } = useAuth();
+  const [grades, setGrades] = useState<Grade[]>([]);
+  const [termResults, setTermResults] = useState<TermResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentTermId, setCurrentTermId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGrades = async () => {
+      if (!studentData?.id) return;
+
+      try {
+        // Fetch all grades for the student
+        const { data: gradesData } = await supabase
+          .from("grades")
+          .select(`
+            id,
+            continuous_assessment,
+            exam_score,
+            total_score,
+            letter_grade,
+            remark,
+            subjects (name),
+            terms (id, name)
+          `)
+          .eq("student_id", studentData.id)
+          .order("created_at", { ascending: false });
+
+        if (gradesData) {
+          setGrades(gradesData);
+        }
+
+        // Fetch term results
+        const { data: results } = await supabase
+          .from("term_results")
+          .select(`
+            gpa,
+            class_position,
+            class_size,
+            terms (id, name)
+          `)
+          .eq("student_id", studentData.id)
+          .eq("is_published", true)
+          .order("created_at", { ascending: false });
+
+        if (results) {
+          setTermResults(results);
+        }
+
+        // Fetch current term
+        const { data: currentTerm } = await supabase
+          .from("terms")
+          .select("id")
+          .eq("is_current", true)
+          .maybeSingle();
+
+        if (currentTerm) {
+          setCurrentTermId(currentTerm.id);
+        }
+      } catch (error) {
+        console.error("Error fetching grades:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGrades();
+  }, [studentData?.id]);
+
+  // Group grades by term
+  const groupedGrades: GroupedGrades = grades.reduce((acc, grade) => {
+    const termId = grade.terms?.id || "unknown";
+    const termName = grade.terms?.name || "Unknown Term";
+    
+    if (!acc[termId]) {
+      const termResult = termResults.find(tr => tr.terms?.id === termId);
+      acc[termId] = {
+        termName,
+        grades: [],
+        gpa: termResult?.gpa || null,
+      };
+    }
+    acc[termId].grades.push(grade);
+    return acc;
+  }, {} as GroupedGrades);
+
+  const currentTermResult = termResults[0];
+  
+  // Calculate cumulative GPA
+  const cumulativeGpa = termResults.length > 0
+    ? termResults.reduce((sum, tr) => sum + (tr.gpa || 0), 0) / termResults.length
+    : null;
+
+  const currentTermGrades = currentTermId ? groupedGrades[currentTermId] : null;
+  const previousTerms = Object.entries(groupedGrades).filter(([id]) => id !== currentTermId);
+
   return (
-    <DashboardLayout
-      userType="student"
-      userName={studentData.name}
-      userSubtitle={`ID: ${studentData.id}`}
-      searchPlaceholder="Search subjects..."
-    >
-      <div className="max-w-6xl mx-auto space-y-6">
+    <StudentLayout title="My Grades">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="animate-fade-up">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">
             My Grades
           </h2>
           <p className="text-muted-foreground mt-1">
-            {studentData.class} • {studentData.programme}
+            View your academic performance
           </p>
         </div>
 
         {/* GPA Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-up animation-delay-100">
-          <Card className="bg-gradient-primary text-primary-foreground">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm opacity-80">Current Term GPA</p>
-                  <p className="text-4xl font-bold mt-1">{gradesData.currentTerm.gpa.toFixed(2)}</p>
+        {loading ? (
+          <div className="grid grid-cols-3 gap-3">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-24 rounded-xl" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-3">
+            <Card className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
+              <CardContent className="p-4">
+                <div className="flex flex-col items-center text-center">
+                  <TrendingUp className="w-5 h-5 mb-1 opacity-80" />
+                  <p className="text-xs opacity-80">Term GPA</p>
+                  <p className="text-2xl font-bold">
+                    {currentTermResult?.gpa?.toFixed(2) || "N/A"}
+                  </p>
                 </div>
-                <span className="material-symbols-outlined text-4xl opacity-50">trending_up</span>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Cumulative GPA</p>
-                  <p className="text-4xl font-bold text-foreground mt-1">3.06</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex flex-col items-center text-center">
+                  <BarChart3 className="w-5 h-5 mb-1 text-emerald-500" />
+                  <p className="text-xs text-muted-foreground">CGPA</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {cumulativeGpa?.toFixed(2) || "N/A"}
+                  </p>
                 </div>
-                <span className="material-symbols-outlined text-4xl text-success">analytics</span>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Class Rank</p>
-                  <p className="text-4xl font-bold text-foreground mt-1">12<span className="text-lg text-muted-foreground">/44</span></p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex flex-col items-center text-center">
+                  <Trophy className="w-5 h-5 mb-1 text-amber-500" />
+                  <p className="text-xs text-muted-foreground">Rank</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {currentTermResult?.class_position || "N/A"}
+                    {currentTermResult?.class_size && (
+                      <span className="text-sm text-muted-foreground">/{currentTermResult.class_size}</span>
+                    )}
+                  </p>
                 </div>
-                <span className="material-symbols-outlined text-4xl text-warning">emoji_events</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Grades Tables */}
-        <Tabs defaultValue="current" className="animate-fade-up animation-delay-200">
-          <TabsList>
+        <Tabs defaultValue="current" className="w-full">
+          <TabsList className="w-full grid grid-cols-2">
             <TabsTrigger value="current">Current Term</TabsTrigger>
             <TabsTrigger value="previous">Previous Terms</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="current" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">assignment</span>
-                  {gradesData.currentTerm.term}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Subject</th>
-                        <th className="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">CA (30%)</th>
-                        <th className="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">Exam (70%)</th>
-                        <th className="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">Total</th>
-                        <th className="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">Grade</th>
-                        <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Remark</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {gradesData.currentTerm.subjects.map((row, idx) => (
-                        <tr 
-                          key={idx} 
-                          className={`border-b border-border/50 hover:bg-secondary/30 transition-colors ${
-                            row.grade === "F" ? "bg-destructive/5" : ""
-                          }`}
-                        >
-                          <td className="py-4 px-4 font-medium text-foreground">{row.subject}</td>
-                          <td className="py-4 px-4 text-center text-muted-foreground">{row.ca}</td>
-                          <td className="py-4 px-4 text-center text-muted-foreground">{row.exam}</td>
-                          <td className="py-4 px-4 text-center font-semibold text-foreground">{row.total}</td>
-                          <td className="py-4 px-4 text-center">
-                            <GradeBadge grade={row.grade} size="md" />
-                          </td>
-                          <td className={`py-4 px-4 text-sm ${
-                            row.grade === "F" ? "text-destructive font-medium" : "text-muted-foreground"
-                          }`}>
-                            {row.remark}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* GPA Summary at bottom */}
-                <div className="mt-6 p-4 bg-secondary/50 rounded-lg flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary">calculate</span>
-                    <span className="font-medium text-foreground">Term Grade Point Average (GPA)</span>
-                  </div>
-                  <span className="text-2xl font-bold text-primary">{gradesData.currentTerm.gpa.toFixed(2)}</span>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="previous" className="mt-6 space-y-6">
-            {gradesData.previousTerms.map((term, termIdx) => (
-              <Card key={termIdx}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-muted-foreground">history</span>
-                      {term.term}
-                    </span>
-                    <span className="text-primary font-bold">GPA: {term.gpa.toFixed(2)}</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-border">
-                          <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Subject</th>
-                          <th className="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">CA</th>
-                          <th className="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">Exam</th>
-                          <th className="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">Total</th>
-                          <th className="text-center py-3 px-4 text-sm font-semibold text-muted-foreground">Grade</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {term.subjects.map((row, idx) => (
-                          <tr key={idx} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
-                            <td className="py-3 px-4 font-medium text-foreground">{row.subject}</td>
-                            <td className="py-3 px-4 text-center text-muted-foreground">{row.ca}</td>
-                            <td className="py-3 px-4 text-center text-muted-foreground">{row.exam}</td>
-                            <td className="py-3 px-4 text-center font-semibold text-foreground">{row.total}</td>
-                            <td className="py-3 px-4 text-center">
-                              <GradeBadge grade={row.grade} size="sm" />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+          <TabsContent value="current" className="mt-4">
+            {loading ? (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Skeleton key={i} className="h-12 rounded-lg" />
+                    ))}
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            ) : currentTermGrades?.grades.length ? (
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" />
+                    {currentTermGrades.termName}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {currentTermGrades.grades.map((grade) => (
+                      <div
+                        key={grade.id}
+                        className={`p-3 rounded-lg border ${
+                          grade.letter_grade === "F" 
+                            ? "bg-destructive/5 border-destructive/20" 
+                            : "bg-secondary/50 border-border"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="font-medium text-foreground text-sm">
+                            {grade.subjects?.name || "Unknown Subject"}
+                          </p>
+                          <GradeBadge grade={grade.letter_grade || "N/A"} size="sm" />
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>CA: {grade.continuous_assessment || 0}</span>
+                          <span>Exam: {grade.exam_score || 0}</span>
+                          <span className="font-medium text-foreground">
+                            Total: {grade.total_score || 0}
+                          </span>
+                        </div>
+                        {grade.remark && (
+                          <p className={`text-xs mt-1 ${
+                            grade.letter_grade === "F" ? "text-destructive" : "text-muted-foreground"
+                          }`}>
+                            {grade.remark}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* GPA Summary */}
+                  {currentTermGrades.gpa && (
+                    <div className="mt-4 p-3 bg-primary/5 rounded-lg flex items-center justify-between">
+                      <span className="text-sm font-medium text-foreground">Term GPA</span>
+                      <span className="text-lg font-bold text-primary">
+                        {currentTermGrades.gpa.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <FileText className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No grades available for current term</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="previous" className="mt-4 space-y-4">
+            {loading ? (
+              <Card>
+                <CardContent className="p-4">
+                  <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <Skeleton key={i} className="h-12 rounded-lg" />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : previousTerms.length > 0 ? (
+              previousTerms.map(([termId, termData]) => (
+                <Card key={termId}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <History className="w-4 h-4 text-muted-foreground" />
+                        {termData.termName}
+                      </span>
+                      {termData.gpa && (
+                        <span className="text-primary font-bold">
+                          GPA: {termData.gpa.toFixed(2)}
+                        </span>
+                      )}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {termData.grades.map((grade) => (
+                        <div
+                          key={grade.id}
+                          className="flex items-center justify-between p-3 rounded-lg bg-secondary/50"
+                        >
+                          <div>
+                            <p className="font-medium text-foreground text-sm">
+                              {grade.subjects?.name || "Unknown Subject"}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Total: {grade.total_score || 0}
+                            </p>
+                          </div>
+                          <GradeBadge grade={grade.letter_grade || "N/A"} size="sm" />
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <History className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No previous term grades available</p>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardLayout>
+    </StudentLayout>
   );
 };
 
