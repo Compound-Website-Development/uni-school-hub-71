@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { Users, BookOpen, ClipboardCheck, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { DashboardSkeleton } from "@/components/ui/loading-skeleton";
 
 interface ClassData {
   id: string;
@@ -24,16 +25,9 @@ const StaffClasses = () => {
     const fetchClasses = async () => {
       setIsLoading(true);
 
-      // Fetch classes with student counts
       const { data: classData, error: classError } = await supabase
         .from("classes")
-        .select(`
-          id,
-          name,
-          grade_level,
-          section,
-          capacity
-        `)
+        .select(`id, name, grade_level, section, capacity`)
         .order("grade_level");
 
       if (classError) {
@@ -42,7 +36,6 @@ const StaffClasses = () => {
         return;
       }
 
-      // Get student counts for each class
       const classesWithCounts = await Promise.all(
         (classData || []).map(async (cls) => {
           const { count } = await supabase
@@ -51,10 +44,7 @@ const StaffClasses = () => {
             .eq("class_id", cls.id)
             .eq("status", "active");
 
-          return {
-            ...cls,
-            student_count: count || 0,
-          };
+          return { ...cls, student_count: count || 0 };
         })
       );
 
@@ -68,9 +58,7 @@ const StaffClasses = () => {
   if (isLoading) {
     return (
       <StaffLayout title="Classes">
-        <div className="text-center py-12 text-muted-foreground">
-          Loading classes...
-        </div>
+        <DashboardSkeleton />
       </StaffLayout>
     );
   }
