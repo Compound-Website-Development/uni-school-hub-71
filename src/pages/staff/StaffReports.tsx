@@ -270,8 +270,9 @@ const StaffReports = () => {
         )}
 
         {isLoading && (
-          <div className="text-center py-12 text-muted-foreground">
-            Loading report data...
+          <div className="flex items-center justify-center py-12">
+            <span className="material-symbols-outlined animate-spin text-primary text-3xl mr-3">progress_activity</span>
+            <span className="text-muted-foreground">Loading report data...</span>
           </div>
         )}
 
