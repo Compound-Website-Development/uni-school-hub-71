@@ -1,7 +1,17 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { useState } from "react";
 
 const Index = () => {
+  const [selectedProgramme, setSelectedProgramme] = useState<string>("");
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -17,6 +27,7 @@ const Index = () => {
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
             <a href="#about" className="text-muted-foreground hover:text-foreground transition-colors">About</a>
+            <a href="#programmes" className="text-muted-foreground hover:text-foreground transition-colors">Programmes</a>
             <a href="#apply" className="text-muted-foreground hover:text-foreground transition-colors">Apply</a>
           </div>
 
@@ -49,7 +60,7 @@ const Index = () => {
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              A comprehensive school management system for Upper and Senior Secondary students. 
+              A comprehensive school management system for Upper Basic and Senior Secondary students. 
               Access grades, reports, and manage your academic journey - all in one place.
             </p>
 
@@ -162,19 +173,79 @@ const Index = () => {
             </h2>
             <p className="text-muted-foreground mb-8 leading-relaxed">
               Located in Jarreng Village, Niamina East District, The Gambia, our schools serve 
-              approximately 700-800 students across Upper and Senior Secondary levels. With 37 
+              approximately 700-800 students across Upper Basic and Senior Secondary levels. With 37 
               dedicated teachers, we are committed to providing quality education and preparing 
               students for a successful future.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <div className="bg-card rounded-lg border border-border px-6 py-4">
-                <p className="font-bold text-foreground">Upper Secondary</p>
-                <p className="text-sm text-muted-foreground">Grades 10-11</p>
+                <p className="font-bold text-foreground">Upper Basic School</p>
+                <p className="text-sm text-muted-foreground">Grade 7 - 9</p>
               </div>
               <div className="bg-card rounded-lg border border-border px-6 py-4">
-                <p className="font-bold text-foreground">Senior Secondary</p>
-                <p className="text-sm text-muted-foreground">Grade 12</p>
+                <p className="font-bold text-foreground">Senior Secondary School</p>
+                <p className="text-sm text-muted-foreground">Grade 10 - 12</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Programmes Section */}
+      <section id="programmes" className="py-20 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Our Programmes
+            </h2>
+            <p className="text-muted-foreground">
+              Choose from our specialized academic programmes
+            </p>
+          </div>
+
+          {/* Programme Dropdown */}
+          <div className="max-w-md mx-auto mb-8">
+            <Select value={selectedProgramme} onValueChange={setSelectedProgramme}>
+              <SelectTrigger className="w-full bg-card">
+                <SelectValue placeholder="Select a Programme" />
+              </SelectTrigger>
+              <SelectContent className="bg-card">
+                <SelectItem value="art">Art (Humanities Studies)</SelectItem>
+                <SelectItem value="science">Science</SelectItem>
+                <SelectItem value="commerce">Commerce</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className={`bg-card rounded-xl border-2 p-6 text-center transition-all ${selectedProgramme === 'art' ? 'border-primary bg-primary/5' : 'border-border'}`}>
+              <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-amber-500 text-3xl">palette</span>
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">Art (Humanities Studies)</h3>
+              <p className="text-sm text-muted-foreground">
+                Focus on History, Literature, Government, Geography, and Social Sciences
+              </p>
+            </div>
+
+            <div className={`bg-card rounded-xl border-2 p-6 text-center transition-all ${selectedProgramme === 'science' ? 'border-primary bg-primary/5' : 'border-border'}`}>
+              <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-emerald-500 text-3xl">science</span>
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">Science</h3>
+              <p className="text-sm text-muted-foreground">
+                Focus on Physics, Chemistry, Biology, Further Mathematics, and Technical subjects
+              </p>
+            </div>
+
+            <div className={`bg-card rounded-xl border-2 p-6 text-center transition-all ${selectedProgramme === 'commerce' ? 'border-primary bg-primary/5' : 'border-border'}`}>
+              <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-blue-500 text-3xl">account_balance</span>
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">Commerce</h3>
+              <p className="text-sm text-muted-foreground">
+                Focus on Accounting, Commerce, Business Management, and Economics
+              </p>
             </div>
           </div>
         </div>

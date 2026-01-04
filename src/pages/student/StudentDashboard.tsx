@@ -1,14 +1,23 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { StudentLayout } from "@/components/layout/StudentLayout";
-import { StatCard } from "@/components/ui/stat-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GradeBadge } from "@/components/ui/grade-badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { FileText, Calendar, BookOpen, MessageCircle, PlayCircle, Clock } from "lucide-react";
+import { 
+  BookOpen, 
+  FileText, 
+  Calendar, 
+  TrendingUp, 
+  Award,
+  Clock,
+  ChevronRight,
+  BarChart3,
+  GraduationCap
+} from "lucide-react";
 
 interface Grade {
   id: string;
@@ -30,53 +39,37 @@ const StudentDashboard = () => {
   const [termResult, setTermResult] = useState<TermResult | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const currentDate = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  };
 
   useEffect(() => {
     const fetchStudentData = async () => {
       if (!studentData?.id) return;
 
       try {
-        // Fetch recent grades
         const { data: grades } = await supabase
           .from("grades")
-          .select(`
-            id,
-            total_score,
-            letter_grade,
-            subjects (name)
-          `)
+          .select(`id, total_score, letter_grade, subjects (name)`)
           .eq("student_id", studentData.id)
           .order("created_at", { ascending: false })
           .limit(5);
 
-        if (grades) {
-          setRecentGrades(grades);
-        }
+        if (grades) setRecentGrades(grades);
 
-        // Fetch current term result
         const { data: result } = await supabase
           .from("term_results")
-          .select(`
-            gpa,
-            class_position,
-            class_size,
-            terms (name)
-          `)
+          .select(`gpa, class_position, class_size, terms (name)`)
           .eq("student_id", studentData.id)
           .eq("is_published", true)
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
 
-        if (result) {
-          setTermResult(result);
-        }
+        if (result) setTermResult(result);
       } catch (error) {
         console.error("Error fetching student data:", error);
       } finally {
@@ -87,185 +80,240 @@ const StudentDashboard = () => {
     fetchStudentData();
   }, [studentData?.id]);
 
-  const studentName = studentData 
-    ? `${studentData.first_name} ${studentData.last_name}`
-    : "Student";
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
-  };
-
-  // Mock schedule data - would come from a schedule table
   const upcomingClasses = [
-    { time: "08:00 AM", subject: "English Language", room: "Room 101", teacher: "Mr. Jallow" },
-    { time: "10:00 AM", subject: "Mathematics", room: "Room 204", teacher: "Mrs. Ceesay" },
-    { time: "12:00 PM", subject: "History", room: "Room 108", teacher: "Mr. Camara" },
-    { time: "02:00 PM", subject: "Islamic Studies", room: "Room 112", teacher: "Sheikh Fatty" },
+    { time: "08:00", subject: "English Language", room: "Room 101", color: "bg-gradient-primary" },
+    { time: "10:00", subject: "Mathematics", room: "Room 204", color: "bg-gradient-purple" },
+    { time: "12:00", subject: "History", room: "Room 108", color: "bg-gradient-orange" },
   ];
+
+  const quickActions = [
+    { icon: BookOpen, label: "Grades", href: "/student/grades", color: "bg-primary/10 text-primary" },
+    { icon: FileText, label: "Reports", href: "/student/reports", color: "bg-success/10 text-success" },
+    { icon: Calendar, label: "Schedule", href: "/student/schedule", color: "bg-orange/10 text-orange" },
+    { icon: GraduationCap, label: "Transcript", href: "/student/transcript", color: "bg-purple/10 text-purple" },
+  ];
+
+  const getGradeColor = (grade: string | null) => {
+    switch(grade) {
+      case 'A': return 'text-success bg-success/10';
+      case 'B': return 'text-primary bg-primary/10';
+      case 'C': return 'text-warning bg-warning/10';
+      default: return 'text-destructive bg-destructive/10';
+    }
+  };
 
   return (
     <StudentLayout title="Dashboard">
       <div className="space-y-6">
         {/* Welcome Header */}
-        <div className="flex flex-col gap-2">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-            {getGreeting()}, {studentData?.first_name || "Student"} 👋
-          </h2>
-          <p className="text-muted-foreground">
-            <span className="font-medium text-foreground">{currentDate}</span>
-          </p>
+        <div className="animate-fade-up">
+          <p className="text-muted-foreground text-sm font-medium">{getGreeting()}</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mt-1">
+            {studentData?.first_name || "Student"} 👋
+          </h1>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Stats Cards - Modern Grid */}
+        <div className="grid grid-cols-2 gap-3 animate-fade-up animation-delay-100">
           {loading ? (
             <>
               {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-24 rounded-xl" />
+                <Skeleton key={i} className="h-28 rounded-2xl" />
               ))}
             </>
           ) : (
             <>
-              <StatCard
-                icon="trending_up"
-                label="Current GPA"
-                value={termResult?.gpa?.toFixed(2) || "N/A"}
-                variant="primary"
-              />
-              <StatCard
-                icon="analytics"
-                label="Cumulative GPA"
-                value="3.06"
-                variant="success"
-              />
-              <StatCard
-                icon="emoji_events"
-                label="Class Position"
-                value={termResult?.class_position 
-                  ? `${termResult.class_position}/${termResult.class_size || "?"}`
-                  : "N/A"}
-                variant="warning"
-              />
-              <StatCard
-                icon="calendar_today"
-                label="Current Term"
-                value={termResult?.terms?.name || "Term 1"}
-                variant="default"
-              />
+              {/* GPA Card */}
+              <Card className="bg-gradient-primary text-primary-foreground rounded-2xl border-0 overflow-hidden">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-primary-foreground/70 text-xs font-medium">Term GPA</p>
+                      <p className="text-3xl font-bold mt-1">
+                        {termResult?.gpa?.toFixed(2) || "N/A"}
+                      </p>
+                    </div>
+                    <div className="p-2 bg-primary-foreground/20 rounded-xl">
+                      <TrendingUp className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Progress value={termResult?.gpa ? (termResult.gpa / 4) * 100 : 0} className="h-1.5 bg-primary-foreground/20" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Rank Card */}
+              <Card className="bg-card rounded-2xl shadow-card">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-muted-foreground text-xs font-medium">Class Rank</p>
+                      <p className="text-3xl font-bold text-foreground mt-1">
+                        {termResult?.class_position || "N/A"}
+                        {termResult?.class_size && (
+                          <span className="text-sm text-muted-foreground font-normal">/{termResult.class_size}</span>
+                        )}
+                      </p>
+                    </div>
+                    <div className="p-2 bg-warning/10 rounded-xl">
+                      <Award className="w-5 h-5 text-warning" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* CGPA Card */}
+              <Card className="bg-card rounded-2xl shadow-card">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-muted-foreground text-xs font-medium">Cumulative GPA</p>
+                      <p className="text-3xl font-bold text-foreground mt-1">3.06</p>
+                    </div>
+                    <div className="p-2 bg-success/10 rounded-xl">
+                      <BarChart3 className="w-5 h-5 text-success" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Term Card */}
+              <Card className="bg-card rounded-2xl shadow-card">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-muted-foreground text-xs font-medium">Current Term</p>
+                      <p className="text-lg font-bold text-foreground mt-1">
+                        {termResult?.terms?.name || "Term 1"}
+                      </p>
+                    </div>
+                    <div className="p-2 bg-primary/10 rounded-xl">
+                      <Calendar className="w-5 h-5 text-primary" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </>
           )}
         </div>
 
+        {/* Quick Actions */}
+        <div className="animate-fade-up animation-delay-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-foreground">Quick Actions</h2>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            {quickActions.map((action, idx) => (
+              <Link key={idx} to={action.href}>
+                <div className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-card shadow-card hover:shadow-lg transition-all duration-200 card-interactive">
+                  <div className={`p-3 rounded-xl ${action.color}`}>
+                    <action.icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-xs font-medium text-foreground text-center">{action.label}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Today's Schedule */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
+        <div className="animate-fade-up animation-delay-300">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
               <Clock className="w-5 h-5 text-primary" />
               Today's Schedule
-            </CardTitle>
+            </h2>
             <Link to="/student/schedule">
-              <Button variant="ghost" size="sm">View All</Button>
+              <Button variant="ghost" size="sm" className="text-primary">
+                View All
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
             </Link>
-          </CardHeader>
-          <CardContent className="space-y-3">
+          </div>
+          
+          <div className="space-y-3">
             {upcomingClasses.map((cls, idx) => (
-              <div
-                key={idx}
-                className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
-                  idx === 0 
-                    ? "bg-primary/5 border-primary/20" 
-                    : "bg-secondary/50 border-border"
+              <Card 
+                key={idx} 
+                className={`rounded-2xl border-0 overflow-hidden transition-all duration-200 ${
+                  idx === 0 ? 'shadow-glow' : 'shadow-card'
                 }`}
               >
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                  idx === 0 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}>
-                  {idx === 0 ? <PlayCircle className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground text-sm truncate">{cls.subject}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {cls.room} • {cls.teacher}
-                  </p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className={`text-xs font-medium ${idx === 0 ? "text-primary" : "text-muted-foreground"}`}>
-                    {cls.time}
-                  </p>
-                  {idx === 0 && (
-                    <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                      Now
-                    </span>
-                  )}
-                </div>
-              </div>
+                <CardContent className="p-0">
+                  <div className="flex items-stretch">
+                    <div className={`w-1.5 ${cls.color}`}></div>
+                    <div className="flex-1 p-4 flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-xl ${cls.color} flex items-center justify-center shrink-0`}>
+                        <span className="text-primary-foreground font-bold text-sm">{cls.time}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-foreground truncate">{cls.subject}</p>
+                        <p className="text-sm text-muted-foreground">{cls.room}</p>
+                      </div>
+                      {idx === 0 && (
+                        <span className="px-3 py-1 bg-success/10 text-success text-xs font-medium rounded-full">
+                          Now
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Recent Grades */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
+        <div className="animate-fade-up animation-delay-400">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-primary" />
               Recent Grades
-            </CardTitle>
+            </h2>
             <Link to="/student/grades">
-              <Button variant="ghost" size="sm">View All</Button>
+              <Button variant="ghost" size="sm" className="text-primary">
+                View All
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
             </Link>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-14 rounded-lg" />
-                ))}
-              </div>
-            ) : recentGrades.length > 0 ? (
-              <div className="space-y-2">
-                {recentGrades.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-secondary/50"
-                  >
-                    <div>
-                      <p className="font-medium text-foreground text-sm">
-                        {item.subjects?.name || "Unknown Subject"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{item.total_score || 0}%</p>
-                    </div>
-                    <GradeBadge grade={item.letter_grade || "N/A"} size="sm" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground py-4">No grades available yet</p>
-            )}
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { icon: BookOpen, label: "View Grades", href: "/student/grades", color: "text-primary" },
-            { icon: FileText, label: "Download Report", href: "/student/reports", color: "text-emerald-500" },
-            { icon: Calendar, label: "Schedule", href: "/student/schedule", color: "text-amber-500" },
-            { icon: MessageCircle, label: "Messages", href: "/student/settings", color: "text-blue-500" },
-          ].map((action, idx) => (
-            <Link key={idx} to={action.href}>
-              <Card className="p-4 hover:bg-secondary/50 transition-colors cursor-pointer">
-                <div className="flex flex-col items-center gap-2 text-center">
-                  <div className="p-2 rounded-lg bg-secondary">
-                    <action.icon className={`w-5 h-5 ${action.color}`} />
-                  </div>
-                  <span className="text-sm font-medium text-foreground">{action.label}</span>
+          <Card className="rounded-2xl shadow-card">
+            <CardContent className="p-0 divide-y divide-border">
+              {loading ? (
+                <div className="p-4 space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-14 rounded-xl" />
+                  ))}
                 </div>
-              </Card>
-            </Link>
-          ))}
+              ) : recentGrades.length > 0 ? (
+                recentGrades.map((grade) => (
+                  <div key={grade.id} className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+                        <BookOpen className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">
+                          {grade.subjects?.name || "Unknown"}
+                        </p>
+                        <p className="text-sm text-muted-foreground">{grade.total_score || 0}%</p>
+                      </div>
+                    </div>
+                    <span className={`px-3 py-1.5 rounded-xl text-sm font-bold ${getGradeColor(grade.letter_grade)}`}>
+                      {grade.letter_grade || "N/A"}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center">
+                  <BookOpen className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No grades available yet</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </StudentLayout>

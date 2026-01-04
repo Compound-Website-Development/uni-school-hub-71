@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { StudentLayout } from "@/components/layout/StudentLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { FileText, Download, Eye, GraduationCap, Loader2 } from "lucide-react";
+import { FileText, Download, Eye, GraduationCap, Loader2, ChevronRight } from "lucide-react";
 
 interface Term {
   id: string;
@@ -71,34 +71,20 @@ const StudentReports = () => {
       if (!studentData?.id || !selectedTerm) return;
 
       try {
-        // Fetch grades for selected term
         const { data: gradesData } = await supabase
           .from("grades")
           .select(`
-            continuous_assessment,
-            exam_score,
-            total_score,
-            letter_grade,
-            remark,
+            continuous_assessment, exam_score, total_score, letter_grade, remark,
             subjects (name)
           `)
           .eq("student_id", studentData.id)
           .eq("term_id", selectedTerm);
 
-        if (gradesData) {
-          setGrades(gradesData);
-        }
+        if (gradesData) setGrades(gradesData);
 
-        // Fetch term result
         const { data: result } = await supabase
           .from("term_results")
-          .select(`
-            gpa,
-            class_position,
-            class_size,
-            teacher_comment,
-            principal_comment
-          `)
+          .select(`gpa, class_position, class_size, teacher_comment, principal_comment`)
           .eq("student_id", studentData.id)
           .eq("term_id", selectedTerm)
           .eq("is_published", true)
@@ -123,7 +109,6 @@ const StudentReports = () => {
       const pageWidth = doc.internal.pageSize.getWidth();
       const selectedTermName = terms.find(t => t.id === selectedTerm)?.name || "Term";
       
-      // Header
       doc.setFontSize(16);
       doc.setFont("helvetica", "bold");
       doc.text("JARRENG VILLAGE SCHOOLS", pageWidth / 2, 20, { align: "center" });
@@ -136,12 +121,10 @@ const StudentReports = () => {
       doc.setFont("helvetica", "bold");
       doc.text("TERM REPORT", pageWidth / 2, 40, { align: "center" });
       
-      // Divider line
       doc.setDrawColor(19, 127, 236);
       doc.setLineWidth(0.5);
       doc.line(20, 45, pageWidth - 20, 45);
       
-      // Student Info
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
       doc.text("Student Information", 20, 55);
@@ -151,11 +134,9 @@ const StudentReports = () => {
       doc.text(`Student Name: ${studentData.first_name} ${studentData.last_name}`, 20, 70);
       doc.text(`Term: ${selectedTermName}`, 20, 77);
       
-      // Academic Records
       doc.setFont("helvetica", "bold");
       doc.text("ACADEMIC RECORDS", 20, 91);
       
-      // Table
       if (grades.length > 0) {
         autoTable(doc, {
           startY: 96,
@@ -168,18 +149,9 @@ const StudentReports = () => {
             row.letter_grade || "N/A",
             row.remark || "N/A",
           ]),
-          headStyles: {
-            fillColor: [19, 127, 236],
-            textColor: [255, 255, 255],
-            fontStyle: "bold",
-          },
-          alternateRowStyles: {
-            fillColor: [245, 247, 250],
-          },
-          styles: {
-            fontSize: 9,
-            cellPadding: 3,
-          },
+          headStyles: { fillColor: [19, 127, 236], textColor: [255, 255, 255], fontStyle: "bold" },
+          alternateRowStyles: { fillColor: [245, 247, 250] },
+          styles: { fontSize: 9, cellPadding: 3 },
           columnStyles: {
             0: { cellWidth: 55 },
             1: { cellWidth: 15, halign: "center" },
@@ -190,7 +162,6 @@ const StudentReports = () => {
           },
         });
         
-        // GPA & Position
         const finalY = (doc as any).lastAutoTable.finalY + 10;
         
         if (termResult) {
@@ -198,7 +169,6 @@ const StudentReports = () => {
           doc.text(`GPA: ${termResult.gpa?.toFixed(2) || "N/A"}`, 20, finalY);
           doc.text(`Class Position: ${termResult.class_position || "N/A"} out of ${termResult.class_size || "N/A"}`, 80, finalY);
           
-          // Comments
           if (termResult.teacher_comment) {
             doc.text("Class Teacher's Comments:", 20, finalY + 15);
             doc.setFont("helvetica", "normal");
@@ -210,12 +180,10 @@ const StudentReports = () => {
         doc.text("No grades available for this term.", 20, 96);
       }
       
-      // Footer
       doc.setFontSize(8);
       doc.text("Thank You For Being Part Of Jarreng Village Schools", pageWidth / 2, 280, { align: "center" });
       doc.text(`Generated on ${new Date().toLocaleDateString()}`, pageWidth / 2, 286, { align: "center" });
       
-      // Save
       doc.save(`Term_Report_${studentData.student_id}_${studentData.first_name}_${studentData.last_name}.pdf`);
       
       toast({
@@ -237,64 +205,70 @@ const StudentReports = () => {
     ? `${studentData.first_name} ${studentData.last_name}`.toUpperCase()
     : "STUDENT";
 
+  const getGradeColor = (grade: string | null) => {
+    switch(grade) {
+      case 'A': return 'text-success';
+      case 'B': return 'text-primary';
+      case 'C': return 'text-warning';
+      default: return 'text-destructive';
+    }
+  };
+
   return (
     <StudentLayout title="Reports">
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h2 className="text-2xl font-bold text-foreground tracking-tight">
-            Term Reports
-          </h2>
-          <p className="text-muted-foreground mt-1">
+        <div className="animate-fade-up">
+          <h1 className="text-2xl font-bold text-foreground">Term Reports</h1>
+          <p className="text-muted-foreground text-sm mt-1">
             Download your academic reports
           </p>
         </div>
 
         {/* Report Selection */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <FileText className="w-4 h-4 text-primary" />
-              Select Report
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <Card className="rounded-2xl shadow-card animate-fade-up animation-delay-100">
+          <CardContent className="p-5 space-y-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 bg-primary/10 rounded-xl">
+                <FileText className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-foreground">Select Report</h2>
+                <p className="text-sm text-muted-foreground">Choose a term to view or download</p>
+              </div>
+            </div>
+            
             {loading ? (
-              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-12 w-full rounded-xl" />
             ) : (
               <>
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
-                    Academic Term
-                  </label>
-                  <Select value={selectedTerm} onValueChange={setSelectedTerm}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select term" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {terms.map((term) => (
-                        <SelectItem key={term.id} value={term.id}>
-                          {term.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select value={selectedTerm} onValueChange={setSelectedTerm}>
+                  <SelectTrigger className="h-12 rounded-xl">
+                    <SelectValue placeholder="Select term" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card">
+                    {terms.map((term) => (
+                      <SelectItem key={term.id} value={term.id}>
+                        {term.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 
                 <Button 
                   onClick={generatePDF} 
                   disabled={isGenerating || grades.length === 0}
-                  className="w-full"
+                  className="w-full h-12 rounded-xl bg-gradient-primary shadow-glow"
                 >
                   {isGenerating ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                       Generating...
                     </>
                   ) : (
                     <>
-                      <Download className="w-4 h-4 mr-2" />
-                      Download PDF
+                      <Download className="w-5 h-5 mr-2" />
+                      Download PDF Report
                     </>
                   )}
                 </Button>
@@ -304,33 +278,34 @@ const StudentReports = () => {
         </Card>
 
         {/* Report Preview */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Eye className="w-4 h-4 text-primary" />
-              Report Preview
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Card className="rounded-2xl shadow-card overflow-hidden animate-fade-up animation-delay-200">
+          <div className="flex items-center gap-3 p-4 border-b border-border">
+            <div className="p-2 bg-primary/10 rounded-xl">
+              <Eye className="w-5 h-5 text-primary" />
+            </div>
+            <h2 className="font-semibold text-foreground">Report Preview</h2>
+          </div>
+          
+          <CardContent className="p-0">
             {/* Preview Header */}
-            <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground p-4 rounded-t-lg">
+            <div className="bg-gradient-primary text-primary-foreground p-5">
               <h3 className="text-lg font-bold text-center">JARRENG VILLAGE SCHOOLS</h3>
               <p className="text-center opacity-80 text-xs mt-1">Niamina East District, The Gambia</p>
-              <p className="text-center font-semibold mt-2 text-sm">TERM REPORT</p>
+              <p className="text-center font-semibold mt-3 text-sm">TERM REPORT</p>
             </div>
             
             {/* Student Info */}
-            <div className="p-3 bg-secondary/30 border-b border-border">
-              <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="p-4 bg-muted/30 border-b border-border">
+              <div className="flex items-center justify-between text-sm">
                 <div>
                   <span className="text-muted-foreground">Student ID:</span>
-                  <span className="ml-1 font-medium text-foreground">
+                  <span className="ml-1 font-semibold text-foreground">
                     {studentData?.student_id || "N/A"}
                   </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Name:</span>
-                  <span className="ml-1 font-medium text-foreground">{studentName}</span>
+                  <span className="ml-1 font-semibold text-foreground">{studentName}</span>
                 </div>
               </div>
             </div>
@@ -339,45 +314,45 @@ const StudentReports = () => {
             {grades.length > 0 ? (
               <div className="divide-y divide-border">
                 {grades.slice(0, 4).map((row, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3">
+                  <div key={idx} className="flex items-center justify-between p-4">
                     <span className="text-sm font-medium text-foreground">
                       {row.subjects?.name || "N/A"}
                     </span>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       <span className="text-sm text-muted-foreground">
-                        {row.total_score || 0}
+                        {row.total_score || 0}%
                       </span>
-                      <span className="text-sm font-bold text-primary">
+                      <span className={`text-sm font-bold ${getGradeColor(row.letter_grade)}`}>
                         {row.letter_grade || "N/A"}
                       </span>
                     </div>
                   </div>
                 ))}
                 {grades.length > 4 && (
-                  <div className="p-3 text-center text-sm text-muted-foreground bg-muted/30">
+                  <div className="p-4 text-center text-sm text-muted-foreground bg-muted/30">
                     ... and {grades.length - 4} more subjects
                   </div>
                 )}
               </div>
             ) : (
-              <div className="p-6 text-center text-muted-foreground">
-                <FileText className="w-10 h-10 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">No grades available for this term</p>
+              <div className="p-8 text-center">
+                <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
+                <p className="text-muted-foreground">No grades available for this term</p>
               </div>
             )}
 
             {/* Summary */}
             {termResult && (
-              <div className="p-3 bg-secondary/30 rounded-b-lg flex items-center justify-between text-sm">
-                <div>
-                  <span className="text-muted-foreground">GPA:</span>
-                  <span className="ml-1 font-bold text-primary">
+              <div className="p-4 bg-muted/30 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">GPA:</span>
+                  <span className="font-bold text-primary text-lg">
                     {termResult.gpa?.toFixed(2) || "N/A"}
                   </span>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Position:</span>
-                  <span className="ml-1 font-bold text-amber-500">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Position:</span>
+                  <span className="font-bold text-warning text-lg">
                     {termResult.class_position || "N/A"}/{termResult.class_size || "?"}
                   </span>
                 </div>
@@ -386,25 +361,21 @@ const StudentReports = () => {
           </CardContent>
         </Card>
 
-        {/* Transcript Card */}
-        <Card>
+        {/* Transcript Link */}
+        <Card className="rounded-2xl shadow-card animate-fade-up animation-delay-300">
           <CardContent className="p-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-emerald-500/10 rounded-lg">
-                <GraduationCap className="w-6 h-6 text-emerald-500" />
+            <Link to="/student/transcript" className="flex items-center gap-4">
+              <div className="p-3 bg-success/10 rounded-xl">
+                <GraduationCap className="w-6 h-6 text-success" />
               </div>
               <div className="flex-1">
-                <p className="font-medium text-foreground">Full Transcript</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="font-semibold text-foreground">Full Transcript</p>
+                <p className="text-sm text-muted-foreground">
                   View complete academic history
                 </p>
               </div>
-              <Link to="/student/transcript">
-                <Button variant="outline" size="sm">
-                  View
-                </Button>
-              </Link>
-            </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </Link>
           </CardContent>
         </Card>
       </div>
