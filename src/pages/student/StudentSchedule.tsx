@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { StudentLayout } from "@/components/layout/StudentLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Clock, MapPin, User, Calendar } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { ListSkeleton } from "@/components/ui/loading-skeleton";
-import { InlineEmptyState } from "@/components/ui/empty-state";
 
 interface ScheduleItem {
   id: string;
@@ -18,18 +16,27 @@ interface ScheduleItem {
   teacher_name: string;
 }
 
-const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const fullDayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const dayColors = [
+  "bg-gradient-primary",
+  "bg-gradient-purple", 
+  "bg-gradient-orange",
+  "bg-gradient-teal",
+  "bg-gradient-pink",
+];
 
 const StudentSchedule = () => {
   const { studentData } = useAuth();
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDay, setSelectedDay] = useState(new Date().getDay());
   const currentDay = new Date().getDay();
 
   useEffect(() => {
     const fetchSchedule = async () => {
       if (!studentData?.class_id) {
-        // If no class_id, use demo data
         setSchedule([]);
         setIsLoading(false);
         return;
@@ -38,15 +45,7 @@ const StudentSchedule = () => {
       try {
         const { data, error } = await supabase
           .from("schedules")
-          .select(`
-            id,
-            day_of_week,
-            start_time,
-            end_time,
-            room,
-            subjects (name),
-            teachers (first_name, last_name)
-          `)
+          .select(`id, day_of_week, start_time, end_time, room, subjects (name), teachers (first_name, last_name)`)
           .eq("class_id", studentData.class_id)
           .order("day_of_week")
           .order("start_time");
@@ -74,110 +73,109 @@ const StudentSchedule = () => {
     fetchSchedule();
   }, [studentData?.class_id]);
 
-  // Demo data fallback
   const demoSchedule = schedule.length > 0 ? schedule : [
     { id: "1", day_of_week: 1, start_time: "08:00", end_time: "09:30", room: "Room 101", subject_name: "Mathematics", teacher_name: "Mr. Johnson" },
     { id: "2", day_of_week: 1, start_time: "09:45", end_time: "11:15", room: "Room 102", subject_name: "English", teacher_name: "Mrs. Smith" },
     { id: "3", day_of_week: 1, start_time: "11:30", end_time: "13:00", room: "Lab 1", subject_name: "Physics", teacher_name: "Dr. Williams" },
     { id: "4", day_of_week: 2, start_time: "08:00", end_time: "09:30", room: "Lab 2", subject_name: "Chemistry", teacher_name: "Mr. Brown" },
     { id: "5", day_of_week: 2, start_time: "09:45", end_time: "11:15", room: "Room 103", subject_name: "Biology", teacher_name: "Mrs. Davis" },
+    { id: "6", day_of_week: 3, start_time: "08:00", end_time: "09:30", room: "Room 101", subject_name: "History", teacher_name: "Mr. Camara" },
   ];
 
-  const todaySchedule = demoSchedule.filter((s) => s.day_of_week === currentDay);
-  const groupedByDay = demoSchedule.reduce((acc, item) => {
-    if (!acc[item.day_of_week]) acc[item.day_of_week] = [];
-    acc[item.day_of_week].push(item);
-    return acc;
-  }, {} as Record<number, ScheduleItem[]>);
+  const selectedDaySchedule = demoSchedule.filter((s) => s.day_of_week === selectedDay);
 
   return (
     <StudentLayout title="Schedule">
       <div className="space-y-6">
-        {/* Today's Schedule */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">today</span>
-              Today's Classes
-              <Badge variant="secondary">{dayNames[currentDay]}</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <ListSkeleton items={3} />
-            ) : todaySchedule.length === 0 ? (
-              <InlineEmptyState icon={Calendar} title="No Classes Today" description="Enjoy your day off!" />
-            ) : (
-              <div className="space-y-3">
-                {todaySchedule.map((item) => (
-                  <div key={item.id} className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">{item.subject_name}</h3>
-                        <div className="flex flex-wrap gap-4 mt-2 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {item.start_time} - {item.end_time}
-                          </span>
-                          {item.room && (
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {item.room}
+        {/* Header */}
+        <div className="animate-fade-up">
+          <h1 className="text-2xl font-bold text-foreground">Schedule</h1>
+          <p className="text-muted-foreground text-sm mt-1">Your weekly class timetable</p>
+        </div>
+
+        {/* Day Selector */}
+        <div className="flex gap-2 overflow-x-auto pb-2 animate-fade-up animation-delay-100">
+          {[1, 2, 3, 4, 5].map((day, idx) => (
+            <button
+              key={day}
+              onClick={() => setSelectedDay(day)}
+              className={`flex flex-col items-center px-4 py-3 rounded-2xl min-w-[60px] transition-all duration-200 ${
+                selectedDay === day
+                  ? `${dayColors[idx]} text-primary-foreground shadow-glow`
+                  : "bg-card text-foreground shadow-card hover:bg-muted"
+              }`}
+            >
+              <span className="text-xs font-medium opacity-80">{dayNames[day]}</span>
+              <span className="text-lg font-bold">{day + 6}</span>
+              {currentDay === day && (
+                <span className={`w-1.5 h-1.5 rounded-full mt-1 ${selectedDay === day ? 'bg-primary-foreground' : 'bg-primary'}`}></span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Selected Day Header */}
+        <div className="flex items-center gap-3 animate-fade-up animation-delay-200">
+          <div className="p-2.5 bg-primary/10 rounded-xl">
+            <Calendar className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="font-semibold text-foreground">{fullDayNames[selectedDay]}</h2>
+            <p className="text-sm text-muted-foreground">
+              {selectedDaySchedule.length} classes scheduled
+            </p>
+          </div>
+        </div>
+
+        {/* Schedule List */}
+        <div className="space-y-3 animate-fade-up animation-delay-300">
+          {isLoading ? (
+            Array(4).fill(0).map((_, i) => (
+              <Skeleton key={i} className="h-24 rounded-2xl" />
+            ))
+          ) : selectedDaySchedule.length === 0 ? (
+            <Card className="rounded-2xl shadow-card">
+              <CardContent className="p-8 text-center">
+                <Calendar className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="font-medium text-foreground">No Classes</p>
+                <p className="text-sm text-muted-foreground">Enjoy your day off!</p>
+              </CardContent>
+            </Card>
+          ) : (
+            selectedDaySchedule.map((item, idx) => (
+              <Card key={item.id} className="rounded-2xl shadow-card overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="flex items-stretch">
+                    <div className={`w-1.5 ${dayColors[idx % 5]}`}></div>
+                    <div className="flex-1 p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-foreground">{item.subject_name}</h3>
+                          <div className="flex flex-wrap gap-3 mt-2">
+                            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                              <Clock className="w-4 h-4" />
+                              {item.start_time} - {item.end_time}
                             </span>
-                          )}
-                          <span className="flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            {item.teacher_name}
-                          </span>
+                            {item.room && (
+                              <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                                <MapPin className="w-4 h-4" />
+                                {item.room}
+                              </span>
+                            )}
+                          </div>
                         </div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border">
+                        <User className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">{item.teacher_name}</span>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Weekly Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">calendar_month</span>
-              Weekly Overview
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <ListSkeleton items={5} />
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {[1, 2, 3, 4, 5].map((day) => (
-                  <Card key={day} className={day === currentDay ? "ring-2 ring-primary" : ""}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        {dayNames[day]}
-                        {day === currentDay && <Badge className="text-xs">Today</Badge>}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      {groupedByDay[day] && groupedByDay[day].length > 0 ? (
-                        groupedByDay[day].map((item) => (
-                          <div key={item.id} className="flex justify-between text-sm">
-                            <span className="text-foreground truncate">{item.subject_name}</span>
-                            <span className="text-muted-foreground ml-2">{item.start_time}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-sm text-muted-foreground">No classes</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
       </div>
     </StudentLayout>
   );
