@@ -21,6 +21,8 @@ import StaffStudents from "./pages/staff/StaffStudents";
 import StaffAttendance from "./pages/staff/StaffAttendance";
 import StaffClasses from "./pages/staff/StaffClasses";
 import StaffReports from "./pages/staff/StaffReports";
+import AdminStudentUpload from "./pages/staff/AdminStudentUpload";
+import AdminUsers from "./pages/staff/AdminUsers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -103,6 +105,16 @@ const App = () => (
             <Route path="/staff/reports" element={
               <ProtectedRoute allowedRoles={["teacher", "admin"]}>
                 <StaffReports />
+              </ProtectedRoute>
+            } />
+            <Route path="/staff/admin/students" element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminStudentUpload />
+              </ProtectedRoute>
+            } />
+            <Route path="/staff/admin/users" element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminUsers />
               </ProtectedRoute>
             } />
             

@@ -41,6 +41,42 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_permissions: {
+        Row: {
+          can_add_admins: boolean | null
+          can_approve_grades: boolean | null
+          can_manage_students: boolean | null
+          can_manage_teachers: boolean | null
+          can_upload_bulk_data: boolean | null
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          can_add_admins?: boolean | null
+          can_approve_grades?: boolean | null
+          can_manage_students?: boolean | null
+          can_manage_teachers?: boolean | null
+          can_upload_bulk_data?: boolean | null
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          can_add_admins?: boolean | null
+          can_approve_grades?: boolean | null
+          can_manage_students?: boolean | null
+          can_manage_teachers?: boolean | null
+          can_upload_bulk_data?: boolean | null
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           address: string
@@ -240,7 +276,9 @@ export type Database = {
           grade_level: number
           id: string
           name: string
+          school_type: string | null
           section: string
+          specialization: string | null
         }
         Insert: {
           academic_year_id: string
@@ -249,7 +287,9 @@ export type Database = {
           grade_level: number
           id?: string
           name: string
+          school_type?: string | null
           section: string
+          specialization?: string | null
         }
         Update: {
           academic_year_id?: string
@@ -258,7 +298,9 @@ export type Database = {
           grade_level?: number
           id?: string
           name?: string
+          school_type?: string | null
           section?: string
+          specialization?: string | null
         }
         Relationships: [
           {

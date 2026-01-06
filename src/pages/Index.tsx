@@ -21,7 +21,7 @@ const Index = () => {
             <div className="bg-primary/10 p-2 rounded-lg">
               <span className="material-symbols-outlined text-primary">school</span>
             </div>
-            <span className="text-xl font-bold text-foreground">EduPortal</span>
+            <span className="text-xl font-bold text-foreground">Jarreng Schools</span>
           </div>
           
           <div className="hidden md:flex items-center gap-8">
@@ -138,8 +138,8 @@ const Index = () => {
               },
               {
                 icon: "school",
-                title: "Transcripts",
-                description: "Cumulative academic records for graduation with all terms and honors.",
+                title: "Academic Records",
+                description: "Complete academic records for all terms with detailed performance tracking.",
               },
               {
                 icon: "analytics",
@@ -191,15 +191,15 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Programmes Section */}
+      {/* Programmes Section - Only for Senior Secondary */}
       <section id="programmes" className="py-20 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our Programmes
+              Senior Secondary Programmes
             </h2>
             <p className="text-muted-foreground">
-              Choose from our specialized academic programmes
+              Academic programmes available for Senior Secondary students (Grades 10-12)
             </p>
           </div>
 
@@ -210,7 +210,7 @@ const Index = () => {
                 <SelectValue placeholder="Select a Programme" />
               </SelectTrigger>
               <SelectContent className="bg-card">
-                <SelectItem value="art">Art (Humanities Studies)</SelectItem>
+                <SelectItem value="arts">Art (Humanities Studies)</SelectItem>
                 <SelectItem value="science">Science</SelectItem>
                 <SelectItem value="commerce">Commerce</SelectItem>
               </SelectContent>
@@ -218,7 +218,7 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className={`bg-card rounded-xl border-2 p-6 text-center transition-all ${selectedProgramme === 'art' ? 'border-primary bg-primary/5' : 'border-border'}`}>
+            <div className={`bg-card rounded-xl border-2 p-6 text-center transition-all ${selectedProgramme === 'arts' ? 'border-primary bg-primary/5' : 'border-border'}`}>
               <div className="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="material-symbols-outlined text-amber-500 text-3xl">palette</span>
               </div>
@@ -247,6 +247,13 @@ const Index = () => {
                 Focus on Accounting, Commerce, Business Management, and Economics
               </p>
             </div>
+          </div>
+
+          {/* Note about Upper Basic */}
+          <div className="mt-8 p-4 bg-muted/50 rounded-lg text-center">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">Note:</span> Upper Basic School (Grades 7-9) follows a general curriculum without programme specialization.
+            </p>
           </div>
         </div>
       </section>
@@ -291,8 +298,8 @@ const Index = () => {
                 <span className="material-symbols-outlined text-primary">school</span>
               </div>
               <div>
-                <p className="font-bold text-foreground">EduPortal</p>
-                <p className="text-xs text-muted-foreground">Jarreng Village Schools</p>
+                <p className="font-bold text-foreground">Jarreng Village Schools</p>
+                <p className="text-xs text-muted-foreground">Niamina East District, The Gambia</p>
               </div>
             </div>
             
@@ -303,7 +310,7 @@ const Index = () => {
             </div>
 
             <p className="text-sm text-muted-foreground">
-              © 2026 EduPortal. All rights reserved.
+              © 2026 Jarreng Village Schools. All rights reserved.
             </p>
           </div>
         </div>
