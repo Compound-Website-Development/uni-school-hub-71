@@ -9,13 +9,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { InlineEmptyState } from "@/components/ui/empty-state";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Search } from "lucide-react";
 
 interface ClassOption {
   id: string;
   name: string;
-  subject_name: string;
-  subject_id: string;
+  school_type: string | null;
+  grade_level: number;
+  specialization: string | null;
+}
+
+interface Subject {
+  id: string;
+  name: string;
 }
 
 interface StudentGrade {
@@ -37,52 +43,41 @@ const StaffGradebook = () => {
   const { toast } = useToast();
   const { teacherData } = useAuth();
   const [classes, setClasses] = useState<ClassOption[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [terms, setTerms] = useState<Term[]>([]);
   const [students, setStudents] = useState<StudentGrade[]>([]);
+  
+  // Filters
+  const [schoolType, setSchoolType] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
+  const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedTerm, setSelectedTerm] = useState("");
-  const [selectedSubjectId, setSelectedSubjectId] = useState("");
+  const [studentSearch, setStudentSearch] = useState("");
+  
   const [grades, setGrades] = useState<Record<string, { ca: number | null; exam: number | null; grade_id?: string }>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Fetch classes and terms
+  // Fetch initial data
   useEffect(() => {
     const fetchInitialData = async () => {
-      const [classesRes, termsRes] = await Promise.all([
+      const [classesRes, subjectsRes, termsRes] = await Promise.all([
         supabase
-          .from("class_subjects")
-          .select(`
-            class_id,
-            subject_id,
-            classes (id, name),
-            subjects (id, name)
-          `)
-          .order("class_id"),
+          .from("classes")
+          .select("id, name, school_type, grade_level, specialization")
+          .order("grade_level"),
+        supabase
+          .from("subjects")
+          .select("id, name")
+          .order("name"),
         supabase
           .from("terms")
           .select("id, name")
           .order("term_number"),
       ]);
 
-      if (classesRes.data) {
-        const uniqueClasses: ClassOption[] = [];
-        const seen = new Set();
-        classesRes.data.forEach((cs: any) => {
-          const key = `${cs.class_id}-${cs.subject_id}`;
-          if (!seen.has(key) && cs.classes && cs.subjects) {
-            seen.add(key);
-            uniqueClasses.push({
-              id: cs.class_id,
-              name: cs.classes.name,
-              subject_name: cs.subjects.name,
-              subject_id: cs.subject_id,
-            });
-          }
-        });
-        setClasses(uniqueClasses);
-      }
-
+      if (classesRes.data) setClasses(classesRes.data);
+      if (subjectsRes.data) setSubjects(subjectsRes.data);
       if (termsRes.data) {
         setTerms(termsRes.data);
         if (termsRes.data.length > 0) {
@@ -96,9 +91,14 @@ const StaffGradebook = () => {
     fetchInitialData();
   }, []);
 
-  // Fetch students and grades when class/term changes
+  // Filter classes by school type
+  const filteredClasses = schoolType
+    ? classes.filter(c => c.school_type === schoolType)
+    : classes;
+
+  // Fetch students and grades when class/term/subject changes
   useEffect(() => {
-    if (!selectedClass || !selectedTerm) {
+    if (!selectedClass || !selectedTerm || !selectedSubject) {
       setStudents([]);
       setGrades({});
       return;
@@ -107,20 +107,11 @@ const StaffGradebook = () => {
     const fetchStudentsAndGrades = async () => {
       setIsLoading(true);
 
-      // Get the selected class info
-      const selectedClassInfo = classes.find(c => `${c.id}-${c.subject_id}` === selectedClass);
-      if (!selectedClassInfo) {
-        setIsLoading(false);
-        return;
-      }
-
-      setSelectedSubjectId(selectedClassInfo.subject_id);
-
       // Fetch students in this class
       const { data: studentData } = await supabase
         .from("students")
         .select("id, first_name, last_name, student_id")
-        .eq("class_id", selectedClassInfo.id)
+        .eq("class_id", selectedClass)
         .eq("status", "active")
         .order("last_name");
 
@@ -135,8 +126,8 @@ const StaffGradebook = () => {
       const { data: gradeData } = await supabase
         .from("grades")
         .select("id, student_id, continuous_assessment, exam_score")
-        .eq("class_id", selectedClassInfo.id)
-        .eq("subject_id", selectedClassInfo.subject_id)
+        .eq("class_id", selectedClass)
+        .eq("subject_id", selectedSubject)
         .eq("term_id", selectedTerm);
 
       const gradeMap: Record<string, { ca: number | null; exam: number | null; grade_id?: string }> = {};
@@ -164,7 +155,15 @@ const StaffGradebook = () => {
     };
 
     fetchStudentsAndGrades();
-  }, [selectedClass, selectedTerm, classes]);
+  }, [selectedClass, selectedTerm, selectedSubject]);
+
+  // Filter students by search
+  const filteredStudents = studentSearch
+    ? students.filter(s => 
+        s.student_name.toLowerCase().includes(studentSearch.toLowerCase()) ||
+        s.student_code.toLowerCase().includes(studentSearch.toLowerCase())
+      )
+    : students;
 
   const updateGrade = (studentId: string, field: "ca" | "exam", value: string) => {
     const numValue = value === "" ? null : parseFloat(value);
@@ -196,17 +195,12 @@ const StaffGradebook = () => {
   };
 
   const handleSave = async () => {
-    if (!selectedClass || !selectedTerm || !selectedSubjectId) {
-      toast({ title: "Error", description: "Please select a class and term", variant: "destructive" });
+    if (!selectedClass || !selectedTerm || !selectedSubject) {
+      toast({ title: "Error", description: "Please select school, class, subject and term", variant: "destructive" });
       return;
     }
 
     setIsSaving(true);
-    const selectedClassInfo = classes.find(c => `${c.id}-${c.subject_id}` === selectedClass);
-    if (!selectedClassInfo) {
-      setIsSaving(false);
-      return;
-    }
 
     try {
       for (const student of students) {
@@ -215,8 +209,8 @@ const StaffGradebook = () => {
 
         const gradeRecord = {
           student_id: student.id,
-          class_id: selectedClassInfo.id,
-          subject_id: selectedSubjectId,
+          class_id: selectedClass,
+          subject_id: selectedSubject,
           term_id: selectedTerm,
           continuous_assessment: grade.ca,
           exam_score: grade.exam,
@@ -243,15 +237,14 @@ const StaffGradebook = () => {
   const handleSubmitForApproval = async () => {
     await handleSave();
     
-    const selectedClassInfo = classes.find(c => `${c.id}-${c.subject_id}` === selectedClass);
-    if (!selectedClassInfo) return;
+    if (!selectedClass || !selectedSubject) return;
 
     try {
       await supabase
         .from("grades")
         .update({ status: "submitted" })
-        .eq("class_id", selectedClassInfo.id)
-        .eq("subject_id", selectedSubjectId)
+        .eq("class_id", selectedClass)
+        .eq("subject_id", selectedSubject)
         .eq("term_id", selectedTerm)
         .eq("status", "draft");
 
@@ -269,14 +262,14 @@ const StaffGradebook = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-foreground">Grade Entry</h2>
-            <p className="text-muted-foreground text-sm">Upload and manage student grades</p>
+            <p className="text-muted-foreground text-sm">Upload student grades by class and subject</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={handleSave} disabled={isSaving || !selectedClass}>
+            <Button variant="outline" onClick={handleSave} disabled={isSaving || !selectedClass || !selectedSubject}>
               <span className="material-symbols-outlined mr-2 text-lg">save</span>
               Save Draft
             </Button>
-            <Button onClick={handleSubmitForApproval} disabled={isSaving || !selectedClass}>
+            <Button onClick={handleSubmitForApproval} disabled={isSaving || !selectedClass || !selectedSubject}>
               <span className="material-symbols-outlined mr-2 text-lg">send</span>
               Submit
             </Button>
@@ -286,23 +279,58 @@ const StaffGradebook = () => {
         {/* Filters */}
         <Card>
           <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <label className="text-sm font-medium text-foreground mb-2 block">Class & Subject</label>
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* School Type */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">School</label>
+                <Select value={schoolType} onValueChange={(v) => {
+                  setSchoolType(v);
+                  setSelectedClass("");
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select school" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="upper_basic">Upper Basic School</SelectItem>
+                    <SelectItem value="senior_secondary">Senior Secondary School</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Class */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">Class</label>
+                <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!schoolType}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select class" />
                   </SelectTrigger>
                   <SelectContent>
-                    {classes.map((cls) => (
-                      <SelectItem key={`${cls.id}-${cls.subject_id}`} value={`${cls.id}-${cls.subject_id}`}>
-                        {cls.name} - {cls.subject_name}
+                    {filteredClasses.map((cls) => (
+                      <SelectItem key={cls.id} value={cls.id}>
+                        {cls.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full sm:w-48">
+
+              {/* Subject */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">Subject</label>
+                <Select value={selectedSubject} onValueChange={setSelectedSubject}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select subject" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subjects.map((subj) => (
+                      <SelectItem key={subj.id} value={subj.id}>{subj.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Term */}
+              <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Term</label>
                 <Select value={selectedTerm} onValueChange={setSelectedTerm}>
                   <SelectTrigger>
@@ -316,6 +344,21 @@ const StaffGradebook = () => {
                 </Select>
               </div>
             </div>
+
+            {/* Student Search */}
+            {selectedClass && selectedSubject && (
+              <div className="mt-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by student name or ID..."
+                    value={studentSearch}
+                    onChange={(e) => setStudentSearch(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -330,10 +373,10 @@ const StaffGradebook = () => {
           <CardContent>
             {isLoading ? (
               <TableSkeleton rows={6} />
-            ) : !selectedClass ? (
-              <InlineEmptyState icon={BookOpen} title="Select a Class" description="Choose a class above to view and enter grades" />
-            ) : students.length === 0 ? (
-              <InlineEmptyState icon={BookOpen} title="No Students" description="No students found in this class" />
+            ) : !selectedClass || !selectedSubject ? (
+              <InlineEmptyState icon={BookOpen} title="Select Class & Subject" description="Choose a school, class and subject above to view and enter grades" />
+            ) : filteredStudents.length === 0 ? (
+              <InlineEmptyState icon={BookOpen} title="No Students" description={studentSearch ? "No students match your search" : "No students found in this class"} />
             ) : (
               <div className="overflow-x-auto -mx-6 px-6">
                 <table className="w-full min-w-[600px]">
@@ -347,7 +390,7 @@ const StaffGradebook = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {students.map((student) => {
+                    {filteredStudents.map((student) => {
                       const total = calculateTotal(student.id);
                       const letterGrade = calculateLetterGrade(total);
                       return (

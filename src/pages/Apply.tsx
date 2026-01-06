@@ -62,6 +62,16 @@ const SENIOR_SECONDARY_SUBJECTS = [
 
 const GRADES = ["A", "B", "C", "D", "E", "F"];
 
+// Upper Basic grade sections
+const UPPER_BASIC_GRADES = {
+  "7": ["7A", "7B", "7C", "7D", "7E", "7F", "7G"],
+  "8": ["8A", "8B", "8C", "8D", "8E", "8F", "8G"],
+  "9": ["9A", "9B", "9C", "9D", "9E", "9F", "9G"],
+};
+
+// Senior Secondary specializations
+const SENIOR_SECONDARY_SPECIALIZATIONS = ["Commerce", "Agric", "Technical", "Home Science", "Arts"];
+
 interface SubjectGrade {
   subject: string;
   grade: string;
@@ -88,8 +98,9 @@ const Apply = () => {
     // Academic
     previousSchool: "",
     admissionType: "", // "upper_basic" or "senior_secondary"
-    applyingForGrade: "",
-    programme: "",
+    gradeLevel: "", // "7", "8", "9" for upper basic OR "10", "11", "12" for senior secondary
+    classSection: "", // "7A", "7B" etc for upper basic OR "Commerce", "Agric" etc for senior secondary
+    programme: "", // Only for senior secondary
     subjectGrades: [] as SubjectGrade[],
     // Guardian
     guardianName: "",
@@ -127,11 +138,21 @@ const Apply = () => {
       : SENIOR_SECONDARY_SUBJECTS;
   };
 
-  const getGradesForAdmissionType = () => {
+  const getGradeLevelsForAdmissionType = () => {
     if (formData.admissionType === "upper_basic") {
       return ["7", "8", "9"];
     }
     return ["10", "11", "12"];
+  };
+
+  const getClassSectionsForGrade = () => {
+    if (formData.admissionType === "upper_basic" && formData.gradeLevel) {
+      return UPPER_BASIC_GRADES[formData.gradeLevel as keyof typeof UPPER_BASIC_GRADES] || [];
+    }
+    if (formData.admissionType === "senior_secondary") {
+      return SENIOR_SECONDARY_SPECIALIZATIONS.map(spec => `${formData.gradeLevel} ${spec}`);
+    }
+    return [];
   };
 
   const validateStep = (currentStep: number): boolean => {
@@ -157,10 +178,19 @@ const Apply = () => {
         }
         return true;
       case 3:
-        if (!formData.previousSchool || !formData.admissionType || !formData.applyingForGrade || !formData.programme) {
+        if (!formData.previousSchool || !formData.admissionType || !formData.gradeLevel || !formData.classSection) {
           toast({
             title: "Missing Information",
             description: "Please fill in all required fields.",
+            variant: "destructive",
+          });
+          return false;
+        }
+        // For senior secondary, programme is required
+        if (formData.admissionType === "senior_secondary" && !formData.programme) {
+          toast({
+            title: "Missing Information",
+            description: "Please select a programme of study.",
             variant: "destructive",
           });
           return false;
@@ -221,8 +251,8 @@ const Apply = () => {
         village: formData.village,
         previous_school: formData.previousSchool,
         last_grade_completed: gradesString,
-        applying_for_grade: parseInt(formData.applyingForGrade),
-        programme: formData.programme,
+        applying_for_grade: parseInt(formData.gradeLevel),
+        programme: formData.admissionType === "senior_secondary" ? formData.programme : "General",
         guardian_name: formData.guardianName,
         guardian_relation: formData.guardianRelation,
         guardian_phone: formData.guardianPhone,
@@ -262,7 +292,7 @@ const Apply = () => {
             <div className="bg-primary/10 p-2 rounded-lg">
               <span className="material-symbols-outlined text-primary">school</span>
             </div>
-            <span className="text-xl font-bold text-foreground">EduPortal</span>
+            <span className="text-xl font-bold text-foreground">Jarreng Schools</span>
           </Link>
           <Link to="/login">
             <Button variant="outline" size="sm">
@@ -434,45 +464,77 @@ const Apply = () => {
                     />
                   </div>
 
-                  {/* Admission Type Dropdown */}
+                  {/* School Type Dropdown (renamed from Admission Type) */}
                   <div className="space-y-2">
-                    <Label htmlFor="admissionType">Select Type of Admission *</Label>
+                    <Label htmlFor="admissionType">Select School *</Label>
                     <Select 
                       value={formData.admissionType} 
                       onValueChange={(v) => {
                         updateForm("admissionType", v);
-                        updateForm("applyingForGrade", "");
+                        updateForm("gradeLevel", "");
+                        updateForm("classSection", "");
+                        updateForm("programme", "");
                         updateForm("subjectGrades", []);
                       }}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select admission type" />
+                        <SelectValue placeholder="Select school type" />
                       </SelectTrigger>
                       <SelectContent className="bg-card">
-                        <SelectItem value="upper_basic">Admissions to Upper Basic (Grade 7-9)</SelectItem>
-                        <SelectItem value="senior_secondary">Admissions to Senior Secondary (Grade 10-12)</SelectItem>
+                        <SelectItem value="upper_basic">Upper Basic School</SelectItem>
+                        <SelectItem value="senior_secondary">Senior Secondary School</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {formData.admissionType && (
                     <>
-                      <div className="grid grid-cols-2 gap-4">
+                      {/* Grade Level Selection */}
+                      <div className="space-y-2">
+                        <Label htmlFor="gradeLevel">Select Grade *</Label>
+                        <Select 
+                          value={formData.gradeLevel} 
+                          onValueChange={(v) => {
+                            updateForm("gradeLevel", v);
+                            updateForm("classSection", "");
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select grade" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-card">
+                            {getGradeLevelsForAdmissionType().map((grade) => (
+                              <SelectItem key={grade} value={grade}>
+                                Grade {grade}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Class Section Selection */}
+                      {formData.gradeLevel && (
                         <div className="space-y-2">
-                          <Label htmlFor="applyingFor">Applying For Grade *</Label>
-                          <Select value={formData.applyingForGrade} onValueChange={(v) => updateForm("applyingForGrade", v)}>
+                          <Label htmlFor="classSection">
+                            {formData.admissionType === "upper_basic" ? "Select Class Section *" : "Select Specialization *"}
+                          </Label>
+                          <Select value={formData.classSection} onValueChange={(v) => updateForm("classSection", v)}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select grade" />
+                              <SelectValue placeholder={formData.admissionType === "upper_basic" ? "Select section" : "Select specialization"} />
                             </SelectTrigger>
                             <SelectContent className="bg-card">
-                              {getGradesForAdmissionType().map((grade) => (
-                                <SelectItem key={grade} value={grade}>
-                                  Grade {grade}
+                              {getClassSectionsForGrade().map((section) => (
+                                <SelectItem key={section} value={section}>
+                                  {section}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </div>
+                      )}
+
+                      {/* Programme Selection - Only for Senior Secondary */}
+                      {formData.admissionType === "senior_secondary" && (
                         <div className="space-y-2">
                           <Label htmlFor="programme">Programme of Study *</Label>
                           <Select value={formData.programme} onValueChange={(v) => updateForm("programme", v)}>
@@ -480,13 +542,13 @@ const Apply = () => {
                               <SelectValue placeholder="Select programme" />
                             </SelectTrigger>
                             <SelectContent className="bg-card">
-                              <SelectItem value="Art">Art (Humanities Studies)</SelectItem>
+                              <SelectItem value="Arts">Art (Humanities Studies)</SelectItem>
                               <SelectItem value="Science">Science</SelectItem>
                               <SelectItem value="Commerce">Commerce</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
-                      </div>
+                      )}
 
                       {/* Subject Grades Section */}
                       <div className="space-y-3 mt-6">

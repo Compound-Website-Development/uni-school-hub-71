@@ -20,6 +20,7 @@ interface ClassData {
   id: string;
   name: string;
   grade_level: number;
+  school_type: string | null;
 }
 
 interface StudentData {
@@ -34,34 +35,67 @@ interface AttendanceRecord {
   status: "present" | "absent" | "late" | "excused";
 }
 
+interface ScheduleData {
+  class_id: string;
+  class_name: string;
+  subject_name: string;
+  start_time: string;
+  end_time: string;
+}
+
 const StaffAttendance = () => {
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [students, setStudents] = useState<StudentData[]>([]);
+  const [todaySchedule, setTodaySchedule] = useState<ScheduleData[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>("");
+  const [selectedSchoolType, setSelectedSchoolType] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [attendance, setAttendance] = useState<Record<string, AttendanceRecord["status"]>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
-  // Fetch classes
+  // Fetch classes and today's schedule
   useEffect(() => {
-    const fetchClasses = async () => {
-      const { data, error } = await supabase
-        .from("classes")
-        .select("id, name, grade_level")
-        .order("grade_level");
+    const fetchInitialData = async () => {
+      const [classesRes, scheduleRes] = await Promise.all([
+        supabase
+          .from("classes")
+          .select("id, name, grade_level, school_type")
+          .order("grade_level"),
+        supabase
+          .from("schedules")
+          .select(`
+            class_id,
+            start_time,
+            end_time,
+            classes (name),
+            subjects (name)
+          `)
+          .eq("day_of_week", new Date().getDay())
+          .order("start_time"),
+      ]);
 
-      if (error) {
-        console.error("Error fetching classes:", error);
-        return;
+      if (classesRes.data) setClasses(classesRes.data);
+      
+      if (scheduleRes.data) {
+        setTodaySchedule(scheduleRes.data.map((s: any) => ({
+          class_id: s.class_id,
+          class_name: s.classes?.name || "Unknown",
+          subject_name: s.subjects?.name || "Unknown",
+          start_time: s.start_time?.slice(0, 5) || "",
+          end_time: s.end_time?.slice(0, 5) || "",
+        })));
       }
-
-      setClasses(data || []);
     };
 
-    fetchClasses();
+    fetchInitialData();
   }, []);
+
+  // Filter classes by school type
+  const filteredClasses = selectedSchoolType
+    ? classes.filter(c => c.school_type === selectedSchoolType)
+    : classes;
 
   // Fetch students when class is selected
   useEffect(() => {
@@ -203,20 +237,70 @@ const StaffAttendance = () => {
   return (
     <StaffLayout title="Attendance">
       <div className="space-y-6">
+        {/* Today's Schedule Quick Select */}
+        {todaySchedule.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <span className="material-symbols-outlined text-primary">schedule</span>
+                Today's Classes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {todaySchedule.map((schedule, idx) => (
+                  <Button
+                    key={idx}
+                    variant={selectedClass === schedule.class_id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => {
+                      const cls = classes.find(c => c.id === schedule.class_id);
+                      if (cls) {
+                        setSelectedSchoolType(cls.school_type || "");
+                        setSelectedClass(schedule.class_id);
+                      }
+                    }}
+                  >
+                    <Clock className="w-3 h-3 mr-1" />
+                    {schedule.start_time} - {schedule.class_name}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Filters */}
         <Card>
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Select Class
+                  School
                 </label>
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
+                <Select value={selectedSchoolType} onValueChange={(v) => {
+                  setSelectedSchoolType(v);
+                  setSelectedClass("");
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select school" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="upper_basic">Upper Basic School</SelectItem>
+                    <SelectItem value="senior_secondary">Senior Secondary School</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex-1">
+                <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Class
+                </label>
+                <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!selectedSchoolType}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a class" />
                   </SelectTrigger>
                   <SelectContent>
-                    {classes.map((cls) => (
+                    {filteredClasses.map((cls) => (
                       <SelectItem key={cls.id} value={cls.id}>
                         {cls.name}
                       </SelectItem>
@@ -370,7 +454,7 @@ const StaffAttendance = () => {
                 Select a Class
               </h3>
               <p className="text-muted-foreground">
-                Choose a class above to start marking attendance
+                Choose a school and class above to start marking attendance
               </p>
             </CardContent>
           </Card>
