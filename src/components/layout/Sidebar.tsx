@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import npsLogo from "@/assets/nps-logo.png";
 
 interface NavItem {
   icon: string;
@@ -20,20 +21,18 @@ export const Sidebar = ({ navItems, userType, userName, userSubtitle, onLogout }
   const location = useLocation();
 
   return (
-    <aside className="w-64 bg-card border-r border-border flex flex-col h-full flex-shrink-0 transition-colors">
+    <aside className="w-[260px] bg-primary flex flex-col h-full flex-shrink-0 transition-colors">
       {/* Logo */}
-      <div className="p-6 flex items-center gap-3">
-        <div className="bg-primary/10 p-2 rounded-lg">
-          <span className="material-symbols-outlined text-primary text-2xl">school</span>
-        </div>
+      <div className="p-5 flex items-center gap-3">
+        <img src={npsLogo} alt="NPS" className="h-8 w-auto" />
         <div className="flex flex-col">
-          <h1 className="text-lg font-bold tracking-tight text-foreground">EduPortal</h1>
-          <p className="text-muted-foreground text-xs capitalize">{userType} Access</p>
+          <h1 className="text-lg font-bold tracking-tight text-primary-foreground">NPS Portal</h1>
+          <p className="text-primary-foreground/50 text-xs capitalize">{userType} Access</p>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto scrollbar-thin">
+      <nav className="flex-1 px-3 space-y-1 overflow-y-auto scrollbar-thin">
         {navItems.map((item) => {
           const isActive = location.pathname === item.href;
           return (
@@ -41,20 +40,16 @@ export const Sidebar = ({ navItems, userType, userName, userSubtitle, onLogout }
               key={item.href}
               to={item.href}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200",
+                "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-sm",
                 isActive
-                  ? "bg-accent text-accent-foreground font-semibold"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border-l-4 border-primary-foreground"
+                  : "text-primary-foreground/70 hover:text-primary-foreground hover:bg-sidebar-accent/50"
               )}
             >
-              <span className={cn("material-symbols-outlined", isActive && "filled")}>
-                {item.icon}
-              </span>
-              <span className="text-sm font-medium flex-1">{item.label}</span>
+              <span className={cn("material-symbols-outlined", isActive && "filled")}>{item.icon}</span>
+              <span className="font-medium flex-1">{item.label}</span>
               {item.badge && item.badge > 0 && (
-                <span className="bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full">
-                  {item.badge}
-                </span>
+                <span className="bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded-full">{item.badge}</span>
               )}
             </Link>
           );
@@ -62,30 +57,22 @@ export const Sidebar = ({ navItems, userType, userName, userSubtitle, onLogout }
       </nav>
 
       {/* User Profile & Logout */}
-      <div className="p-4 border-t border-border">
-        <Link
-          to={`/${userType}/settings`}
-          className="flex items-center gap-3 px-4 py-2 rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
-        >
-          <span className="material-symbols-outlined">settings</span>
-          <span className="text-sm font-medium">Settings</span>
-        </Link>
+      <div className="p-4 border-t border-sidebar-border">
         <button
           onClick={onLogout}
-          className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors mt-1"
+          className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-primary-foreground/60 hover:text-primary-foreground hover:bg-sidebar-accent transition-colors"
         >
           <span className="material-symbols-outlined">logout</span>
           <span className="text-sm font-medium">Logout</span>
         </button>
         
-        {/* User Info */}
         <div className="mt-4 flex items-center gap-3 px-4">
-          <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+          <div className="h-10 w-10 rounded-full bg-primary-foreground/20 flex items-center justify-center text-primary-foreground font-bold">
             {userName.charAt(0)}
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold text-foreground truncate">{userName}</span>
-            <span className="text-xs text-muted-foreground truncate">{userSubtitle}</span>
+            <span className="text-sm font-bold text-primary-foreground truncate">{userName}</span>
+            <span className="text-xs text-primary-foreground/50 truncate">{userSubtitle}</span>
           </div>
         </div>
       </div>

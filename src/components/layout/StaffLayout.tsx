@@ -3,26 +3,17 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { MobileHeader } from "./MobileHeader";
 import { 
-  Sheet, 
-  SheetContent, 
-  SheetHeader, 
-  SheetTitle 
+  Sheet, SheetContent, SheetHeader, SheetTitle 
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import npsLogo from "@/assets/nps-logo.png";
 import { 
-  LayoutDashboard, 
-  Users, 
-  BookOpen, 
-  ClipboardCheck,
-  FileText,
-  UserPlus,
-  Settings,
-  LogOut,
-  GraduationCap,
-  Search,
-  Bell
+  LayoutDashboard, Users, BookOpen, ClipboardCheck, FileText,
+  UserPlus, Settings, LogOut, Search, Bell, BarChart2,
+  ShieldCheck, Upload
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +30,7 @@ const teacherNavItems = [
   { icon: BookOpen, label: "Classes", href: "/staff/classes" },
   { icon: ClipboardCheck, label: "Attendance", href: "/staff/attendance" },
   { icon: FileText, label: "Gradebook", href: "/staff/gradebook" },
-  { icon: FileText, label: "Reports", href: "/staff/reports" },
+  { icon: BarChart2, label: "Reports", href: "/staff/reports" },
 ];
 
 const adminNavItems = [
@@ -49,15 +40,14 @@ const adminNavItems = [
   { icon: BookOpen, label: "Classes", href: "/staff/classes" },
   { icon: ClipboardCheck, label: "Attendance", href: "/staff/attendance" },
   { icon: FileText, label: "Gradebook", href: "/staff/gradebook" },
-  { icon: FileText, label: "Reports", href: "/staff/reports" },
+  { icon: BarChart2, label: "Reports", href: "/staff/reports" },
+  { icon: Upload, label: "Bulk Upload", href: "/staff/admin/students" },
+  { icon: ShieldCheck, label: "Manage Users", href: "/staff/admin/users" },
   { icon: Settings, label: "Settings", href: "/staff/settings" },
 ];
 
 export const StaffLayout = ({ 
-  children, 
-  title,
-  showSearch = false,
-  searchPlaceholder = "Search..."
+  children, title, showSearch = false, searchPlaceholder = "Search..."
 }: StaffLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { signOut, teacherData, userRole } = useAuth();
@@ -69,92 +59,67 @@ export const StaffLayout = ({
     navigate("/");
   };
 
-  const staffName = teacherData 
-    ? `${teacherData.first_name} ${teacherData.last_name}`
-    : "Staff";
-
-  const staffInitials = teacherData
-    ? `${teacherData.first_name[0]}${teacherData.last_name[0]}`
-    : "ST";
-
+  const staffName = teacherData ? `${teacherData.first_name} ${teacherData.last_name}` : "Staff";
+  const staffInitials = teacherData ? `${teacherData.first_name[0]}${teacherData.last_name[0]}` : "ST";
   const navItems = userRole === "admin" ? adminNavItems : teacherNavItems;
+
+  const SidebarNav = ({ onItemClick }: { onItemClick?: () => void }) => (
+    <div className="space-y-1">
+      {navItems.map((item) => {
+        const isActive = location.pathname === item.href;
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            to={item.href}
+            onClick={onItemClick}
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-sm",
+              isActive
+                ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border-l-4 border-primary-foreground"
+                : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+            )}
+          >
+            <Icon className="w-5 h-5 shrink-0" />
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
       {/* Mobile Header */}
-      <MobileHeader 
-        title={title || "Staff Portal"} 
-        onMenuClick={() => setSidebarOpen(true)}
-        showSearch={showSearch}
-        searchPlaceholder={searchPlaceholder}
-      />
+      <MobileHeader title={title || "Staff Portal"} onMenuClick={() => setSidebarOpen(true)} showSearch={showSearch} searchPlaceholder={searchPlaceholder} />
 
-      {/* Mobile Sidebar Drawer */}
+      {/* Mobile Sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-72 p-0">
-          <SheetHeader className="p-6 border-b border-border">
+        <SheetContent side="left" className="w-72 p-0 bg-primary border-r-0">
+          <SheetHeader className="p-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <SheetTitle className="text-xl font-bold">EduPortal</SheetTitle>
+              <img src={npsLogo} alt="NPS" className="h-8 w-auto" />
+              <SheetTitle className="text-primary-foreground text-lg">NPS Portal</SheetTitle>
             </div>
           </SheetHeader>
-
           <div className="flex flex-col h-[calc(100%-5rem)]">
-            {/* User Info */}
-            <div className="p-4 border-b border-border">
+            <div className="px-4 pb-4 border-b border-sidebar-border">
               <div className="flex items-center gap-3">
-                <Avatar>
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {staffInitials}
-                  </AvatarFallback>
+                <Avatar className="border-2 border-primary-foreground/20">
+                  <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-bold">{staffInitials}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground truncate">{staffName}</p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    {userRole || "Staff"}
-                  </p>
+                  <p className="font-medium text-primary-foreground truncate text-sm">{staffName}</p>
+                  <Badge variant="secondary" className="text-xs capitalize bg-accent text-accent-foreground">{userRole || "Staff"}</Badge>
                 </div>
               </div>
             </div>
-
-            {/* Navigation */}
-            <nav className="flex-1 p-4 overflow-y-auto">
-              <div className="space-y-1">
-                {navItems.map((item) => {
-                  const isActive = location.pathname === item.href;
-                  const Icon = item.icon;
-                  
-                  return (
-                    <Link
-                      key={item.href}
-                      to={item.href}
-                      onClick={() => setSidebarOpen(false)}
-                      className={cn(
-                        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                        isActive
-                          ? "bg-accent text-accent-foreground font-medium"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                      )}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
+            <nav className="flex-1 p-3 overflow-y-auto scrollbar-thin">
+              <SidebarNav onItemClick={() => setSidebarOpen(false)} />
             </nav>
-
-            {/* Logout */}
-            <div className="p-4 border-t border-border">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-                onClick={handleLogout}
-              >
-                <LogOut className="w-5 h-5 mr-3" />
-                Sign Out
+            <div className="p-4 border-t border-sidebar-border">
+              <Button variant="ghost" className="w-full justify-start text-primary-foreground/70 hover:text-primary-foreground hover:bg-sidebar-accent" onClick={handleLogout}>
+                <LogOut className="w-5 h-5 mr-3" /> Sign Out
               </Button>
             </div>
           </div>
@@ -164,90 +129,47 @@ export const StaffLayout = ({
       {/* Desktop Layout */}
       <div className="hidden md:flex h-screen w-full overflow-hidden">
         {/* Desktop Sidebar */}
-        <aside className="w-64 bg-card border-r border-border flex flex-col shrink-0">
-          {/* Logo */}
-          <div className="p-6 border-b border-border">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">EduPortal</span>
-            </div>
+        <aside className="w-[260px] bg-primary flex flex-col shrink-0">
+          <div className="p-5 flex items-center gap-3">
+            <img src={npsLogo} alt="NPS" className="h-8 w-auto" />
+            <span className="text-lg font-bold text-primary-foreground">NPS Portal</span>
           </div>
 
-          {/* User Info */}
-          <div className="p-4 border-b border-border">
+          <div className="px-4 pb-4 border-b border-sidebar-border">
             <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {staffInitials}
-                </AvatarFallback>
+              <Avatar className="border-2 border-primary-foreground/20">
+                <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-bold text-sm">{staffInitials}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-foreground truncate">{staffName}</p>
-                <p className="text-sm text-muted-foreground capitalize">
-                  {userRole || "Staff"}
-                </p>
+                <p className="font-medium text-primary-foreground truncate text-sm">{staffName}</p>
+                <Badge variant="secondary" className="text-xs capitalize bg-accent text-accent-foreground">{userRole || "Staff"}</Badge>
               </div>
             </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 p-4 overflow-y-auto">
-            <div className="space-y-1">
-              {navItems.map((item) => {
-                const isActive = location.pathname === item.href;
-                const Icon = item.icon;
-                
-                return (
-                  <Link
-                    key={item.href}
-                    to={item.href}
-                    className={cn(
-                      "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                      isActive
-                        ? "bg-accent text-accent-foreground font-medium"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
+          <nav className="flex-1 p-3 overflow-y-auto scrollbar-thin">
+            <p className="text-xs font-semibold text-primary-foreground/40 uppercase tracking-wider mb-3 px-4">Menu</p>
+            <SidebarNav />
           </nav>
 
-          {/* Logout */}
-          <div className="p-4 border-t border-border">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-              onClick={handleLogout}
-            >
-              <LogOut className="w-5 h-5 mr-3" />
-              Sign Out
+          <div className="p-4 border-t border-sidebar-border">
+            <Button variant="ghost" className="w-full justify-start text-primary-foreground/70 hover:text-primary-foreground hover:bg-sidebar-accent" onClick={handleLogout}>
+              <LogOut className="w-5 h-5 mr-3" /> Sign Out
             </Button>
           </div>
         </aside>
 
         {/* Main Content */}
         <main className="flex-1 flex flex-col overflow-hidden">
-          {/* Desktop Header */}
           <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
             <div className="flex items-center gap-4">
-              {title && (
-                <h1 className="text-xl font-semibold text-foreground">{title}</h1>
-              )}
+              {title && <h1 className="text-xl font-bold text-foreground">{title}</h1>}
             </div>
             <div className="flex items-center gap-4">
               {showSearch && (
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    placeholder={searchPlaceholder}
-                    className="pl-10 w-64"
-                  />
+                  <Input placeholder={searchPlaceholder} className="pl-10 w-64 rounded-md" />
                 </div>
               )}
               <Button variant="ghost" size="icon" className="relative">
@@ -255,19 +177,13 @@ export const StaffLayout = ({
               </Button>
             </div>
           </header>
-
-          {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto p-6 lg:p-8">
-            {children}
-          </div>
+          <div className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</div>
         </main>
       </div>
 
       {/* Mobile Content */}
       <div className="md:hidden">
-        <div className="p-4">
-          {children}
-        </div>
+        <div className="p-4">{children}</div>
       </div>
     </div>
   );
