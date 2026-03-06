@@ -4,10 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
+import npsLogo from "@/assets/nps-logo.png";
+import {
+  GraduationCap,
+  Briefcase,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  Loader2,
+  ArrowLeft,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -15,18 +26,20 @@ const loginSchema = z.object({
 });
 
 const registerSchema = z.object({
-  firstName: z.string().min(1, "First name is required").max(50, "First name is too long"),
-  lastName: z.string().min(1, "Last name is required").max(50, "Last name is too long"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(1, "Phone number is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Please confirm your password"),
+  staffId: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
 });
 
 type LoginErrors = { email?: string; password?: string };
-type RegisterErrors = { firstName?: string; lastName?: string; email?: string; password?: string; confirmPassword?: string };
+type RegisterErrors = { firstName?: string; lastName?: string; email?: string; phone?: string; password?: string; confirmPassword?: string; staffId?: string };
 
 const Login = () => {
   const navigate = useNavigate();
@@ -34,7 +47,8 @@ const Login = () => {
   const { signIn, signUp, user, userRole, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
-  const [userType, setUserType] = useState<"student" | "staff">("student");
+  const [userType, setUserType] = useState<"student" | "staff" | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   
   const [loginErrors, setLoginErrors] = useState<LoginErrors>({});
   const [registerErrors, setRegisterErrors] = useState<RegisterErrors>({});
@@ -44,147 +58,100 @@ const Login = () => {
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
+    staffId: "",
   });
 
-  // Redirect if already logged in
   useEffect(() => {
     if (user && !authLoading) {
-      if (userRole === "student") {
-        navigate("/student");
-      } else if (userRole === "teacher" || userRole === "admin") {
-        navigate("/staff");
-      }
+      if (userRole === "student") navigate("/student");
+      else if (userRole === "teacher" || userRole === "admin") navigate("/staff");
     }
   }, [user, userRole, authLoading, navigate]);
 
-  const validateLoginForm = () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       loginSchema.parse(loginForm);
       setLoginErrors({});
-      return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: LoginErrors = {};
         error.errors.forEach((err) => {
-          if (err.path[0]) {
-            fieldErrors[err.path[0] as keyof LoginErrors] = err.message;
-          }
+          if (err.path[0]) fieldErrors[err.path[0] as keyof LoginErrors] = err.message;
         });
         setLoginErrors(fieldErrors);
       }
-      return false;
+      return;
     }
-  };
 
-  const validateRegisterForm = () => {
-    try {
-      registerSchema.parse(registerForm);
-      setRegisterErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const fieldErrors: RegisterErrors = {};
-        error.errors.forEach((err) => {
-          if (err.path[0]) {
-            fieldErrors[err.path[0] as keyof RegisterErrors] = err.message;
-          }
-        });
-        setRegisterErrors(fieldErrors);
-      }
-      return false;
-    }
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateLoginForm()) return;
-    
     setIsLoading(true);
-
     const { error } = await signIn(loginForm.email, loginForm.password);
-
     setIsLoading(false);
 
     if (error) {
-      let message = "Invalid credentials. Please try again.";
-      if (error.message?.includes("Invalid login")) {
-        message = "Invalid email or password. Please check your credentials.";
-      } else if (error.message?.includes("Email not confirmed")) {
-        message = "Please verify your email before logging in.";
-      }
-      
       toast({
         title: "Login Failed",
-        description: message,
+        description: error.message?.includes("Invalid login")
+          ? "Invalid email or password."
+          : error.message?.includes("Email not confirmed")
+          ? "Please verify your email before logging in."
+          : "Invalid credentials. Please try again.",
         variant: "destructive",
       });
       return;
     }
 
-    toast({
-      title: "Welcome back!",
-      description: "You have successfully logged in.",
-    });
+    toast({ title: "Welcome back!", description: "You have successfully logged in." });
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateRegisterForm()) return;
-    
-    setIsLoading(true);
+    try {
+      registerSchema.parse(registerForm);
+      setRegisterErrors({});
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const fieldErrors: RegisterErrors = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) fieldErrors[err.path[0] as keyof RegisterErrors] = err.message;
+        });
+        setRegisterErrors(fieldErrors);
+      }
+      return;
+    }
 
+    setIsLoading(true);
     const role = userType === "staff" ? "teacher" : "student";
-    
     const { error } = await signUp(registerForm.email, registerForm.password, {
       first_name: registerForm.firstName,
       last_name: registerForm.lastName,
-      role: role,
+      role,
     });
-
     setIsLoading(false);
 
     if (error) {
-      let message = "Registration failed. Please try again.";
-      if (error.message?.includes("already registered")) {
-        message = "This email is already registered. Please sign in instead.";
-      }
-      
       toast({
         title: "Registration Failed",
-        description: message,
+        description: error.message?.includes("already registered")
+          ? "This email is already registered. Please sign in."
+          : "Registration failed. Please try again.",
         variant: "destructive",
       });
       return;
     }
 
-    toast({
-      title: "Account created!",
-      description: "You can now sign in with your credentials.",
-    });
-    
-    // Switch to login mode after successful registration
+    toast({ title: "Account created!", description: "Please check your email to verify your account." });
     setAuthMode("login");
     setLoginForm({ email: registerForm.email, password: "" });
-    setRegisterForm({
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
   };
 
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gradient-surface flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <span className="material-symbols-outlined animate-spin text-primary text-4xl">progress_activity</span>
-          <span className="text-muted-foreground">Loading...</span>
-        </div>
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -193,320 +160,242 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-surface flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-pattern-dots opacity-30" />
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-[420px] relative z-10 animate-fade-in">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-3">
-            <div className="bg-primary/10 p-3 rounded-xl">
-              <span className="material-symbols-outlined text-primary text-3xl">school</span>
-            </div>
-            <span className="text-2xl font-bold text-foreground">EduPortal</span>
+          <Link to="/">
+            <img src={npsLogo} alt="Nigerian Private Schools" className="h-16 mx-auto mb-4" />
           </Link>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground">
             {authMode === "login" ? "Sign in to your account" : "Create your account"}
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{authMode === "login" ? "Welcome Back" : "Get Started"}</CardTitle>
+        <Card className="shadow-lg border-border">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl">
+              {authMode === "login" ? "Welcome Back" : "Get Started"}
+            </CardTitle>
             <CardDescription>
-              {authMode === "login" 
-                ? "Enter your credentials to continue" 
-                : "Fill in your details to create an account"}
+              {authMode === "login"
+                ? "Enter your credentials to continue"
+                : userType
+                ? `Register as a ${userType === "student" ? "Student" : "Staff Member"}`
+                : "Choose your account type"}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* User Type Tabs */}
-            <Tabs value={userType} onValueChange={(v) => setUserType(v as "student" | "staff")} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="student" className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-lg">person</span>
-                  Student
-                </TabsTrigger>
-                <TabsTrigger value="staff" className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-lg">badge</span>
-                  Staff
-                </TabsTrigger>
-              </TabsList>
+            {authMode === "login" ? (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address <span className="text-destructive">*</span></Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@school.com"
+                    value={loginForm.email}
+                    onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                    className={cn("rounded-md", loginErrors.email && "border-destructive")}
+                  />
+                  {loginErrors.email && <p className="text-xs text-destructive">{loginErrors.email}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password <span className="text-destructive">*</span></Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                      className={cn("rounded-md pr-10", loginErrors.password && "border-destructive")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {loginErrors.password && <p className="text-xs text-destructive">{loginErrors.password}</p>}
+                </div>
 
-              <TabsContent value="student" className="mt-0">
-                {authMode === "login" ? (
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="studentEmail">Email Address</Label>
-                      <Input
-                        id="studentEmail"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={loginForm.email}
-                        onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                        className={loginErrors.email ? "border-destructive" : ""}
-                      />
-                      {loginErrors.email && <p className="text-xs text-destructive">{loginErrors.email}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="studentPassword">Password</Label>
-                      <Input
-                        id="studentPassword"
-                        type="password"
-                        placeholder="Enter your password"
-                        value={loginForm.password}
-                        onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                        className={loginErrors.password ? "border-destructive" : ""}
-                      />
-                      {loginErrors.password && <p className="text-xs text-destructive">{loginErrors.password}</p>}
-                    </div>
-
-                    <Button type="submit" className="w-full bg-gradient-primary" disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
-                          Signing in...
-                        </>
-                      ) : (
-                        <>
-                          <span className="material-symbols-outlined mr-2">login</span>
-                          Sign In
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleRegister} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input
-                          id="firstName"
-                          type="text"
-                          placeholder="John"
-                          value={registerForm.firstName}
-                          onChange={(e) => setRegisterForm({ ...registerForm, firstName: e.target.value })}
-                          className={registerErrors.firstName ? "border-destructive" : ""}
-                        />
-                        {registerErrors.firstName && <p className="text-xs text-destructive">{registerErrors.firstName}</p>}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input
-                          id="lastName"
-                          type="text"
-                          placeholder="Doe"
-                          value={registerForm.lastName}
-                          onChange={(e) => setRegisterForm({ ...registerForm, lastName: e.target.value })}
-                          className={registerErrors.lastName ? "border-destructive" : ""}
-                        />
-                        {registerErrors.lastName && <p className="text-xs text-destructive">{registerErrors.lastName}</p>}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="regEmail">Email Address</Label>
-                      <Input
-                        id="regEmail"
-                        type="email"
-                        placeholder="john.doe@example.com"
-                        value={registerForm.email}
-                        onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
-                        className={registerErrors.email ? "border-destructive" : ""}
-                      />
-                      {registerErrors.email && <p className="text-xs text-destructive">{registerErrors.email}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="regPassword">Password</Label>
-                      <Input
-                        id="regPassword"
-                        type="password"
-                        placeholder="Create a password"
-                        value={registerForm.password}
-                        onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
-                        className={registerErrors.password ? "border-destructive" : ""}
-                      />
-                      {registerErrors.password && <p className="text-xs text-destructive">{registerErrors.password}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">Confirm Password</Label>
-                      <Input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm your password"
-                        value={registerForm.confirmPassword}
-                        onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
-                        className={registerErrors.confirmPassword ? "border-destructive" : ""}
-                      />
-                      {registerErrors.confirmPassword && <p className="text-xs text-destructive">{registerErrors.confirmPassword}</p>}
-                    </div>
-
-                    <Button type="submit" className="w-full bg-gradient-primary" disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
-                          Creating account...
-                        </>
-                      ) : (
-                        <>
-                          <span className="material-symbols-outlined mr-2">person_add</span>
-                          Create Account
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                )}
-
-                <div className="mt-6 text-center">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}
-                    className="text-sm text-primary hover:underline font-medium"
-                  >
-                    {authMode === "login" 
-                      ? "Don't have an account? Register" 
-                      : "Already have an account? Sign in"}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="remember" />
+                    <Label htmlFor="remember" className="text-sm text-muted-foreground cursor-pointer">Remember me</Label>
+                  </div>
+                  <button type="button" className="text-sm text-primary hover:underline font-medium">
+                    Forgot password?
                   </button>
                 </div>
-              </TabsContent>
 
-              <TabsContent value="staff" className="mt-0">
-                {authMode === "login" ? (
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="staffEmail">Email Address</Label>
-                      <Input
-                        id="staffEmail"
-                        type="email"
-                        placeholder="Enter your email"
-                        value={loginForm.email}
-                        onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
-                        className={loginErrors.email ? "border-destructive" : ""}
-                      />
-                      {loginErrors.email && <p className="text-xs text-destructive">{loginErrors.email}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="staffPassword">Password</Label>
-                      <Input
-                        id="staffPassword"
-                        type="password"
-                        placeholder="Enter your password"
-                        value={loginForm.password}
-                        onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
-                        className={loginErrors.password ? "border-destructive" : ""}
-                      />
-                      {loginErrors.password && <p className="text-xs text-destructive">{loginErrors.password}</p>}
-                    </div>
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 rounded-lg font-semibold transition-all hover:scale-[1.02]" disabled={isLoading}>
+                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                  {isLoading ? "Signing in..." : "Sign In"}
+                </Button>
+              </form>
+            ) : !userType ? (
+              /* Role Selection */
+              <div className="space-y-4">
+                <button
+                  onClick={() => setUserType("student")}
+                  className="w-full p-5 rounded-xl border-2 border-border hover:border-primary bg-card hover:bg-primary/5 transition-all flex items-center gap-4 text-left group"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <GraduationCap className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground">I am a Student</p>
+                    <p className="text-sm text-muted-foreground">Access your results, attendance & more</p>
+                  </div>
+                </button>
 
-                    <Button type="submit" className="w-full bg-gradient-primary" disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
-                          Signing in...
-                        </>
-                      ) : (
-                        <>
-                          <span className="material-symbols-outlined mr-2">login</span>
-                          Sign In
-                        </>
-                      )}
-                    </Button>
-                  </form>
-                ) : (
-                  <form onSubmit={handleRegister} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="staffFirstName">First Name</Label>
-                        <Input
-                          id="staffFirstName"
-                          type="text"
-                          placeholder="Jane"
-                          value={registerForm.firstName}
-                          onChange={(e) => setRegisterForm({ ...registerForm, firstName: e.target.value })}
-                          className={registerErrors.firstName ? "border-destructive" : ""}
-                        />
-                        {registerErrors.firstName && <p className="text-xs text-destructive">{registerErrors.firstName}</p>}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="staffLastName">Last Name</Label>
-                        <Input
-                          id="staffLastName"
-                          type="text"
-                          placeholder="Smith"
-                          value={registerForm.lastName}
-                          onChange={(e) => setRegisterForm({ ...registerForm, lastName: e.target.value })}
-                          className={registerErrors.lastName ? "border-destructive" : ""}
-                        />
-                        {registerErrors.lastName && <p className="text-xs text-destructive">{registerErrors.lastName}</p>}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="staffRegEmail">Email Address</Label>
-                      <Input
-                        id="staffRegEmail"
-                        type="email"
-                        placeholder="jane.smith@school.edu"
-                        value={registerForm.email}
-                        onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
-                        className={registerErrors.email ? "border-destructive" : ""}
-                      />
-                      {registerErrors.email && <p className="text-xs text-destructive">{registerErrors.email}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="staffRegPassword">Password</Label>
-                      <Input
-                        id="staffRegPassword"
-                        type="password"
-                        placeholder="Create a password"
-                        value={registerForm.password}
-                        onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
-                        className={registerErrors.password ? "border-destructive" : ""}
-                      />
-                      {registerErrors.password && <p className="text-xs text-destructive">{registerErrors.password}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="staffConfirmPassword">Confirm Password</Label>
-                      <Input
-                        id="staffConfirmPassword"
-                        type="password"
-                        placeholder="Confirm your password"
-                        value={registerForm.confirmPassword}
-                        onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
-                        className={registerErrors.confirmPassword ? "border-destructive" : ""}
-                      />
-                      {registerErrors.confirmPassword && <p className="text-xs text-destructive">{registerErrors.confirmPassword}</p>}
-                    </div>
+                <button
+                  onClick={() => setUserType("staff")}
+                  className="w-full p-5 rounded-xl border-2 border-border hover:border-primary bg-card hover:bg-primary/5 transition-all flex items-center gap-4 text-left group"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Briefcase className="w-7 h-7 text-secondary group-hover:text-primary-foreground transition-colors" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground">I am a Staff Member</p>
+                    <p className="text-sm text-muted-foreground">Manage classes, results & students</p>
+                  </div>
+                </button>
+              </div>
+            ) : (
+              /* Registration Form */
+              <form onSubmit={handleRegister} className="space-y-4">
+                <button
+                  type="button"
+                  onClick={() => setUserType(null)}
+                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-2"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Change role
+                </button>
 
-                    <Button type="submit" className="w-full bg-gradient-primary" disabled={isLoading}>
-                      {isLoading ? (
-                        <>
-                          <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
-                          Creating account...
-                        </>
-                      ) : (
-                        <>
-                          <span className="material-symbols-outlined mr-2">person_add</span>
-                          Create Staff Account
-                        </>
-                      )}
-                    </Button>
-                  </form>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>First Name <span className="text-destructive">*</span></Label>
+                    <Input
+                      placeholder="John"
+                      value={registerForm.firstName}
+                      onChange={(e) => setRegisterForm({ ...registerForm, firstName: e.target.value })}
+                      className={cn("rounded-md", registerErrors.firstName && "border-destructive")}
+                    />
+                    {registerErrors.firstName && <p className="text-xs text-destructive">{registerErrors.firstName}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Last Name <span className="text-destructive">*</span></Label>
+                    <Input
+                      placeholder="Doe"
+                      value={registerForm.lastName}
+                      onChange={(e) => setRegisterForm({ ...registerForm, lastName: e.target.value })}
+                      className={cn("rounded-md", registerErrors.lastName && "border-destructive")}
+                    />
+                    {registerErrors.lastName && <p className="text-xs text-destructive">{registerErrors.lastName}</p>}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Email Address <span className="text-destructive">*</span></Label>
+                  <Input
+                    type="email"
+                    placeholder="you@school.com"
+                    value={registerForm.email}
+                    onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
+                    className={cn("rounded-md", registerErrors.email && "border-destructive")}
+                  />
+                  {registerErrors.email && <p className="text-xs text-destructive">{registerErrors.email}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Phone Number <span className="text-destructive">*</span></Label>
+                  <Input
+                    type="tel"
+                    placeholder="+234 800 000 0000"
+                    value={registerForm.phone}
+                    onChange={(e) => setRegisterForm({ ...registerForm, phone: e.target.value })}
+                    className={cn("rounded-md", registerErrors.phone && "border-destructive")}
+                  />
+                  {registerErrors.phone && <p className="text-xs text-destructive">{registerErrors.phone}</p>}
+                </div>
+
+                {userType === "staff" && (
+                  <div className="space-y-2">
+                    <Label>Staff ID / Employee Number</Label>
+                    <Input
+                      placeholder="EMP-2025-001"
+                      value={registerForm.staffId}
+                      onChange={(e) => setRegisterForm({ ...registerForm, staffId: e.target.value })}
+                      className="rounded-md"
+                    />
+                  </div>
                 )}
 
-                <div className="mt-6 text-center">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}
-                    className="text-sm text-primary hover:underline font-medium"
-                  >
-                    {authMode === "login" 
-                      ? "Don't have an account? Register" 
-                      : "Already have an account? Sign in"}
-                  </button>
+                <div className="space-y-2">
+                  <Label>Password <span className="text-destructive">*</span></Label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a password"
+                      value={registerForm.password}
+                      onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
+                      className={cn("rounded-md pr-10", registerErrors.password && "border-destructive")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {registerErrors.password && <p className="text-xs text-destructive">{registerErrors.password}</p>}
                 </div>
-              </TabsContent>
-            </Tabs>
+
+                <div className="space-y-2">
+                  <Label>Confirm Password <span className="text-destructive">*</span></Label>
+                  <Input
+                    type="password"
+                    placeholder="Confirm your password"
+                    value={registerForm.confirmPassword}
+                    onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
+                    className={cn("rounded-md", registerErrors.confirmPassword && "border-destructive")}
+                  />
+                  {registerErrors.confirmPassword && <p className="text-xs text-destructive">{registerErrors.confirmPassword}</p>}
+                </div>
+
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 rounded-lg font-semibold transition-all hover:scale-[1.02]" disabled={isLoading}>
+                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                  {isLoading ? "Creating account..." : "Create Account"}
+                </Button>
+              </form>
+            )}
+
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMode(authMode === "login" ? "register" : "login");
+                  setUserType(null);
+                }}
+                className="text-sm text-primary hover:underline font-medium"
+              >
+                {authMode === "login"
+                  ? "Don't have an account? Register"
+                  : "Already have an account? Sign in"}
+              </button>
+            </div>
           </CardContent>
         </Card>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          <Link to="/" className="hover:text-foreground">← Back to home</Link>
+          <Link to="/" className="hover:text-foreground flex items-center justify-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Back to home
+          </Link>
         </p>
       </div>
     </div>

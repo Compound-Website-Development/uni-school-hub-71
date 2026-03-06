@@ -2,6 +2,7 @@ import { Menu, Bell, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import npsLogo from "@/assets/nps-logo.png";
 
 interface MobileHeaderProps {
   title?: string;
@@ -12,7 +13,7 @@ interface MobileHeaderProps {
 }
 
 export const MobileHeader = ({
-  title = "EduPortal",
+  title = "NPS Portal",
   onMenuClick,
   notifications = 0,
   showSearch = false,
@@ -24,18 +25,14 @@ export const MobileHeader = ({
     <header className="sticky top-0 z-40 bg-card border-b border-border md:hidden">
       <div className="flex items-center justify-between h-14 px-4">
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onMenuClick}
-            className="shrink-0"
-          >
+          <Button variant="ghost" size="icon" onClick={onMenuClick} className="shrink-0">
             <Menu className="w-5 h-5" />
           </Button>
           {!searchOpen && (
-            <h1 className="text-lg font-semibold text-foreground truncate">
-              {title}
-            </h1>
+            <div className="flex items-center gap-2">
+              <img src={npsLogo} alt="NPS" className="h-7 w-auto" />
+              {title && <span className="text-sm font-semibold text-foreground truncate">{title}</span>}
+            </div>
           )}
         </div>
 
@@ -43,19 +40,9 @@ export const MobileHeader = ({
           {showSearch && (
             <>
               {searchOpen ? (
-                <Input
-                  type="search"
-                  placeholder={searchPlaceholder}
-                  className="w-48 h-9"
-                  autoFocus
-                  onBlur={() => setSearchOpen(false)}
-                />
+                <Input type="search" placeholder={searchPlaceholder} className="w-48 h-9" autoFocus onBlur={() => setSearchOpen(false)} />
               ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSearchOpen(true)}
-                >
+                <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)}>
                   <Search className="w-5 h-5" />
                 </Button>
               )}

@@ -2,54 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-/* EduPortal School Management System - Modern Design System */
+/* Nigerian Private Schools — Design System */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 @layer base {
   :root {
-    /* Modern Brand Colors */
-    --primary: 220 90% 56%;
+    /* Nigerian School Brand — Green + Gold */
+    --primary: 142 64% 24%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 220 100% 97%;
+    --primary-light: 142 71% 45%;
+    --primary-soft: 142 76% 96%;
     
-    /* Background Hierarchy - Clean & Modern */
-    --background: 220 20% 97%;
-    --foreground: 220 30% 10%;
+    /* Background */
+    --background: 150 14% 97%;
+    --foreground: 150 30% 12%;
     
-    /* Surface Colors */
+    /* Surface */
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 10%;
+    --card-foreground: 150 30% 12%;
     --surface: 0 0% 100%;
-    --surface-dark: 220 25% 12%;
+    --surface-dark: 150 25% 12%;
     
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 10%;
+    --popover-foreground: 150 30% 12%;
     
     /* Secondary & Muted */
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 30% 10%;
+    --secondary: 30 56% 16%;
+    --secondary-foreground: 0 0% 100%;
     
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 150 10% 95%;
+    --muted-foreground: 220 9% 46%;
     
-    /* Accent Colors */
-    --accent: 220 100% 97%;
-    --accent-foreground: 220 90% 50%;
+    /* Accent — Gold */
+    --accent: 43 96% 56%;
+    --accent-foreground: 30 56% 16%;
     
     /* Status Colors */
-    --success: 160 84% 39%;
+    --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
-    --warning: 43 96% 56%;
+    --warning: 38 92% 50%;
     --warning-foreground: 0 0% 0%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --info: 199 89% 48%;
+    --info: 217 91% 60%;
     --info-foreground: 0 0% 100%;
     
     /* Grade Colors */
-    --grade-excellent: 160 84% 39%;
-    --grade-very-good: 220 90% 56%;
+    --grade-excellent: 142 76% 36%;
+    --grade-very-good: 217 91% 60%;
     --grade-good: 43 96% 56%;
     --grade-fail: 0 84% 60%;
     
@@ -64,70 +65,71 @@
     --teal-foreground: 0 0% 100%;
     
     /* Border & Input */
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 220 90% 56%;
+    --border: 142 40% 90%;
+    --input: 142 20% 90%;
+    --ring: 142 64% 24%;
     
-    --radius: 1rem;
+    --radius: 0.75rem;
     
-    /* Sidebar */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 10% 40%;
-    --sidebar-primary: 220 90% 56%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 100% 97%;
-    --sidebar-accent-foreground: 220 90% 56%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 220 90% 56%;
+    /* Sidebar — Dark Green */
+    --sidebar-background: 142 64% 24%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 142 64% 24%;
+    --sidebar-accent: 142 50% 30%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 142 50% 30%;
+    --sidebar-ring: 0 0% 100%;
     
-    /* Chart Colors for Analytics */
-    --chart-1: 220 90% 56%;
-    --chart-2: 160 84% 39%;
-    --chart-3: 43 96% 56%;
+    /* Chart Colors */
+    --chart-1: 142 64% 24%;
+    --chart-2: 43 96% 56%;
+    --chart-3: 217 91% 60%;
     --chart-4: 0 84% 60%;
     --chart-5: 271 91% 65%;
   }
 
   .dark {
-    --background: 220 25% 8%;
-    --foreground: 210 40% 98%;
+    --background: 150 20% 7%;
+    --foreground: 0 0% 95%;
     
-    --card: 220 25% 12%;
-    --card-foreground: 210 40% 98%;
-    --surface: 220 25% 14%;
-    --surface-dark: 220 25% 8%;
+    --card: 150 20% 11%;
+    --card-foreground: 0 0% 95%;
+    --surface: 150 20% 13%;
+    --surface-dark: 150 20% 7%;
     
-    --popover: 220 25% 12%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 150 20% 11%;
+    --popover-foreground: 0 0% 95%;
     
-    --primary: 220 90% 60%;
+    --primary: 142 71% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 220 50% 20%;
+    --primary-light: 142 71% 55%;
+    --primary-soft: 142 40% 18%;
     
-    --secondary: 220 20% 18%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 38 60% 25%;
+    --secondary-foreground: 0 0% 100%;
     
-    --muted: 220 20% 18%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 150 15% 16%;
+    --muted-foreground: 150 10% 55%;
     
-    --accent: 220 50% 20%;
-    --accent-foreground: 220 90% 70%;
+    --accent: 43 80% 50%;
+    --accent-foreground: 0 0% 100%;
     
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 220 20% 20%;
-    --input: 220 20% 20%;
-    --ring: 220 90% 60%;
+    --border: 150 15% 20%;
+    --input: 150 15% 20%;
+    --ring: 142 71% 45%;
     
-    --sidebar-background: 220 25% 10%;
-    --sidebar-foreground: 215 20% 65%;
-    --sidebar-primary: 220 90% 60%;
+    --sidebar-background: 150 25% 10%;
+    --sidebar-foreground: 150 10% 75%;
+    --sidebar-primary: 142 71% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 50% 20%;
-    --sidebar-accent-foreground: 220 90% 70%;
-    --sidebar-border: 220 20% 18%;
-    --sidebar-ring: 220 90% 60%;
+    --sidebar-accent: 142 40% 18%;
+    --sidebar-accent-foreground: 142 71% 55%;
+    --sidebar-border: 150 15% 18%;
+    --sidebar-ring: 142 71% 45%;
   }
 }
 
@@ -138,7 +140,11 @@
   
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   }
   
   html {
@@ -202,28 +208,23 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
 @keyframes scale-in {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
 
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 @layer utilities {
   .animate-fade-in {
-    animation: fade-in 0.5s ease-out forwards;
+    animation: fade-in 0.3s ease-out forwards;
   }
   
   .animate-fade-up {
-    animation: fade-up 0.6s ease-out forwards;
+    animation: fade-up 0.5s ease-out forwards;
   }
   
   .animate-slide-in-right {
@@ -233,15 +234,7 @@
   .animate-slide-in-bottom {
     animation: slide-in-bottom 0.4s ease-out forwards;
   }
-  
-  .animate-pulse-soft {
-    animation: pulse-soft 2s ease-in-out infinite;
-  }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
+
   .animate-scale-in {
     animation: scale-in 0.3s ease-out forwards;
   }
@@ -261,24 +254,30 @@
   .animation-delay-400 {
     animation-delay: 400ms;
   }
+
+  .skeleton {
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
 }
 
 /* Gradient Backgrounds */
 @layer utilities {
   .bg-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(220 90% 45%) 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(142 64% 18%) 100%);
   }
   
   .bg-gradient-hero {
-    background: linear-gradient(135deg, hsl(220 90% 56%) 0%, hsl(240 70% 45%) 100%);
+    background: linear-gradient(135deg, hsl(142 64% 24%) 0%, hsl(150 50% 15%) 100%);
   }
   
   .bg-gradient-surface {
-    background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(220 20% 94%) 100%);
+    background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(150 14% 94%) 100%);
   }
   
   .bg-gradient-card {
-    background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(220 20% 98%) 100%);
+    background: linear-gradient(180deg, hsl(var(--card)) 0%, hsl(150 14% 98%) 100%);
   }
   
   .bg-gradient-orange {
@@ -298,8 +297,8 @@
   }
   
   .bg-pattern-dots {
-    background-image: radial-gradient(hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px);
-    background-size: 20px 20px;
+    background-image: radial-gradient(hsl(var(--primary) / 0.08) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
   }
   
   .shadow-glow {
@@ -318,7 +317,7 @@
 /* Card Hover Effects */
 @layer components {
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
   }
   
   .card-hover-subtle {
@@ -330,19 +329,17 @@
   }
   
   .nav-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-sidebar-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200;
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200;
   }
   
   .nav-link-active {
-    @apply bg-accent text-accent-foreground font-semibold;
+    @apply bg-sidebar-accent text-sidebar-accent-foreground font-semibold;
   }
   
-  /* Modern Button Styles */
   .btn-float {
     @apply shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200;
   }
   
-  /* Glass Effect */
   .glass {
     @apply bg-card/80 backdrop-blur-lg;
   }
@@ -350,24 +347,9 @@
   .glass-strong {
     @apply bg-card/95 backdrop-blur-xl;
   }
-  
-  /* Feature Card */
-  .feature-card {
-    @apply relative overflow-hidden rounded-2xl p-6 transition-all duration-300;
-  }
-  
-  .feature-card::before {
-    content: '';
-    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, transparent 100%);
-  }
-  
-  .feature-card:hover::before {
-    @apply opacity-100;
-  }
 }
 
-/* Print Styles for Report Cards */
+/* Print Styles */
 @media print {
   .no-print {
     display: none !important;
@@ -383,7 +365,7 @@
   }
 }
 
-/* Mobile-specific optimizations */
+/* Mobile-specific */
 @layer utilities {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
