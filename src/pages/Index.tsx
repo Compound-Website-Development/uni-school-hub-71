@@ -33,49 +33,52 @@ const steps = [
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-primary border-b border-primary/80">
+      {/* Navbar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center gap-3">
-              <img src={npsLogo} alt="NPS Logo" className="h-10 w-auto" />
+              <img src={npsLogo} alt="Nigerian Private Schools" className="h-10 w-auto" />
             </Link>
             <div className="flex items-center gap-3">
               <Link to="/login">
-                <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/10">Sign In</Button>
+                <Button variant="ghost" className="text-foreground hover:bg-muted">Sign In</Button>
               </Link>
               <Link to="/login">
-                <Button className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">Get Started</Button>
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium">Get Started</Button>
               </Link>
             </div>
           </div>
         </div>
       </nav>
 
+      {/* Hero */}
       <section className="relative pt-16 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero" />
-        <div className="absolute inset-0 bg-pattern-dots opacity-20" />
+        <div className="absolute inset-0 bg-pattern-dots opacity-30" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36 text-center">
           <img src={npsLogo} alt="Nigerian Private Schools" className="h-16 md:h-20 mx-auto mb-8 animate-fade-in" />
-          <h1 className="text-4xl md:text-6xl font-extrabold text-primary-foreground leading-tight animate-fade-up">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-foreground leading-tight animate-fade-up">
             Manage Your School.<br />
-            <span className="text-accent">Empower Every Student.</span>
+            <span className="text-primary">Empower Every Student.</span>
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto animate-fade-up animation-delay-100">
+          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-up animation-delay-100">
             A complete school management platform built for Nigerian private schools. Results, attendance, fees, and more — all in one place.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up animation-delay-200">
             <Link to="/login">
-              <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
+              <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-lg px-8 py-6 shadow-soft hover:shadow-md transition-all hover:scale-[1.02]">
                 Get Started Free <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
             <Link to="/login">
-              <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-lg px-8 py-6">Sign In</Button>
+              <Button size="lg" variant="outline" className="border-border text-foreground hover:bg-muted font-medium text-lg px-8 py-6">Sign In</Button>
             </Link>
           </div>
         </div>
       </section>
 
+      {/* Features */}
       <section className="py-20 md:py-28 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -86,7 +89,7 @@ const Index = () => {
             {features.map((f, i) => (
               <Card key={i} className="group card-hover border-border bg-card rounded-xl">
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <div className="w-12 h-12 rounded-lg bg-primary/8 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <f.icon className="w-6 h-6 text-primary group-hover:text-primary-foreground transition-colors" />
                   </div>
                   <h3 className="text-lg font-bold text-foreground mb-2">{f.title}</h3>
@@ -98,7 +101,8 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 bg-muted/50">
+      {/* How It Works */}
+      <section className="py-20 md:py-28 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-extrabold text-foreground">How It Works</h2>
@@ -107,8 +111,8 @@ const Index = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((s, i) => (
               <div key={i} className="text-center">
-                <div className="w-20 h-20 rounded-2xl bg-primary mx-auto flex items-center justify-center mb-6 shadow-glow">
-                  <s.icon className="w-10 h-10 text-primary-foreground" />
+                <div className="w-20 h-20 rounded-2xl bg-primary/10 mx-auto flex items-center justify-center mb-6">
+                  <s.icon className="w-10 h-10 text-primary" />
                 </div>
                 <span className="text-sm font-bold text-accent">STEP {s.num}</span>
                 <h3 className="text-xl font-bold text-foreground mt-2 mb-2">{s.title}</h3>
@@ -119,28 +123,30 @@ const Index = () => {
         </div>
       </section>
 
+      {/* CTA */}
       <section className="py-20 md:py-28 bg-gradient-hero relative">
-        <div className="absolute inset-0 bg-pattern-dots opacity-10" />
+        <div className="absolute inset-0 bg-pattern-dots opacity-20" />
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-primary-foreground mb-6">Ready to Transform Your School?</h2>
-          <p className="text-lg text-primary-foreground/80 mb-10 max-w-2xl mx-auto">Join hundreds of Nigerian private schools already using our platform.</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-6">Ready to Transform Your School?</h2>
+          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">Join hundreds of Nigerian private schools already using our platform.</p>
           <Link to="/login">
-            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold text-lg px-10 py-6 shadow-lg hover:scale-[1.02] transition-all">
+            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-lg px-10 py-6 shadow-soft hover:shadow-md hover:scale-[1.02] transition-all">
               Get Started Now <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
           </Link>
         </div>
       </section>
 
-      <footer className="bg-foreground py-12">
+      {/* Footer */}
+      <footer className="bg-card border-t border-border py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <img src={npsLogo} alt="NPS" className="h-7 w-auto brightness-0 invert" />
-            <div className="flex items-center gap-6 text-sm text-background/60">
-              <Link to="/login" className="hover:text-background transition-colors">Sign In</Link>
-              <Link to="/apply" className="hover:text-background transition-colors">Apply</Link>
+            <img src={npsLogo} alt="Nigerian Private Schools" className="h-7 w-auto" />
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <Link to="/login" className="hover:text-foreground transition-colors">Sign In</Link>
+              <Link to="/apply" className="hover:text-foreground transition-colors">Apply</Link>
             </div>
-            <p className="text-sm text-background/50">Built for Nigerian Schools 🇳🇬</p>
+            <p className="text-sm text-muted-foreground">Built for Nigerian Schools 🇳🇬</p>
           </div>
         </div>
       </footer>
