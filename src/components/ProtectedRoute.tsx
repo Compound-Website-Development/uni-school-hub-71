@@ -22,6 +22,8 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
         // Redirect to appropriate portal based on role
         if (userRole === "student") {
           navigate("/student", { replace: true });
+        } else if (userRole === "admin") {
+          navigate("/admin", { replace: true });
         } else {
           navigate("/staff", { replace: true });
         }
