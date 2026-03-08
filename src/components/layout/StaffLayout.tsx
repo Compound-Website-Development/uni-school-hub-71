@@ -56,7 +56,7 @@ export const StaffLayout = ({
 
   const handleLogout = async () => {
     await signOut();
-    navigate("/");
+    navigate("/login");
   };
 
   const staffName = teacherData ? `${teacherData.first_name} ${teacherData.last_name}` : "Staff";
