@@ -111,11 +111,11 @@ const StudentReports = () => {
       
       doc.setFontSize(16);
       doc.setFont("helvetica", "bold");
-      doc.text("JARRENG VILLAGE SCHOOLS", pageWidth / 2, 20, { align: "center" });
+      doc.text("NIGERIAN PRIVATE SCHOOLS", pageWidth / 2, 20, { align: "center" });
       
       doc.setFontSize(12);
       doc.setFont("helvetica", "normal");
-      doc.text("Niamina East District, The Gambia", pageWidth / 2, 28, { align: "center" });
+      doc.text("School Management Platform", pageWidth / 2, 28, { align: "center" });
       
       doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
@@ -181,7 +181,7 @@ const StudentReports = () => {
       }
       
       doc.setFontSize(8);
-      doc.text("Thank You For Being Part Of Jarreng Village Schools", pageWidth / 2, 280, { align: "center" });
+      doc.text("Nigerian Private Schools — Excellence in Education", pageWidth / 2, 280, { align: "center" });
       doc.text(`Generated on ${new Date().toLocaleDateString()}`, pageWidth / 2, 286, { align: "center" });
       
       doc.save(`Term_Report_${studentData.student_id}_${studentData.first_name}_${studentData.last_name}.pdf`);
@@ -289,8 +289,8 @@ const StudentReports = () => {
           <CardContent className="p-0">
             {/* Preview Header */}
             <div className="bg-gradient-primary text-primary-foreground p-5">
-              <h3 className="text-lg font-bold text-center">JARRENG VILLAGE SCHOOLS</h3>
-              <p className="text-center opacity-80 text-xs mt-1">Niamina East District, The Gambia</p>
+              <h3 className="text-lg font-bold text-center">NIGERIAN PRIVATE SCHOOLS</h3>
+              <p className="text-center opacity-80 text-xs mt-1">School Management Platform</p>
               <p className="text-center font-semibold mt-3 text-sm">TERM REPORT</p>
             </div>
             
