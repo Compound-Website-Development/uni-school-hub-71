@@ -381,6 +381,143 @@ export type Database = {
           },
         ]
       }
+      exam_questions: {
+        Row: {
+          correct_index: number
+          created_at: string | null
+          exam_id: string
+          id: string
+          options: Json
+          points: number | null
+          question_text: string
+        }
+        Insert: {
+          correct_index?: number
+          created_at?: string | null
+          exam_id: string
+          id?: string
+          options?: Json
+          points?: number | null
+          question_text: string
+        }
+        Update: {
+          correct_index?: number
+          created_at?: string | null
+          exam_id?: string
+          id?: string
+          options?: Json
+          points?: number | null
+          question_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_questions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_submissions: {
+        Row: {
+          answers: Json | null
+          exam_id: string
+          id: string
+          score: number | null
+          started_at: string | null
+          student_id: string
+          submitted_at: string | null
+        }
+        Insert: {
+          answers?: Json | null
+          exam_id: string
+          id?: string
+          score?: number | null
+          started_at?: string | null
+          student_id: string
+          submitted_at?: string | null
+        }
+        Update: {
+          answers?: Json | null
+          exam_id?: string
+          id?: string
+          score?: number | null
+          started_at?: string | null
+          student_id?: string
+          submitted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_submissions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_submissions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exams: {
+        Row: {
+          class_id: string | null
+          created_at: string | null
+          created_by: string | null
+          duration_minutes: number
+          end_time: string | null
+          id: string
+          start_time: string | null
+          status: string
+          subject_id: string | null
+          title: string
+        }
+        Insert: {
+          class_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          duration_minutes?: number
+          end_time?: string | null
+          id?: string
+          start_time?: string | null
+          status?: string
+          subject_id?: string | null
+          title: string
+        }
+        Update: {
+          class_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          duration_minutes?: number
+          end_time?: string | null
+          id?: string
+          start_time?: string | null
+          status?: string
+          subject_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exams_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exams_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fee_items: {
         Row: {
           amount: number
@@ -566,6 +703,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          link: string | null
+          title: string
+          type: string | null
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          title: string
+          type?: string | null
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          title?: string
+          type?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
