@@ -13,8 +13,9 @@ import npsLogo from "@/assets/nps-logo.png";
 import { 
   LayoutDashboard, Users, BookOpen, ClipboardCheck, FileText,
   UserPlus, Settings, LogOut, Search, Bell, BarChart2,
-  ShieldCheck, Upload
+  ShieldCheck, Upload, Monitor
 } from "lucide-react";
+import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { cn } from "@/lib/utils";
 
 interface StaffLayoutProps {
@@ -30,6 +31,7 @@ const teacherNavItems = [
   { icon: BookOpen, label: "Classes", href: "/staff/classes" },
   { icon: ClipboardCheck, label: "Attendance", href: "/staff/attendance" },
   { icon: FileText, label: "Gradebook", href: "/staff/gradebook" },
+  { icon: Monitor, label: "CBT Exams", href: "/staff/cbt" },
   { icon: BarChart2, label: "Reports", href: "/staff/reports" },
 ];
 
@@ -172,9 +174,7 @@ export const StaffLayout = ({
                   <Input placeholder={searchPlaceholder} className="pl-10 w-64 rounded-md" />
                 </div>
               )}
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="w-5 h-5" />
-              </Button>
+              <NotificationDropdown />
             </div>
           </header>
           <div className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</div>
