@@ -63,6 +63,7 @@ const adminNavSections = [
       { icon: Upload, label: "Bulk Upload", href: "/admin/bulk-upload" },
       { icon: Database, label: "Manage Users", href: "/admin/users" },
       { icon: Settings, label: "School Settings", href: "/admin/settings" },
+      { icon: Globe, label: "Staff Portal", href: "/staff" },
     ],
   },
 ];
@@ -77,7 +78,7 @@ export const AdminLayout = ({
 
   const handleLogout = async () => {
     await signOut();
-    navigate("/");
+    navigate("/login");
   };
 
   const staffName = teacherData ? `${teacherData.first_name} ${teacherData.last_name}` : "Admin";

@@ -35,7 +35,7 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
 
   const handleLogout = async () => {
     await signOut();
-    navigate("/");
+    navigate("/login");
   };
 
   const studentName = studentData ? `${studentData.first_name} ${studentData.last_name}` : "Student";

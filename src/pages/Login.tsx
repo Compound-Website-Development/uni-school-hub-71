@@ -65,10 +65,10 @@ const Login = () => {
   });
 
   useEffect(() => {
-    if (user && !authLoading) {
-      if (userRole === "student") navigate("/student");
-      else if (userRole === "admin") navigate("/admin");
-      else if (userRole === "teacher") navigate("/staff");
+    if (user && !authLoading && userRole) {
+      if (userRole === "student") navigate("/student", { replace: true });
+      else if (userRole === "admin") navigate("/admin", { replace: true });
+      else if (userRole === "teacher") navigate("/staff", { replace: true });
     }
   }, [user, userRole, authLoading, navigate]);
 
