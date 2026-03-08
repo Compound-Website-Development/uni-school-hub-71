@@ -1,7 +1,29 @@
 import { cn } from "@/lib/utils";
+import { 
+  Users, BookOpen, ClipboardList, UserPlus, TrendingUp, TrendingDown,
+  GraduationCap, CreditCard, Bell, Calendar, FileText, BarChart2,
+  CheckCircle, Clock, AlertTriangle, XCircle, type LucideIcon
+} from "lucide-react";
+
+const iconMap: Record<string, LucideIcon> = {
+  group: Users,
+  book: BookOpen,
+  assignment: ClipboardList,
+  person_add: UserPlus,
+  graduation_cap: GraduationCap,
+  credit_card: CreditCard,
+  bell: Bell,
+  calendar: Calendar,
+  file_text: FileText,
+  bar_chart: BarChart2,
+  check_circle: CheckCircle,
+  clock: Clock,
+  alert: AlertTriangle,
+  x_circle: XCircle,
+};
 
 interface StatCardProps {
-  icon: string;
+  icon: string | LucideIcon;
   label: string;
   value: string | number;
   trend?: {
@@ -28,11 +50,13 @@ export const StatCard = ({
   variant = "default",
   className,
 }: StatCardProps) => {
+  const IconComponent = typeof icon === "string" ? iconMap[icon] || Users : icon;
+
   return (
-    <div className={cn("bg-card rounded-xl border border-border p-5 card-hover-subtle", className)}>
+    <div className={cn("bg-card rounded-xl border border-border/50 p-5 card-hover-subtle shadow-card", className)}>
       <div className="flex items-start justify-between">
         <div className={cn("p-3 rounded-lg", variantStyles[variant])}>
-          <span className="material-symbols-outlined text-xl">{icon}</span>
+          <IconComponent className="w-5 h-5" />
         </div>
         {trend && (
           <span
@@ -43,9 +67,7 @@ export const StatCard = ({
                 : "bg-destructive/10 text-destructive"
             )}
           >
-            <span className="material-symbols-outlined text-sm">
-              {trend.isPositive ? "trending_up" : "trending_down"}
-            </span>
+            {trend.isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
             {trend.value}%
           </span>
         )}

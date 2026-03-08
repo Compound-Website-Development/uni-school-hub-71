@@ -8,12 +8,18 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Apply from "./pages/Apply";
+import ResetPassword from "./pages/ResetPassword";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentGrades from "./pages/student/StudentGrades";
 import StudentReports from "./pages/student/StudentReports";
 import StudentTranscript from "./pages/student/StudentTranscript";
 import StudentSchedule from "./pages/student/StudentSchedule";
 import StudentSettings from "./pages/student/StudentSettings";
+import StudentAttendance from "./pages/student/StudentAttendance";
+import StudentFees from "./pages/student/StudentFees";
+import StudentAnnouncements from "./pages/student/StudentAnnouncements";
+import StudentExams from "./pages/student/StudentExams";
+import TakeExam from "./pages/student/TakeExam";
 import StaffDashboard from "./pages/staff/StaffDashboard";
 import StaffGradebook from "./pages/staff/StaffGradebook";
 import StaffAdmissions from "./pages/staff/StaffAdmissions";
@@ -21,6 +27,7 @@ import StaffStudents from "./pages/staff/StaffStudents";
 import StaffAttendance from "./pages/staff/StaffAttendance";
 import StaffClasses from "./pages/staff/StaffClasses";
 import StaffReports from "./pages/staff/StaffReports";
+import StaffCBT from "./pages/staff/StaffCBT";
 import AdminStudentUpload from "./pages/staff/AdminStudentUpload";
 import AdminUsers from "./pages/staff/AdminUsers";
 // Superadmin pages
@@ -48,6 +55,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/apply" element={<Apply />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             
             {/* Student Portal */}
             <Route path="/student" element={<ProtectedRoute allowedRoles={["student"]}><StudentDashboard /></ProtectedRoute>} />
@@ -56,6 +64,11 @@ const App = () => (
             <Route path="/student/transcript" element={<ProtectedRoute allowedRoles={["student"]}><StudentTranscript /></ProtectedRoute>} />
             <Route path="/student/schedule" element={<ProtectedRoute allowedRoles={["student"]}><StudentSchedule /></ProtectedRoute>} />
             <Route path="/student/settings" element={<ProtectedRoute allowedRoles={["student"]}><StudentSettings /></ProtectedRoute>} />
+            <Route path="/student/attendance" element={<ProtectedRoute allowedRoles={["student"]}><StudentAttendance /></ProtectedRoute>} />
+            <Route path="/student/fees" element={<ProtectedRoute allowedRoles={["student"]}><StudentFees /></ProtectedRoute>} />
+            <Route path="/student/announcements" element={<ProtectedRoute allowedRoles={["student"]}><StudentAnnouncements /></ProtectedRoute>} />
+            <Route path="/student/exams" element={<ProtectedRoute allowedRoles={["student"]}><StudentExams /></ProtectedRoute>} />
+            <Route path="/student/exams/:id" element={<ProtectedRoute allowedRoles={["student"]}><TakeExam /></ProtectedRoute>} />
             
             {/* Staff Portal */}
             <Route path="/staff" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffDashboard /></ProtectedRoute>} />
@@ -65,6 +78,7 @@ const App = () => (
             <Route path="/staff/attendance" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffAttendance /></ProtectedRoute>} />
             <Route path="/staff/classes" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffClasses /></ProtectedRoute>} />
             <Route path="/staff/reports" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffReports /></ProtectedRoute>} />
+            <Route path="/staff/cbt" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffCBT /></ProtectedRoute>} />
             <Route path="/staff/admin/students" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStudentUpload /></ProtectedRoute>} />
             <Route path="/staff/admin/users" element={<ProtectedRoute allowedRoles={["admin"]}><AdminUsers /></ProtectedRoute>} />
             

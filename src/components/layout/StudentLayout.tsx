@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import npsLogo from "@/assets/nps-logo.png";
 import { 
   Home, BookOpen, FileText, Calendar, User,
-  LogOut, Menu, Bell
+  LogOut, Menu, Bell, CreditCard, Megaphone, Monitor
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,8 +22,11 @@ interface StudentLayoutProps {
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/student" },
   { icon: BookOpen, label: "My Results", href: "/student/grades" },
-  { icon: Calendar, label: "Attendance", href: "/student/schedule" },
+  { icon: Calendar, label: "Attendance", href: "/student/attendance" },
   { icon: FileText, label: "Reports", href: "/student/reports" },
+  { icon: CreditCard, label: "Fee Payments", href: "/student/fees" },
+  { icon: Megaphone, label: "Announcements", href: "/student/announcements" },
+  { icon: Monitor, label: "CBT Exams", href: "/student/exams" },
   { icon: User, label: "My Profile", href: "/student/settings" },
 ];
 

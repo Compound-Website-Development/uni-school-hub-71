@@ -15,6 +15,7 @@ import {
   PieChart, Database, Globe, Lock
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { NotificationDropdown } from "@/components/NotificationDropdown";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -204,9 +205,7 @@ export const AdminLayout = ({
                   <Input placeholder={searchPlaceholder} className="pl-9 w-56 h-9 text-sm rounded-md" />
                 </div>
               )}
-              <Button variant="ghost" size="icon" className="relative h-9 w-9">
-                <Bell className="w-4 h-4" />
-              </Button>
+              <NotificationDropdown />
             </div>
           </header>
           <div className="flex-1 overflow-y-auto p-5 lg:p-6">{children}</div>

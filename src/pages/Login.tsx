@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 import npsLogo from "@/assets/nps-logo.png";
 import {
@@ -227,7 +228,18 @@ const Login = () => {
                     <Checkbox id="remember" />
                     <Label htmlFor="remember" className="text-sm text-muted-foreground cursor-pointer">Remember me</Label>
                   </div>
-                  <button type="button" className="text-sm text-primary hover:underline font-medium">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!loginForm.email) { toast({ title: "Enter your email", description: "Please enter your email address first.", variant: "destructive" }); return; }
+                      const { error } = await supabase.auth.resetPasswordForEmail(loginForm.email, {
+                        redirectTo: `${window.location.origin}/reset-password`,
+                      });
+                      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+                      else toast({ title: "Check your email", description: "We've sent you a password reset link." });
+                    }}
+                    className="text-sm text-primary hover:underline font-medium"
+                  >
                     Forgot password?
                   </button>
                 </div>

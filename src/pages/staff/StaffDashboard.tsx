@@ -7,6 +7,10 @@ import { Link } from "react-router-dom";
 import { DashboardSkeleton } from "@/components/ui/loading-skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { 
+  FileText, UserPlus, Users, ClipboardCheck, Clock, Eye,
+  Users as UsersIcon, BookOpen, AlertTriangle
+} from "lucide-react";
 
 interface DashboardStats {
   totalStudents: number;
@@ -42,7 +46,6 @@ const StaffDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // Fetch counts in parallel
         const [studentsRes, classesRes, gradesRes, applicationsRes] = await Promise.all([
           supabase.from("students").select("id", { count: "exact", head: true }).eq("status", "active"),
           supabase.from("classes").select("id", { count: "exact", head: true }),
@@ -57,17 +60,10 @@ const StaffDashboard = () => {
           newApplications: applicationsRes.count || 0,
         });
 
-        // Fetch today's schedule
         const dayOfWeek = new Date().getDay();
         const { data: scheduleData } = await supabase
           .from("schedules")
-          .select(`
-            start_time,
-            end_time,
-            room,
-            classes (name),
-            subjects (name)
-          `)
+          .select(`start_time, end_time, room, classes (name), subjects (name)`)
           .eq("day_of_week", dayOfWeek)
           .order("start_time")
           .limit(5);
@@ -82,7 +78,6 @@ const StaffDashboard = () => {
             }))
           );
         } else {
-          // Fallback demo data
           setUpcomingClasses([
             { time: "09:00", className: "Grade 10A", subject: "Mathematics", students: 32 },
             { time: "11:00", className: "Grade 11B", subject: "Mathematics", students: 28 },
@@ -107,6 +102,13 @@ const StaffDashboard = () => {
     );
   }
 
+  const quickActions = [
+    { icon: FileText, label: "Upload Grades", href: "/staff/gradebook", color: "text-primary bg-primary/10" },
+    { icon: UserPlus, label: "Admissions", href: "/staff/admissions", color: "text-success bg-success/10" },
+    { icon: Users, label: "Students", href: "/staff/students", color: "text-warning bg-warning/10" },
+    { icon: ClipboardCheck, label: "Attendance", href: "/staff/attendance", color: "text-info bg-info/10" },
+  ];
+
   const pendingTasks = [
     { task: "Upload Term 3 grades", due: "Due in 2 days", priority: "high" as const },
     { task: `Review ${stats?.newApplications || 0} applications`, due: "Due in 5 days", priority: "medium" as const },
@@ -129,7 +131,7 @@ const StaffDashboard = () => {
           <div className="flex gap-3">
             <Link to="/staff/gradebook">
               <Button className="bg-gradient-primary">
-                <span className="material-symbols-outlined mr-2">edit_note</span>
+                <FileText className="w-4 h-4 mr-2" />
                 Upload Grades
               </Button>
             </Link>
@@ -146,34 +148,30 @@ const StaffDashboard = () => {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { icon: "edit_note", label: "Upload Grades", href: "/staff/gradebook", color: "primary" },
-            { icon: "person_add", label: "Admissions", href: "/staff/admissions", color: "success" },
-            { icon: "group", label: "Students", href: "/staff/students", color: "warning" },
-            { icon: "fact_check", label: "Attendance", href: "/staff/attendance", color: "info" },
-          ].map((action, idx) => (
-            <Link key={idx} to={action.href}>
-              <Card className="p-4 card-hover-subtle cursor-pointer group">
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <div className={`p-3 rounded-lg bg-${action.color}/10 group-hover:bg-${action.color} transition-colors`}>
-                    <span className={`material-symbols-outlined text-${action.color} group-hover:text-white text-2xl`}>
-                      {action.icon}
-                    </span>
+          {quickActions.map((action, idx) => {
+            const Icon = action.icon;
+            return (
+              <Link key={idx} to={action.href}>
+                <Card className="p-4 card-hover-subtle cursor-pointer group rounded-xl border-border/50 shadow-card">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <div className={`p-3 rounded-lg ${action.color} group-hover:scale-110 transition-transform`}>
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{action.label}</span>
                   </div>
-                  <span className="text-sm font-medium text-foreground">{action.label}</span>
-                </div>
-              </Card>
-            </Link>
-          ))}
+                </Card>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Main Dashboard Grid */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Today's Schedule */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 rounded-xl border-border/50 shadow-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">schedule</span>
+                <Clock className="w-5 h-5 text-primary" />
                 Today's Classes
               </CardTitle>
             </CardHeader>
@@ -185,7 +183,7 @@ const StaffDashboard = () => {
                     className={`flex items-center gap-4 p-4 rounded-lg border transition-colors ${
                       idx === 0 
                         ? "bg-primary/5 border-primary/20" 
-                        : "bg-secondary/50 border-border hover:bg-secondary"
+                        : "bg-muted/30 border-border hover:bg-muted/50"
                     }`}
                   >
                     <div className={`w-14 h-14 rounded-lg flex flex-col items-center justify-center ${
@@ -196,12 +194,12 @@ const StaffDashboard = () => {
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-foreground">{cls.className} - {cls.subject}</p>
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm">group</span>
+                        <UsersIcon className="w-3.5 h-3.5" />
                         {cls.students} students
                       </p>
                     </div>
                     <Button variant="outline" size="sm">
-                      <span className="material-symbols-outlined mr-1 text-sm">visibility</span>
+                      <Eye className="w-4 h-4 mr-1" />
                       View
                     </Button>
                   </div>
@@ -211,10 +209,10 @@ const StaffDashboard = () => {
           </Card>
 
           {/* Pending Tasks */}
-          <Card>
+          <Card className="rounded-xl border-border/50 shadow-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-warning">pending_actions</span>
+                <AlertTriangle className="w-5 h-5 text-warning" />
                 Pending Tasks
               </CardTitle>
             </CardHeader>
@@ -223,7 +221,7 @@ const StaffDashboard = () => {
                 {pendingTasks.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex items-start gap-3 p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
+                    className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
                   >
                     <div className={`w-2 h-2 rounded-full mt-2 ${
                       item.priority === "high" ? "bg-destructive" :
