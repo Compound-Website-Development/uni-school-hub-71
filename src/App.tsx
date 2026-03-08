@@ -23,6 +23,16 @@ import StaffClasses from "./pages/staff/StaffClasses";
 import StaffReports from "./pages/staff/StaffReports";
 import AdminStudentUpload from "./pages/staff/AdminStudentUpload";
 import AdminUsers from "./pages/staff/AdminUsers";
+// Superadmin pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminActivityLogs from "./pages/admin/AdminActivityLogs";
+import AdminStudentsPage from "./pages/admin/AdminStudentsPage";
+import AdminStaffPage from "./pages/admin/AdminStaffPage";
+import AdminAnnouncementsPage from "./pages/admin/AdminAnnouncementsPage";
+import AdminFeesPage from "./pages/admin/AdminFeesPage";
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import AdminApprovalsPage from "./pages/admin/AdminApprovalsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,83 +50,41 @@ const App = () => (
             <Route path="/apply" element={<Apply />} />
             
             {/* Student Portal */}
-            <Route path="/student" element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <StudentDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/grades" element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <StudentGrades />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/reports" element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <StudentReports />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/transcript" element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <StudentTranscript />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/schedule" element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <StudentSchedule />
-              </ProtectedRoute>
-            } />
-            <Route path="/student/settings" element={
-              <ProtectedRoute allowedRoles={["student"]}>
-                <StudentSettings />
-              </ProtectedRoute>
-            } />
+            <Route path="/student" element={<ProtectedRoute allowedRoles={["student"]}><StudentDashboard /></ProtectedRoute>} />
+            <Route path="/student/grades" element={<ProtectedRoute allowedRoles={["student"]}><StudentGrades /></ProtectedRoute>} />
+            <Route path="/student/reports" element={<ProtectedRoute allowedRoles={["student"]}><StudentReports /></ProtectedRoute>} />
+            <Route path="/student/transcript" element={<ProtectedRoute allowedRoles={["student"]}><StudentTranscript /></ProtectedRoute>} />
+            <Route path="/student/schedule" element={<ProtectedRoute allowedRoles={["student"]}><StudentSchedule /></ProtectedRoute>} />
+            <Route path="/student/settings" element={<ProtectedRoute allowedRoles={["student"]}><StudentSettings /></ProtectedRoute>} />
             
-            {/* Staff/Admin Portal */}
-            <Route path="/staff" element={
-              <ProtectedRoute allowedRoles={["teacher", "admin"]}>
-                <StaffDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/staff/gradebook" element={
-              <ProtectedRoute allowedRoles={["teacher", "admin"]}>
-                <StaffGradebook />
-              </ProtectedRoute>
-            } />
-            <Route path="/staff/admissions" element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <StaffAdmissions />
-              </ProtectedRoute>
-            } />
-            <Route path="/staff/students" element={
-              <ProtectedRoute allowedRoles={["teacher", "admin"]}>
-                <StaffStudents />
-              </ProtectedRoute>
-            } />
-            <Route path="/staff/attendance" element={
-              <ProtectedRoute allowedRoles={["teacher", "admin"]}>
-                <StaffAttendance />
-              </ProtectedRoute>
-            } />
-            <Route path="/staff/classes" element={
-              <ProtectedRoute allowedRoles={["teacher", "admin"]}>
-                <StaffClasses />
-              </ProtectedRoute>
-            } />
-            <Route path="/staff/reports" element={
-              <ProtectedRoute allowedRoles={["teacher", "admin"]}>
-                <StaffReports />
-              </ProtectedRoute>
-            } />
-            <Route path="/staff/admin/students" element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminStudentUpload />
-              </ProtectedRoute>
-            } />
-            <Route path="/staff/admin/users" element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminUsers />
-              </ProtectedRoute>
-            } />
+            {/* Staff Portal */}
+            <Route path="/staff" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffDashboard /></ProtectedRoute>} />
+            <Route path="/staff/gradebook" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffGradebook /></ProtectedRoute>} />
+            <Route path="/staff/admissions" element={<ProtectedRoute allowedRoles={["admin"]}><StaffAdmissions /></ProtectedRoute>} />
+            <Route path="/staff/students" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffStudents /></ProtectedRoute>} />
+            <Route path="/staff/attendance" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffAttendance /></ProtectedRoute>} />
+            <Route path="/staff/classes" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffClasses /></ProtectedRoute>} />
+            <Route path="/staff/reports" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffReports /></ProtectedRoute>} />
+            <Route path="/staff/admin/students" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStudentUpload /></ProtectedRoute>} />
+            <Route path="/staff/admin/users" element={<ProtectedRoute allowedRoles={["admin"]}><AdminUsers /></ProtectedRoute>} />
+            
+            {/* Superadmin Portal */}
+            <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AdminAnalytics /></ProtectedRoute>} />
+            <Route path="/admin/activity" element={<ProtectedRoute allowedRoles={["admin"]}><AdminActivityLogs /></ProtectedRoute>} />
+            <Route path="/admin/students" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStudentsPage /></ProtectedRoute>} />
+            <Route path="/admin/staff" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStaffPage /></ProtectedRoute>} />
+            <Route path="/admin/admissions" element={<ProtectedRoute allowedRoles={["admin"]}><StaffAdmissions /></ProtectedRoute>} />
+            <Route path="/admin/approvals" element={<ProtectedRoute allowedRoles={["admin"]}><AdminApprovalsPage /></ProtectedRoute>} />
+            <Route path="/admin/classes" element={<ProtectedRoute allowedRoles={["admin"]}><StaffClasses /></ProtectedRoute>} />
+            <Route path="/admin/gradebook" element={<ProtectedRoute allowedRoles={["admin"]}><StaffGradebook /></ProtectedRoute>} />
+            <Route path="/admin/attendance" element={<ProtectedRoute allowedRoles={["admin"]}><StaffAttendance /></ProtectedRoute>} />
+            <Route path="/admin/reports" element={<ProtectedRoute allowedRoles={["admin"]}><StaffReports /></ProtectedRoute>} />
+            <Route path="/admin/fees" element={<ProtectedRoute allowedRoles={["admin"]}><AdminFeesPage /></ProtectedRoute>} />
+            <Route path="/admin/announcements" element={<ProtectedRoute allowedRoles={["admin"]}><AdminAnnouncementsPage /></ProtectedRoute>} />
+            <Route path="/admin/bulk-upload" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStudentUpload /></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute allowedRoles={["admin"]}><AdminUsers /></ProtectedRoute>} />
+            <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettingsPage /></ProtectedRoute>} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

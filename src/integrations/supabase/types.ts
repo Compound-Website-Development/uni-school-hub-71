@@ -41,6 +41,39 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          ip_address: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       admin_permissions: {
         Row: {
           can_add_admins: boolean | null
@@ -74,6 +107,42 @@ export type Database = {
           id?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      announcements: {
+        Row: {
+          body: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_published: boolean | null
+          priority: string | null
+          target_role: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_published?: boolean | null
+          priority?: string | null
+          target_role?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_published?: boolean | null
+          priority?: string | null
+          target_role?: string | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -312,6 +381,102 @@ export type Database = {
           },
         ]
       }
+      fee_items: {
+        Row: {
+          amount: number
+          class_id: string | null
+          created_at: string | null
+          id: string
+          is_mandatory: boolean | null
+          name: string
+          term_id: string | null
+        }
+        Insert: {
+          amount?: number
+          class_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          name: string
+          term_id?: string | null
+        }
+        Update: {
+          amount?: number
+          class_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_mandatory?: boolean | null
+          name?: string
+          term_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_items_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fee_items_term_id_fkey"
+            columns: ["term_id"]
+            isOneToOne: false
+            referencedRelation: "terms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fee_payments: {
+        Row: {
+          amount_paid: number
+          created_at: string | null
+          fee_item_id: string
+          id: string
+          paid_at: string | null
+          payment_method: string | null
+          reference: string | null
+          status: string | null
+          student_id: string
+        }
+        Insert: {
+          amount_paid?: number
+          created_at?: string | null
+          fee_item_id: string
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          status?: string | null
+          student_id: string
+        }
+        Update: {
+          amount_paid?: number
+          created_at?: string | null
+          fee_item_id?: string
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          reference?: string | null
+          status?: string | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_payments_fee_item_id_fkey"
+            columns: ["fee_item_id"]
+            isOneToOne: false
+            referencedRelation: "fee_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fee_payments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       grades: {
         Row: {
           approved_by: string | null
@@ -513,6 +678,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      school_settings: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          updated_by: string | null
+          value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: string | null
+        }
+        Relationships: []
       }
       students: {
         Row: {

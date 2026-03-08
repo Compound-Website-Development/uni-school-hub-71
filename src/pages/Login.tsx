@@ -67,7 +67,8 @@ const Login = () => {
   useEffect(() => {
     if (user && !authLoading) {
       if (userRole === "student") navigate("/student");
-      else if (userRole === "teacher" || userRole === "admin") navigate("/staff");
+      else if (userRole === "admin") navigate("/admin");
+      else if (userRole === "teacher") navigate("/staff");
     }
   }, [user, userRole, authLoading, navigate]);
 
