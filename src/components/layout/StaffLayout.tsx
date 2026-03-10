@@ -12,8 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import npsLogo from "@/assets/nps-logo.png";
 import { 
   LayoutDashboard, Users, BookOpen, ClipboardCheck, FileText,
-  UserPlus, Settings, LogOut, Search, Bell, BarChart2,
-  ShieldCheck, Upload, Monitor
+  UserPlus, LogOut, Search, BarChart2, Monitor, User
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { cn } from "@/lib/utils";
@@ -33,19 +32,8 @@ const teacherNavItems = [
   { icon: FileText, label: "Gradebook", href: "/staff/gradebook" },
   { icon: Monitor, label: "CBT Exams", href: "/staff/cbt" },
   { icon: BarChart2, label: "Reports", href: "/staff/reports" },
-];
-
-const adminNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/staff" },
   { icon: UserPlus, label: "Admissions", href: "/staff/admissions" },
-  { icon: Users, label: "Students", href: "/staff/students" },
-  { icon: BookOpen, label: "Classes", href: "/staff/classes" },
-  { icon: ClipboardCheck, label: "Attendance", href: "/staff/attendance" },
-  { icon: FileText, label: "Gradebook", href: "/staff/gradebook" },
-  { icon: BarChart2, label: "Reports", href: "/staff/reports" },
-  { icon: Upload, label: "Bulk Upload", href: "/staff/admin/students" },
-  { icon: ShieldCheck, label: "Manage Users", href: "/staff/admin/users" },
-  { icon: Settings, label: "Settings", href: "/staff/settings" },
+  { icon: User, label: "My Profile", href: "/staff/profile" },
 ];
 
 export const StaffLayout = ({ 
@@ -63,11 +51,10 @@ export const StaffLayout = ({
 
   const staffName = teacherData ? `${teacherData.first_name} ${teacherData.last_name}` : "Staff";
   const staffInitials = teacherData ? `${teacherData.first_name[0]}${teacherData.last_name[0]}` : "ST";
-  const navItems = userRole === "admin" ? adminNavItems : teacherNavItems;
 
   const SidebarNav = ({ onItemClick }: { onItemClick?: () => void }) => (
     <div className="space-y-1">
-      {navItems.map((item) => {
+      {teacherNavItems.map((item) => {
         const isActive = location.pathname === item.href;
         const Icon = item.icon;
         return (
@@ -92,10 +79,8 @@ export const StaffLayout = ({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile Header */}
       <MobileHeader title={title || "Staff Portal"} onMenuClick={() => setSidebarOpen(true)} showSearch={showSearch} searchPlaceholder={searchPlaceholder} />
 
-      {/* Mobile Sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="w-72 p-0 bg-primary border-r-0">
           <SheetHeader className="p-6">
@@ -128,9 +113,7 @@ export const StaffLayout = ({
         </SheetContent>
       </Sheet>
 
-      {/* Desktop Layout */}
       <div className="hidden md:flex h-screen w-full overflow-hidden">
-        {/* Desktop Sidebar */}
         <aside className="w-[260px] bg-primary flex flex-col shrink-0">
           <div className="p-5 flex items-center gap-3">
             <img src={npsLogo} alt="NPS" className="h-8 w-auto" />
@@ -161,7 +144,6 @@ export const StaffLayout = ({
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 flex flex-col overflow-hidden">
           <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
             <div className="flex items-center gap-4">
@@ -181,7 +163,6 @@ export const StaffLayout = ({
         </main>
       </div>
 
-      {/* Mobile Content */}
       <div className="md:hidden">
         <div className="p-4">{children}</div>
       </div>
