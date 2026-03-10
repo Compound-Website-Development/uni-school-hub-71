@@ -18,12 +18,14 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
         return;
       }
 
+      // Admin can access all portals (staff + student views open in new tabs)
+      if (userRole === "admin") {
+        return; // Admin has universal access
+      }
+
       if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-        // Redirect to appropriate portal based on role
         if (userRole === "student") {
           navigate("/student", { replace: true });
-        } else if (userRole === "admin") {
-          navigate("/admin", { replace: true });
         } else {
           navigate("/staff", { replace: true });
         }
@@ -42,13 +44,12 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
-  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-    return null;
-  }
+  // Admin can access everything
+  if (userRole === "admin") return <>{children}</>;
+
+  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) return null;
 
   return <>{children}</>;
 };
