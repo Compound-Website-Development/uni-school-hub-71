@@ -10,9 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import npsLogo from "@/assets/nps-logo.png";
 import {
   LayoutDashboard, Users, GraduationCap, Briefcase, ShieldCheck,
-  CreditCard, Megaphone, Settings, LogOut, Search, Bell, BarChart2,
-  Activity, UserPlus, BookOpen, ClipboardCheck, FileText, Upload,
-  PieChart, Database, Globe, Lock
+  CreditCard, Megaphone, Settings, LogOut, Search, BarChart2,
+  Activity, Upload, Database, ExternalLink
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
@@ -29,7 +28,7 @@ const adminNavSections = [
     label: "Overview",
     items: [
       { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
-      { icon: PieChart, label: "Analytics", href: "/admin/analytics" },
+      { icon: BarChart2, label: "Analytics", href: "/admin/analytics" },
       { icon: Activity, label: "Activity Logs", href: "/admin/activity" },
     ],
   },
@@ -38,17 +37,7 @@ const adminNavSections = [
     items: [
       { icon: GraduationCap, label: "Students", href: "/admin/students" },
       { icon: Briefcase, label: "Staff", href: "/admin/staff" },
-      { icon: UserPlus, label: "Admissions", href: "/admin/admissions" },
       { icon: ShieldCheck, label: "Pending Approvals", href: "/admin/approvals" },
-    ],
-  },
-  {
-    label: "Academics",
-    items: [
-      { icon: BookOpen, label: "Classes", href: "/admin/classes" },
-      { icon: FileText, label: "Gradebook", href: "/admin/gradebook" },
-      { icon: ClipboardCheck, label: "Attendance", href: "/admin/attendance" },
-      { icon: BarChart2, label: "Reports", href: "/admin/reports" },
     ],
   },
   {
@@ -64,22 +53,30 @@ const adminNavSections = [
       { icon: Upload, label: "Bulk Upload", href: "/admin/bulk-upload" },
       { icon: Database, label: "Manage Users", href: "/admin/users" },
       { icon: Settings, label: "School Settings", href: "/admin/settings" },
-      { icon: Globe, label: "Staff Portal", href: "/staff" },
     ],
   },
+];
+
+const portalLinks = [
+  { label: "Staff Portal", path: "/staff" },
+  { label: "Student Portal", path: "/student" },
 ];
 
 export const AdminLayout = ({
   children, title, showSearch = false, searchPlaceholder = "Search..."
 }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { signOut, teacherData, userRole } = useAuth();
+  const { signOut, teacherData } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = async () => {
     await signOut();
     navigate("/login");
+  };
+
+  const openPortal = (path: string) => {
+    window.open(window.location.origin + path, "_blank");
   };
 
   const staffName = teacherData ? `${teacherData.first_name} ${teacherData.last_name}` : "Admin";
@@ -116,6 +113,25 @@ export const AdminLayout = ({
           </div>
         </div>
       ))}
+
+      {/* Portal Switcher */}
+      <div>
+        <p className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-[0.15em] mb-1.5 px-4">
+          Portals
+        </p>
+        <div className="space-y-0.5">
+          {portalLinks.map((portal) => (
+            <button
+              key={portal.path}
+              onClick={() => { openPortal(portal.path); onItemClick?.(); }}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-[13px] text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 w-full text-left"
+            >
+              <ExternalLink className="w-4 h-4 shrink-0" />
+              <span>{portal.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 

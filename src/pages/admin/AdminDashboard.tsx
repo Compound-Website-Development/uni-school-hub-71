@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Users, GraduationCap, Briefcase, CreditCard, Megaphone,
   UserPlus, TrendingUp, TrendingDown, BarChart2, Activity,
-  Clock, CheckCircle, AlertCircle, ArrowRight
+  CheckCircle, ArrowRight, ExternalLink, Download
 } from "lucide-react";
 
 interface DashboardStats {
@@ -34,12 +34,11 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [studentsRes, teachersRes, classesRes, appsRes, gradesRes, announcementsRes] = await Promise.all([
+        const [studentsRes, teachersRes, classesRes, appsRes, announcementsRes] = await Promise.all([
           supabase.from("students").select("id", { count: "exact", head: true }).eq("status", "active"),
           supabase.from("teachers").select("id", { count: "exact", head: true }).eq("status", "active"),
           supabase.from("classes").select("id", { count: "exact", head: true }),
           supabase.from("applications").select("id", { count: "exact", head: true }).eq("status", "pending"),
-          supabase.from("grades").select("id", { count: "exact", head: true }).eq("status", "draft"),
           supabase.from("announcements").select("id", { count: "exact", head: true }),
         ]);
 
@@ -54,7 +53,6 @@ const AdminDashboard = () => {
           announcementsSent: announcementsRes.count || 0,
         });
 
-        // Fetch recent activity
         const { data: activityData } = await supabase
           .from("activity_logs")
           .select("*")
@@ -71,6 +69,10 @@ const AdminDashboard = () => {
 
     fetchData();
   }, []);
+
+  const openPortal = (path: string) => {
+    window.open(window.location.origin + path, "_blank");
+  };
 
   const statCards = [
     { icon: GraduationCap, label: "Total Students", value: stats?.totalStudents || 0, color: "text-primary", bg: "bg-primary/10", trend: "+12%", trendUp: true },
@@ -89,9 +91,9 @@ const AdminDashboard = () => {
   const quickActions = [
     { icon: GraduationCap, label: "Manage Students", href: "/admin/students", color: "bg-primary/10 text-primary" },
     { icon: Briefcase, label: "Manage Staff", href: "/admin/staff", color: "bg-info/10 text-info" },
-    { icon: UserPlus, label: "Admissions", href: "/admin/admissions", color: "bg-warning/10 text-warning" },
     { icon: Megaphone, label: "Announcements", href: "/admin/announcements", color: "bg-accent/10 text-accent" },
     { icon: CreditCard, label: "Fee Management", href: "/admin/fees", color: "bg-success/10 text-success" },
+    { icon: Download, label: "Reports & Export", href: "/admin/reports", color: "bg-warning/10 text-warning" },
     { icon: Activity, label: "Activity Logs", href: "/admin/activity", color: "bg-destructive/10 text-destructive" },
   ];
 
@@ -116,6 +118,34 @@ const AdminDashboard = () => {
         <div>
           <h2 className="text-2xl font-bold text-foreground">Welcome back, {userName} 👋</h2>
           <p className="text-muted-foreground text-sm mt-1">Here's what's happening across your school today.</p>
+        </div>
+
+        {/* Portal Switcher */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/staff")}>
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-info/10">
+                <Briefcase className="w-6 h-6 text-info" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-foreground">Staff Portal</p>
+                <p className="text-xs text-muted-foreground">Open staff dashboard in a new tab</p>
+              </div>
+              <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            </CardContent>
+          </Card>
+          <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/student")}>
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-primary/10">
+                <GraduationCap className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-foreground">Student Portal</p>
+                <p className="text-xs text-muted-foreground">Preview student dashboard in a new tab</p>
+              </div>
+              <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            </CardContent>
+          </Card>
         </div>
 
         {/* Primary Stats */}
@@ -164,7 +194,6 @@ const AdminDashboard = () => {
 
         {/* Quick Actions + Recent Activity */}
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Quick Actions */}
           <Card className="lg:col-span-1">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold">Quick Actions</CardTitle>
@@ -187,7 +216,6 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Recent Activity */}
           <Card className="lg:col-span-2">
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
               <CardTitle className="text-sm font-semibold">Recent Activity</CardTitle>
