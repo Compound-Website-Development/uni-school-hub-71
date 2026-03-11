@@ -5,57 +5,48 @@ import { MobileHeader } from "./MobileHeader";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import npsLogo from "@/assets/nps-logo.png";
 import {
-  LayoutDashboard, Users, BookOpen, ClipboardCheck, FileText,
-  UserPlus, LogOut, Search, BarChart2, Monitor, User,
-  ClipboardList, BookOpenCheck, MessageSquare, MessagesSquare, CalendarOff
+  LayoutDashboard, BookOpen, Calendar, CreditCard, MessageSquare,
+  MessagesSquare, LogOut
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { cn } from "@/lib/utils";
 
-interface StaffLayoutProps {
+interface ParentLayoutProps {
   children: ReactNode;
   title?: string;
-  showSearch?: boolean;
-  searchPlaceholder?: string;
 }
 
-const teacherNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/staff" },
-  { icon: Users, label: "Students", href: "/staff/students" },
-  { icon: BookOpen, label: "Classes", href: "/staff/classes" },
-  { icon: ClipboardCheck, label: "Attendance", href: "/staff/attendance" },
-  { icon: FileText, label: "Gradebook", href: "/staff/gradebook" },
-  { icon: Monitor, label: "CBT Exams", href: "/staff/cbt" },
-  { icon: ClipboardList, label: "Assignments", href: "/staff/assignments" },
-  { icon: BookOpenCheck, label: "Lesson Plans", href: "/staff/lesson-plans" },
-  { icon: BarChart2, label: "Reports", href: "/staff/reports" },
-  { icon: UserPlus, label: "Admissions", href: "/staff/admissions" },
-  { icon: MessageSquare, label: "Messages", href: "/staff/messages" },
-  { icon: MessagesSquare, label: "Forum", href: "/staff/forum" },
-  { icon: CalendarOff, label: "Leave", href: "/staff/leave" },
-  { icon: User, label: "My Profile", href: "/staff/profile" },
+const navItems = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/parent" },
+  { icon: BookOpen, label: "Child's Grades", href: "/parent/grades" },
+  { icon: Calendar, label: "Attendance", href: "/parent/attendance" },
+  { icon: CreditCard, label: "Fees", href: "/parent/fees" },
+  { icon: MessageSquare, label: "Messages", href: "/parent/messages" },
+  { icon: MessagesSquare, label: "Forum", href: "/parent/forum" },
 ];
 
-export const StaffLayout = ({
-  children, title, showSearch = false, searchPlaceholder = "Search..."
-}: StaffLayoutProps) => {
+export const ParentLayout = ({ children, title }: ParentLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { signOut, teacherData, userRole } = useAuth();
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleLogout = async () => { await signOut(); navigate("/login"); };
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/login");
+  };
 
-  const staffName = teacherData ? `${teacherData.first_name} ${teacherData.last_name}` : "Staff";
-  const staffInitials = teacherData ? `${teacherData.first_name[0]}${teacherData.last_name[0]}` : "ST";
+  const parentName = user?.user_metadata?.first_name
+    ? `${user.user_metadata.first_name} ${user.user_metadata.last_name || ""}`
+    : "Parent";
+  const initials = parentName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase();
 
   const SidebarNav = ({ onItemClick }: { onItemClick?: () => void }) => (
     <div className="space-y-1">
-      {teacherNavItems.map((item) => {
+      {navItems.map((item) => {
         const isActive = location.pathname === item.href;
         const Icon = item.icon;
         return (
@@ -76,28 +67,28 @@ export const StaffLayout = ({
 
   return (
     <div className="min-h-screen bg-background">
-      <MobileHeader title={title || "Staff Portal"} onMenuClick={() => setSidebarOpen(true)} showSearch={showSearch} searchPlaceholder={searchPlaceholder} />
+      <MobileHeader title={title || "Parent Portal"} onMenuClick={() => setSidebarOpen(true)} />
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="w-72 p-0 bg-primary border-r-0">
           <SheetHeader className="p-6">
             <div className="flex items-center gap-3">
               <img src={npsLogo} alt="NPS" className="h-8 w-auto" />
-              <SheetTitle className="text-primary-foreground text-lg">NPS Portal</SheetTitle>
+              <SheetTitle className="text-primary-foreground text-lg">Parent Portal</SheetTitle>
             </div>
           </SheetHeader>
           <div className="flex flex-col h-[calc(100%-5rem)]">
             <div className="px-4 pb-4 border-b border-sidebar-border">
               <div className="flex items-center gap-3">
                 <Avatar className="border-2 border-primary-foreground/20">
-                  <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-bold">{staffInitials}</AvatarFallback>
+                  <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-bold">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-primary-foreground truncate text-sm">{staffName}</p>
-                  <Badge variant="secondary" className="text-xs capitalize bg-accent text-accent-foreground">{userRole || "Staff"}</Badge>
+                  <p className="font-medium text-primary-foreground truncate text-sm">{parentName}</p>
+                  <Badge className="text-xs bg-accent text-accent-foreground">Parent</Badge>
                 </div>
               </div>
             </div>
-            <nav className="flex-1 p-3 overflow-y-auto scrollbar-thin"><SidebarNav onItemClick={() => setSidebarOpen(false)} /></nav>
+            <nav className="flex-1 p-3 overflow-y-auto"><SidebarNav onItemClick={() => setSidebarOpen(false)} /></nav>
             <div className="p-4 border-t border-sidebar-border">
               <Button variant="ghost" className="w-full justify-start text-primary-foreground/70 hover:text-primary-foreground hover:bg-sidebar-accent" onClick={handleLogout}>
                 <LogOut className="w-5 h-5 mr-3" /> Sign Out
@@ -110,16 +101,16 @@ export const StaffLayout = ({
         <aside className="w-[260px] bg-primary flex flex-col shrink-0">
           <div className="p-5 flex items-center gap-3">
             <img src={npsLogo} alt="NPS" className="h-8 w-auto" />
-            <span className="text-lg font-bold text-primary-foreground">NPS Portal</span>
+            <span className="text-lg font-bold text-primary-foreground">Parent Portal</span>
           </div>
           <div className="px-4 pb-4 border-b border-sidebar-border">
             <div className="flex items-center gap-3">
               <Avatar className="border-2 border-primary-foreground/20">
-                <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-bold text-sm">{staffInitials}</AvatarFallback>
+                <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-bold text-sm">{initials}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-primary-foreground truncate text-sm">{staffName}</p>
-                <Badge variant="secondary" className="text-xs capitalize bg-accent text-accent-foreground">{userRole || "Staff"}</Badge>
+                <p className="font-medium text-primary-foreground truncate text-sm">{parentName}</p>
+                <Badge className="text-xs bg-accent text-accent-foreground">Parent</Badge>
               </div>
             </div>
           </div>
@@ -135,18 +126,8 @@ export const StaffLayout = ({
         </aside>
         <main className="flex-1 flex flex-col overflow-hidden">
           <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
-            <div className="flex items-center gap-4">
-              {title && <h1 className="text-xl font-bold text-foreground">{title}</h1>}
-            </div>
-            <div className="flex items-center gap-4">
-              {showSearch && (
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input placeholder={searchPlaceholder} className="pl-10 w-64 rounded-md" />
-                </div>
-              )}
-              <NotificationDropdown />
-            </div>
+            <div>{title && <h1 className="text-xl font-bold text-foreground">{title}</h1>}</div>
+            <NotificationDropdown />
           </header>
           <div className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</div>
         </main>

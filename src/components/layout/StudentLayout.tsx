@@ -1,16 +1,15 @@
 import { ReactNode, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { 
-  Sheet, SheetContent, SheetHeader, SheetTitle 
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import npsLogo from "@/assets/nps-logo.png";
-import { 
-  Home, BookOpen, FileText, Calendar, User,
-  LogOut, Menu, Bell, CreditCard, Megaphone, Monitor
+import {
+  Home, BookOpen, FileText, Calendar, User, LogOut, Menu, Bell,
+  CreditCard, Megaphone, Monitor, ClipboardList, BookOpenCheck,
+  CalendarDays, AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +26,10 @@ const navItems = [
   { icon: CreditCard, label: "Fee Payments", href: "/student/fees" },
   { icon: Megaphone, label: "Announcements", href: "/student/announcements" },
   { icon: Monitor, label: "CBT Exams", href: "/student/exams" },
+  { icon: ClipboardList, label: "Homework", href: "/student/homework" },
+  { icon: BookOpenCheck, label: "Library", href: "/student/library" },
+  { icon: CalendarDays, label: "Calendar", href: "/student/calendar" },
+  { icon: AlertTriangle, label: "Complaints", href: "/student/complaints" },
   { icon: User, label: "My Profile", href: "/student/settings" },
 ];
 
@@ -36,10 +39,7 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleLogout = async () => {
-    await signOut();
-    navigate("/login");
-  };
+  const handleLogout = async () => { await signOut(); navigate("/login"); };
 
   const studentName = studentData ? `${studentData.first_name} ${studentData.last_name}` : "Student";
   const studentInitials = studentData ? `${studentData.first_name?.[0] || ''}${studentData.last_name?.[0] || ''}` : "ST";
@@ -50,19 +50,14 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
         const isActive = location.pathname === item.href;
         const Icon = item.icon;
         return (
-          <Link
-            key={item.href}
-            to={item.href}
-            onClick={onItemClick}
+          <Link key={item.href} to={item.href} onClick={onItemClick}
             className={cn(
               "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-sm",
               isActive
                 ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border-l-4 border-primary-foreground"
                 : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-            )}
-          >
-            <Icon className="w-5 h-5 shrink-0" />
-            <span>{item.label}</span>
+            )}>
+            <Icon className="w-5 h-5 shrink-0" /><span>{item.label}</span>
           </Link>
         );
       })}
@@ -71,23 +66,15 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 z-40 glass border-b border-border/50 safe-top">
         <div className="flex items-center justify-between px-4 h-16">
-          <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 rounded-lg hover:bg-muted transition-colors">
-            <Menu className="w-6 h-6 text-foreground" />
-          </button>
-          <div className="flex items-center gap-2">
-            <img src={npsLogo} alt="NPS" className="h-8 w-auto" />
-          </div>
+          <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 rounded-lg hover:bg-muted transition-colors"><Menu className="w-6 h-6 text-foreground" /></button>
+          <div className="flex items-center gap-2"><img src={npsLogo} alt="NPS" className="h-8 w-auto" /></div>
           <button className="p-2 -mr-2 rounded-lg hover:bg-muted transition-colors relative">
-            <Bell className="w-5 h-5 text-muted-foreground" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
+            <Bell className="w-5 h-5 text-muted-foreground" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
           </button>
         </div>
       </header>
-
-      {/* Mobile Sidebar */}
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="w-72 p-0 bg-primary border-r-0">
           <SheetHeader className="p-6">
@@ -117,8 +104,6 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
           </div>
         </SheetContent>
       </Sheet>
-
-      {/* Desktop Layout */}
       <div className="hidden md:flex h-screen w-full overflow-hidden">
         <aside className="w-[260px] bg-primary flex flex-col shrink-0">
           <div className="p-5 flex items-center gap-3">
@@ -150,13 +135,7 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
           <div className="p-6 lg:p-8 max-w-6xl">{children}</div>
         </main>
       </div>
-
-      {/* Mobile Content */}
-      <div className="md:hidden pt-16 pb-20">
-        <div className="p-4">{children}</div>
-      </div>
-
-      {/* Mobile Bottom Nav */}
+      <div className="md:hidden pt-16 pb-20"><div className="p-4">{children}</div></div>
       <nav className="md:hidden fixed bottom-4 left-4 right-4 z-50 bg-card rounded-2xl shadow-lg border border-border/50 safe-bottom">
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.slice(0, 5).map((item) => {

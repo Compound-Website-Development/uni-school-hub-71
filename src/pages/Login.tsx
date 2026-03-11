@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   Loader2,
   ArrowLeft,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -48,7 +49,7 @@ const Login = () => {
   const { signIn, signUp, user, userRole, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
-  const [userType, setUserType] = useState<"student" | "staff" | null>(null);
+  const [userType, setUserType] = useState<"student" | "staff" | "parent" | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   
   const [loginErrors, setLoginErrors] = useState<LoginErrors>({});
@@ -70,6 +71,7 @@ const Login = () => {
       if (userRole === "student") navigate("/student", { replace: true });
       else if (userRole === "admin") navigate("/admin", { replace: true });
       else if (userRole === "teacher") navigate("/staff", { replace: true });
+      else if (userRole === "parent") navigate("/parent", { replace: true });
     }
   }, [user, userRole, authLoading, navigate]);
 
@@ -126,7 +128,7 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    const role = userType === "staff" ? "teacher" : "student";
+    const role = userType === "staff" ? "teacher" : userType === "parent" ? "parent" : "student";
     const { error } = await signUp(registerForm.email, registerForm.password, {
       first_name: registerForm.firstName,
       last_name: registerForm.lastName,
@@ -275,6 +277,19 @@ const Login = () => {
                   <div>
                     <p className="font-bold text-foreground">I am a Staff Member</p>
                     <p className="text-sm text-muted-foreground">Manage classes, results & students</p>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => setUserType("parent")}
+                  className="w-full p-5 rounded-xl border-2 border-border hover:border-primary bg-card hover:bg-primary/5 transition-all flex items-center gap-4 text-left group"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Users className="w-7 h-7 text-accent group-hover:text-primary-foreground transition-colors" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground">I am a Parent</p>
+                    <p className="text-sm text-muted-foreground">Monitor your child's progress</p>
                   </div>
                 </button>
               </div>
