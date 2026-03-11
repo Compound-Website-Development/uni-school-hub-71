@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  allowedRoles?: ("student" | "teacher" | "admin")[];
+  allowedRoles?: ("student" | "teacher" | "admin" | "parent")[];
 }
 
 export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
@@ -17,18 +17,13 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
         navigate("/login", { replace: true });
         return;
       }
-
-      // Admin can access all portals (staff + student views open in new tabs)
-      if (userRole === "admin") {
-        return; // Admin has universal access
-      }
+      // Admin can access all portals
+      if (userRole === "admin") return;
 
       if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-        if (userRole === "student") {
-          navigate("/student", { replace: true });
-        } else {
-          navigate("/staff", { replace: true });
-        }
+        if (userRole === "student") navigate("/student", { replace: true });
+        else if (userRole === "parent") navigate("/parent", { replace: true });
+        else navigate("/staff", { replace: true });
       }
     }
   }, [user, isLoading, userRole, allowedRoles, navigate]);
@@ -45,10 +40,7 @@ export const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   if (!user) return null;
-
-  // Admin can access everything
   if (userRole === "admin") return <>{children}</>;
-
   if (allowedRoles && userRole && !allowedRoles.includes(userRole)) return null;
 
   return <>{children}</>;

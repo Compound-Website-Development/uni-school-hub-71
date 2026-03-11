@@ -278,6 +278,19 @@ const Login = () => {
                     <p className="text-sm text-muted-foreground">Manage classes, results & students</p>
                   </div>
                 </button>
+
+                <button
+                  onClick={() => setUserType("parent")}
+                  className="w-full p-5 rounded-xl border-2 border-border hover:border-primary bg-card hover:bg-primary/5 transition-all flex items-center gap-4 text-left group"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Users className="w-7 h-7 text-accent group-hover:text-primary-foreground transition-colors" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground">I am a Parent</p>
+                    <p className="text-sm text-muted-foreground">Monitor your child's progress</p>
+                  </div>
+                </button>
               </div>
             ) : (
               /* Registration Form */
