@@ -70,6 +70,7 @@ const Login = () => {
       if (userRole === "student") navigate("/student", { replace: true });
       else if (userRole === "admin") navigate("/admin", { replace: true });
       else if (userRole === "teacher") navigate("/staff", { replace: true });
+      else if (userRole === "parent") navigate("/parent", { replace: true });
     }
   }, [user, userRole, authLoading, navigate]);
 
