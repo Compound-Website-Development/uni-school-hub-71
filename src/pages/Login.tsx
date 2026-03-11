@@ -127,7 +127,7 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    const role = userType === "staff" ? "teacher" : "student";
+    const role = userType === "staff" ? "teacher" : userType === "parent" ? "parent" : "student";
     const { error } = await signUp(registerForm.email, registerForm.password, {
       first_name: registerForm.firstName,
       last_name: registerForm.lastName,
