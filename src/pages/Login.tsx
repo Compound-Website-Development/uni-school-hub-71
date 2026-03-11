@@ -48,7 +48,7 @@ const Login = () => {
   const { signIn, signUp, user, userRole, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
-  const [userType, setUserType] = useState<"student" | "staff" | null>(null);
+  const [userType, setUserType] = useState<"student" | "staff" | "parent" | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   
   const [loginErrors, setLoginErrors] = useState<LoginErrors>({});
