@@ -38,6 +38,7 @@ const navItems = [
 export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { signOut, studentData } = useAuth();
+  useRealtimeNotifications();
   const navigate = useNavigate();
   const location = useLocation();
 
