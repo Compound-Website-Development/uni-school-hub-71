@@ -59,6 +59,10 @@ const StaffGradebook = () => {
   const [grades, setGrades] = useState<Record<string, { ca: number | null; exam: number | null; grade_id?: string }>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [aiDialogOpen, setAiDialogOpen] = useState(false);
+  const [aiComment, setAiComment] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedStudentForAI, setSelectedStudentForAI] = useState<StudentGrade | null>(null);
 
   // Fetch initial data
   useEffect(() => {
