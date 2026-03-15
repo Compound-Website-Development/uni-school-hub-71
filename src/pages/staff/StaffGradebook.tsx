@@ -320,11 +320,11 @@ const StaffGradebook = () => {
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={handleSave} disabled={isSaving || !selectedClass || !selectedSubject}>
-              <span className="material-symbols-outlined mr-2 text-lg">save</span>
+              <Save className="w-4 h-4 mr-2" />
               Save Draft
             </Button>
             <Button onClick={handleSubmitForApproval} disabled={isSaving || !selectedClass || !selectedSubject}>
-              <span className="material-symbols-outlined mr-2 text-lg">send</span>
+              <Send className="w-4 h-4 mr-2" />
               Submit
             </Button>
           </div>
