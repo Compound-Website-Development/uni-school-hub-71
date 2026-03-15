@@ -441,7 +441,7 @@ const StaffGradebook = () => {
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-24">Exam (70)</th>
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-20">Total</th>
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-20">Grade</th>
-                    </tr>
+                      <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-16">AI</th>
                   </thead>
                   <tbody>
                     {filteredStudents.map((student) => {
