@@ -485,6 +485,18 @@ const StaffGradebook = () => {
                               {letterGrade}
                             </span>
                           </td>
+                          <td className="py-3 px-4 text-center">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              title="Generate AI Comment"
+                              onClick={() => generateAIComment(student)}
+                              disabled={!grades[student.id]?.exam}
+                            >
+                              <Sparkles className="w-4 h-4 text-accent" />
+                            </Button>
+                          </td>
                         </tr>
                       );
                     })}
