@@ -155,6 +155,7 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
           })}
         </div>
       </nav>
+      <AIChatWidget />
     </div>
   );
 };
