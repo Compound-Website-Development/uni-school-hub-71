@@ -506,6 +506,53 @@ const StaffGradebook = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* AI Comment Dialog */}
+        <Dialog open={aiDialogOpen} onOpenChange={setAiDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-accent" />
+                AI Report Card Comment
+              </DialogTitle>
+            </DialogHeader>
+            {selectedStudentForAI && (
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Student: <span className="font-medium text-foreground">{selectedStudentForAI.student_name}</span>
+                </p>
+                {isGenerating ? (
+                  <div className="flex items-center gap-2 py-8 justify-center">
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    <span className="text-sm text-muted-foreground">Generating comment...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Textarea
+                      value={aiComment}
+                      onChange={(e) => setAiComment(e.target.value)}
+                      rows={5}
+                      className="text-sm"
+                      placeholder="AI-generated comment will appear here..."
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button variant="outline" onClick={() => generateAIComment(selectedStudentForAI)}>
+                        <Sparkles className="w-4 h-4 mr-1" /> Regenerate
+                      </Button>
+                      <Button onClick={() => {
+                        navigator.clipboard.writeText(aiComment);
+                        toast({ title: "Copied!", description: "Comment copied to clipboard" });
+                        setAiDialogOpen(false);
+                      }}>
+                        Copy Comment
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </StaffLayout>
   );
