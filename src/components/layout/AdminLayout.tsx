@@ -84,6 +84,7 @@ const portalLinks = [
 export const AdminLayout = ({
   children, title, showSearch = false, searchPlaceholder = "Search..."
 }: AdminLayoutProps) => {
+  useRealtimeNotifications();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { signOut, teacherData } = useAuth();
   const navigate = useNavigate();

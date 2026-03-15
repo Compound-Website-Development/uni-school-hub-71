@@ -32,6 +32,7 @@ const navItems = [
 export const ParentLayout = ({ children, title }: ParentLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { signOut, user } = useAuth();
+  useRealtimeNotifications();
   const navigate = useNavigate();
   const location = useLocation();
 

@@ -44,6 +44,7 @@ const teacherNavItems = [
 export const StaffLayout = ({
   children, title, showSearch = false, searchPlaceholder = "Search..."
 }: StaffLayoutProps) => {
+  useRealtimeNotifications();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { signOut, teacherData, userRole } = useAuth();
   const navigate = useNavigate();
