@@ -261,6 +261,54 @@ const StaffGradebook = () => {
     }
   };
 
+  const generateAIComment = async (student: StudentGrade) => {
+    setSelectedStudentForAI(student);
+    setAiDialogOpen(true);
+    setIsGenerating(true);
+    setAiComment("");
+
+    const grade = grades[student.id];
+    const total = grade ? (grade.ca || 0) + (grade.exam || 0) : 0;
+    const subjectName = subjects.find(s => s.id === selectedSubject)?.name || "Subject";
+
+    try {
+      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          type: "report_comment",
+          messages: [{ role: "user", content: `Generate a report card comment for this student.` }],
+          studentData: {
+            name: student.student_name,
+            subject: subjectName,
+            ca_score: grade?.ca,
+            exam_score: grade?.exam,
+            total_score: total,
+            max_total: 100,
+          },
+        }),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        toast({ title: "AI Error", description: err.error || "Could not generate comment", variant: "destructive" });
+        setIsGenerating(false);
+        return;
+      }
+
+      const data = await resp.json();
+      setAiComment(data.comment || "Unable to generate comment.");
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Error", description: "Failed to connect to AI service", variant: "destructive" });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <StaffLayout title="Gradebook">
       <div className="space-y-6">
