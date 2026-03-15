@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { MobileHeader } from "./MobileHeader";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ const teacherNavItems = [
 export const StaffLayout = ({
   children, title, showSearch = false, searchPlaceholder = "Search..."
 }: StaffLayoutProps) => {
+  useRealtimeNotifications();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { signOut, teacherData, userRole } = useAuth();
   const navigate = useNavigate();

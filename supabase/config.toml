@@ -1,1 +1,7 @@
 project_id = "ntckbcwphneizverhjav"
+
+[functions.seed-admin]
+verify_jwt = false
+
+[functions.ai-assistant]
+verify_jwt = false

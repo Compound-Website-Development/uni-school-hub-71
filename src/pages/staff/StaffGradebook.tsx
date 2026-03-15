@@ -9,7 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { InlineEmptyState } from "@/components/ui/empty-state";
-import { BookOpen, Search } from "lucide-react";
+import { BookOpen, Search, Save, Send, Sparkles, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ClassOption {
   id: string;
@@ -57,6 +59,10 @@ const StaffGradebook = () => {
   const [grades, setGrades] = useState<Record<string, { ca: number | null; exam: number | null; grade_id?: string }>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [aiDialogOpen, setAiDialogOpen] = useState(false);
+  const [aiComment, setAiComment] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedStudentForAI, setSelectedStudentForAI] = useState<StudentGrade | null>(null);
 
   // Fetch initial data
   useEffect(() => {
@@ -255,6 +261,54 @@ const StaffGradebook = () => {
     }
   };
 
+  const generateAIComment = async (student: StudentGrade) => {
+    setSelectedStudentForAI(student);
+    setAiDialogOpen(true);
+    setIsGenerating(true);
+    setAiComment("");
+
+    const grade = grades[student.id];
+    const total = grade ? (grade.ca || 0) + (grade.exam || 0) : 0;
+    const subjectName = subjects.find(s => s.id === selectedSubject)?.name || "Subject";
+
+    try {
+      const resp = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
+          type: "report_comment",
+          messages: [{ role: "user", content: `Generate a report card comment for this student.` }],
+          studentData: {
+            name: student.student_name,
+            subject: subjectName,
+            ca_score: grade?.ca,
+            exam_score: grade?.exam,
+            total_score: total,
+            max_total: 100,
+          },
+        }),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        toast({ title: "AI Error", description: err.error || "Could not generate comment", variant: "destructive" });
+        setIsGenerating(false);
+        return;
+      }
+
+      const data = await resp.json();
+      setAiComment(data.comment || "Unable to generate comment.");
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Error", description: "Failed to connect to AI service", variant: "destructive" });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <StaffLayout title="Gradebook">
       <div className="space-y-6">
@@ -266,11 +320,11 @@ const StaffGradebook = () => {
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={handleSave} disabled={isSaving || !selectedClass || !selectedSubject}>
-              <span className="material-symbols-outlined mr-2 text-lg">save</span>
+              <Save className="w-4 h-4 mr-2" />
               Save Draft
             </Button>
             <Button onClick={handleSubmitForApproval} disabled={isSaving || !selectedClass || !selectedSubject}>
-              <span className="material-symbols-outlined mr-2 text-lg">send</span>
+              <Send className="w-4 h-4 mr-2" />
               Submit
             </Button>
           </div>
@@ -366,7 +420,7 @@ const StaffGradebook = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">edit_note</span>
+              <BookOpen className="w-5 h-5 text-primary" />
               Grade Entry
             </CardTitle>
           </CardHeader>
@@ -387,6 +441,7 @@ const StaffGradebook = () => {
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-24">Exam (70)</th>
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-20">Total</th>
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-20">Grade</th>
+                      <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-16">AI</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -431,6 +486,18 @@ const StaffGradebook = () => {
                               {letterGrade}
                             </span>
                           </td>
+                          <td className="py-3 px-4 text-center">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              title="Generate AI Comment"
+                              onClick={() => generateAIComment(student)}
+                              disabled={!grades[student.id]?.exam}
+                            >
+                              <Sparkles className="w-4 h-4 text-accent" />
+                            </Button>
+                          </td>
                         </tr>
                       );
                     })}
@@ -440,6 +507,53 @@ const StaffGradebook = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* AI Comment Dialog */}
+        <Dialog open={aiDialogOpen} onOpenChange={setAiDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-accent" />
+                AI Report Card Comment
+              </DialogTitle>
+            </DialogHeader>
+            {selectedStudentForAI && (
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Student: <span className="font-medium text-foreground">{selectedStudentForAI.student_name}</span>
+                </p>
+                {isGenerating ? (
+                  <div className="flex items-center gap-2 py-8 justify-center">
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    <span className="text-sm text-muted-foreground">Generating comment...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Textarea
+                      value={aiComment}
+                      onChange={(e) => setAiComment(e.target.value)}
+                      rows={5}
+                      className="text-sm"
+                      placeholder="AI-generated comment will appear here..."
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button variant="outline" onClick={() => generateAIComment(selectedStudentForAI)}>
+                        <Sparkles className="w-4 h-4 mr-1" /> Regenerate
+                      </Button>
+                      <Button onClick={() => {
+                        navigator.clipboard.writeText(aiComment);
+                        toast({ title: "Copied!", description: "Comment copied to clipboard" });
+                        setAiDialogOpen(false);
+                      }}>
+                        Copy Comment
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </StaffLayout>
   );

@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { MobileHeader } from "./MobileHeader";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ const navItems = [
 export const ParentLayout = ({ children, title }: ParentLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { signOut, user } = useAuth();
+  useRealtimeNotifications();
   const navigate = useNavigate();
   const location = useLocation();
 
