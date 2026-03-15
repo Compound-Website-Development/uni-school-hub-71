@@ -420,7 +420,7 @@ const StaffGradebook = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">edit_note</span>
+              <BookOpen className="w-5 h-5 text-primary" />
               Grade Entry
             </CardTitle>
           </CardHeader>
