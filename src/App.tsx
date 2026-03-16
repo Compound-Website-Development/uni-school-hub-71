@@ -143,6 +143,11 @@ const App = () => (
             <Route path="/admin/id-cards" element={<ProtectedRoute allowedRoles={["admin"]}><AdminIDCards /></ProtectedRoute>} />
             <Route path="/admin/certificates" element={<ProtectedRoute allowedRoles={["admin"]}><AdminCertificates /></ProtectedRoute>} />
             <Route path="/admin/complaints" element={<ProtectedRoute allowedRoles={["admin"]}><AdminComplaints /></ProtectedRoute>} />
+            <Route path="/admin/predictive" element={<ProtectedRoute allowedRoles={["admin"]}><AdminPredictiveAnalytics /></ProtectedRoute>} />
+            <Route path="/admin/behavioral" element={<ProtectedRoute allowedRoles={["admin"]}><AdminBehavioral /></ProtectedRoute>} />
+            <Route path="/admin/wellbeing" element={<ProtectedRoute allowedRoles={["admin"]}><AdminWellbeing /></ProtectedRoute>} />
+            <Route path="/admin/inventory" element={<ProtectedRoute allowedRoles={["admin"]}><AdminInventory /></ProtectedRoute>} />
+            <Route path="/admin/substitutions" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSubstitutions /></ProtectedRoute>} />
 
             {/* Parent Portal */}
             <Route path="/parent" element={<ProtectedRoute allowedRoles={["parent"]}><ParentDashboard /></ProtectedRoute>} />
