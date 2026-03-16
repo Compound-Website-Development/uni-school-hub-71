@@ -59,6 +59,12 @@ import AdminVisitors from "./pages/admin/AdminVisitors";
 import AdminIDCards from "./pages/admin/AdminIDCards";
 import AdminCertificates from "./pages/admin/AdminCertificates";
 import AdminComplaints from "./pages/admin/AdminComplaints";
+import AdminPredictiveAnalytics from "./pages/admin/AdminPredictiveAnalytics";
+import AdminBehavioral from "./pages/admin/AdminBehavioral";
+import AdminWellbeing from "./pages/admin/AdminWellbeing";
+import AdminInventory from "./pages/admin/AdminInventory";
+import AdminSubstitutions from "./pages/admin/AdminSubstitutions";
+import StudentResources from "./pages/student/StudentResources";
 // Parent
 import ParentDashboard from "./pages/parent/ParentDashboard";
 import ParentGrades from "./pages/parent/ParentGrades";
