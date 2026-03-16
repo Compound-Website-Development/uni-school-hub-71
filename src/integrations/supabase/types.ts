@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_resources: {
+        Row: {
+          class_id: string | null
+          created_at: string | null
+          description: string | null
+          download_count: number | null
+          external_link: string | null
+          file_url: string | null
+          id: string
+          is_published: boolean | null
+          resource_type: string
+          subject_id: string | null
+          title: string
+          updated_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          class_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          download_count?: number | null
+          external_link?: string | null
+          file_url?: string | null
+          id?: string
+          is_published?: boolean | null
+          resource_type?: string
+          subject_id?: string | null
+          title: string
+          updated_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          class_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          download_count?: number | null
+          external_link?: string | null
+          file_url?: string | null
+          id?: string
+          is_published?: boolean | null
+          resource_type?: string
+          subject_id?: string | null
+          title?: string
+          updated_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academic_resources_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "academic_resources_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       academic_years: {
         Row: {
           created_at: string
@@ -390,6 +453,59 @@ export type Database = {
           },
         ]
       }
+      behavioral_records: {
+        Row: {
+          action_taken: string | null
+          category: string
+          created_at: string | null
+          description: string
+          id: string
+          incident_date: string
+          parent_notified: boolean | null
+          recorded_by: string | null
+          severity: string
+          status: string | null
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          action_taken?: string | null
+          category?: string
+          created_at?: string | null
+          description: string
+          id?: string
+          incident_date?: string
+          parent_notified?: boolean | null
+          recorded_by?: string | null
+          severity?: string
+          status?: string | null
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          action_taken?: string | null
+          category?: string
+          created_at?: string | null
+          description?: string
+          id?: string
+          incident_date?: string
+          parent_notified?: boolean | null
+          recorded_by?: string | null
+          severity?: string
+          status?: string | null
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "behavioral_records_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       book_issues: {
         Row: {
           book_id: string
@@ -592,6 +708,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      counseling_sessions: {
+        Row: {
+          counselor_id: string | null
+          created_at: string | null
+          follow_up_date: string | null
+          id: string
+          is_confidential: boolean | null
+          notes: string | null
+          reason: string
+          session_date: string
+          session_type: string
+          status: string | null
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          counselor_id?: string | null
+          created_at?: string | null
+          follow_up_date?: string | null
+          id?: string
+          is_confidential?: boolean | null
+          notes?: string | null
+          reason: string
+          session_date?: string
+          session_type?: string
+          status?: string | null
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          counselor_id?: string | null
+          created_at?: string | null
+          follow_up_date?: string | null
+          id?: string
+          is_confidential?: boolean | null
+          notes?: string | null
+          reason?: string
+          session_date?: string
+          session_type?: string
+          status?: string | null
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "counseling_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       exam_questions: {
         Row: {
@@ -826,6 +995,54 @@ export type Database = {
           },
         ]
       }
+      fee_reminders: {
+        Row: {
+          created_at: string | null
+          fee_item_id: string | null
+          id: string
+          message: string | null
+          reminder_type: string | null
+          sent_at: string | null
+          status: string | null
+          student_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          fee_item_id?: string | null
+          id?: string
+          message?: string | null
+          reminder_type?: string | null
+          sent_at?: string | null
+          status?: string | null
+          student_id: string
+        }
+        Update: {
+          created_at?: string | null
+          fee_item_id?: string | null
+          id?: string
+          message?: string | null
+          reminder_type?: string | null
+          sent_at?: string | null
+          status?: string | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fee_reminders_fee_item_id_fkey"
+            columns: ["fee_item_id"]
+            isOneToOne: false
+            referencedRelation: "fee_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fee_reminders_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       forum_posts: {
         Row: {
           author_id: string
@@ -1026,6 +1243,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      inventory_items: {
+        Row: {
+          assigned_to: string | null
+          available: number
+          category: string
+          condition: string | null
+          created_at: string | null
+          id: string
+          location: string | null
+          name: string
+          notes: string | null
+          purchase_cost: number | null
+          purchase_date: string | null
+          quantity: number
+          serial_number: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          available?: number
+          category?: string
+          condition?: string | null
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          notes?: string | null
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          quantity?: number
+          serial_number?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          available?: number
+          category?: string
+          condition?: string | null
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          notes?: string | null
+          purchase_cost?: number | null
+          purchase_date?: string | null
+          quantity?: number
+          serial_number?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       leave_requests: {
         Row: {
@@ -1577,6 +1848,64 @@ export type Database = {
             columns: ["programme_id"]
             isOneToOne: false
             referencedRelation: "programmes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      substitutions: {
+        Row: {
+          approved_by: string | null
+          created_at: string | null
+          date: string
+          id: string
+          original_teacher_id: string | null
+          reason: string | null
+          schedule_id: string
+          status: string | null
+          substitute_teacher_id: string | null
+        }
+        Insert: {
+          approved_by?: string | null
+          created_at?: string | null
+          date: string
+          id?: string
+          original_teacher_id?: string | null
+          reason?: string | null
+          schedule_id: string
+          status?: string | null
+          substitute_teacher_id?: string | null
+        }
+        Update: {
+          approved_by?: string | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          original_teacher_id?: string | null
+          reason?: string | null
+          schedule_id?: string
+          status?: string | null
+          substitute_teacher_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "substitutions_original_teacher_id_fkey"
+            columns: ["original_teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "substitutions_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "schedules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "substitutions_substitute_teacher_id_fkey"
+            columns: ["substitute_teacher_id"]
+            isOneToOne: false
+            referencedRelation: "teachers"
             referencedColumns: ["id"]
           },
         ]

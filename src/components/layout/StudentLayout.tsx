@@ -32,6 +32,7 @@ const navItems = [
   { icon: BookOpenCheck, label: "Library", href: "/student/library" },
   { icon: CalendarDays, label: "Calendar", href: "/student/calendar" },
   { icon: AlertTriangle, label: "Complaints", href: "/student/complaints" },
+  { icon: BookOpen, label: "Resources", href: "/student/resources" },
   { icon: User, label: "My Profile", href: "/student/settings" },
 ];
 

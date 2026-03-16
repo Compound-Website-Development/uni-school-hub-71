@@ -59,6 +59,12 @@ import AdminVisitors from "./pages/admin/AdminVisitors";
 import AdminIDCards from "./pages/admin/AdminIDCards";
 import AdminCertificates from "./pages/admin/AdminCertificates";
 import AdminComplaints from "./pages/admin/AdminComplaints";
+import AdminPredictiveAnalytics from "./pages/admin/AdminPredictiveAnalytics";
+import AdminBehavioral from "./pages/admin/AdminBehavioral";
+import AdminWellbeing from "./pages/admin/AdminWellbeing";
+import AdminInventory from "./pages/admin/AdminInventory";
+import AdminSubstitutions from "./pages/admin/AdminSubstitutions";
+import StudentResources from "./pages/student/StudentResources";
 // Parent
 import ParentDashboard from "./pages/parent/ParentDashboard";
 import ParentGrades from "./pages/parent/ParentGrades";
@@ -99,6 +105,7 @@ const App = () => (
             <Route path="/student/library" element={<ProtectedRoute allowedRoles={["student"]}><StudentLibrary /></ProtectedRoute>} />
             <Route path="/student/calendar" element={<ProtectedRoute allowedRoles={["student"]}><StudentCalendar /></ProtectedRoute>} />
             <Route path="/student/complaints" element={<ProtectedRoute allowedRoles={["student"]}><StudentComplaints /></ProtectedRoute>} />
+            <Route path="/student/resources" element={<ProtectedRoute allowedRoles={["student"]}><StudentResources /></ProtectedRoute>} />
             
             {/* Staff Portal */}
             <Route path="/staff" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffDashboard /></ProtectedRoute>} />
@@ -137,6 +144,11 @@ const App = () => (
             <Route path="/admin/id-cards" element={<ProtectedRoute allowedRoles={["admin"]}><AdminIDCards /></ProtectedRoute>} />
             <Route path="/admin/certificates" element={<ProtectedRoute allowedRoles={["admin"]}><AdminCertificates /></ProtectedRoute>} />
             <Route path="/admin/complaints" element={<ProtectedRoute allowedRoles={["admin"]}><AdminComplaints /></ProtectedRoute>} />
+            <Route path="/admin/predictive" element={<ProtectedRoute allowedRoles={["admin"]}><AdminPredictiveAnalytics /></ProtectedRoute>} />
+            <Route path="/admin/behavioral" element={<ProtectedRoute allowedRoles={["admin"]}><AdminBehavioral /></ProtectedRoute>} />
+            <Route path="/admin/wellbeing" element={<ProtectedRoute allowedRoles={["admin"]}><AdminWellbeing /></ProtectedRoute>} />
+            <Route path="/admin/inventory" element={<ProtectedRoute allowedRoles={["admin"]}><AdminInventory /></ProtectedRoute>} />
+            <Route path="/admin/substitutions" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSubstitutions /></ProtectedRoute>} />
 
             {/* Parent Portal */}
             <Route path="/parent" element={<ProtectedRoute allowedRoles={["parent"]}><ParentDashboard /></ProtectedRoute>} />

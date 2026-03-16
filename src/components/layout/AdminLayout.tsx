@@ -13,7 +13,8 @@ import {
   LayoutDashboard, Users, GraduationCap, Briefcase, ShieldCheck,
   CreditCard, Megaphone, Settings, LogOut, Search, BarChart2,
   Activity, Upload, Database, ExternalLink, BookOpen, Bus,
-  UserCheck, CreditCard as IdCard, Award, AlertTriangle, FileText
+  UserCheck, CreditCard as IdCard, Award, AlertTriangle, FileText,
+  Brain, Shield, Heart, Package, RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
@@ -51,11 +52,21 @@ const adminNavSections = [
     ],
   },
   {
+    label: "AI & Analytics",
+    items: [
+      { icon: Brain, label: "Predictive Analytics", href: "/admin/predictive" },
+      { icon: Shield, label: "Behavioral Records", href: "/admin/behavioral" },
+      { icon: Heart, label: "Student Wellbeing", href: "/admin/wellbeing" },
+    ],
+  },
+  {
     label: "Facilities",
     items: [
       { icon: BookOpen, label: "Library", href: "/admin/library" },
       { icon: Bus, label: "Transport", href: "/admin/transport" },
       { icon: UserCheck, label: "Visitors", href: "/admin/visitors" },
+      { icon: Package, label: "Inventory", href: "/admin/inventory" },
+      { icon: RefreshCw, label: "Substitutions", href: "/admin/substitutions" },
     ],
   },
   {
