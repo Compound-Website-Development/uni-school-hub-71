@@ -52,11 +52,21 @@ const adminNavSections = [
     ],
   },
   {
+    label: "AI & Analytics",
+    items: [
+      { icon: Brain, label: "Predictive Analytics", href: "/admin/predictive" },
+      { icon: Shield, label: "Behavioral Records", href: "/admin/behavioral" },
+      { icon: Heart, label: "Student Wellbeing", href: "/admin/wellbeing" },
+    ],
+  },
+  {
     label: "Facilities",
     items: [
       { icon: BookOpen, label: "Library", href: "/admin/library" },
       { icon: Bus, label: "Transport", href: "/admin/transport" },
       { icon: UserCheck, label: "Visitors", href: "/admin/visitors" },
+      { icon: Package, label: "Inventory", href: "/admin/inventory" },
+      { icon: RefreshCw, label: "Substitutions", href: "/admin/substitutions" },
     ],
   },
   {
