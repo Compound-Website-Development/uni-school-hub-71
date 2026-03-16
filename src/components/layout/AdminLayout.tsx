@@ -13,7 +13,8 @@ import {
   LayoutDashboard, Users, GraduationCap, Briefcase, ShieldCheck,
   CreditCard, Megaphone, Settings, LogOut, Search, BarChart2,
   Activity, Upload, Database, ExternalLink, BookOpen, Bus,
-  UserCheck, CreditCard as IdCard, Award, AlertTriangle, FileText
+  UserCheck, CreditCard as IdCard, Award, AlertTriangle, FileText,
+  Brain, Shield, Heart, Package, RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
