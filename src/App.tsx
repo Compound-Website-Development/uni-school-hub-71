@@ -60,6 +60,7 @@ import AdminIDCards from "./pages/admin/AdminIDCards";
 import AdminCertificates from "./pages/admin/AdminCertificates";
 import AdminComplaints from "./pages/admin/AdminComplaints";
 import AdminPredictiveAnalytics from "./pages/admin/AdminPredictiveAnalytics";
+import AdminFinancialIntelligence from "./pages/admin/AdminFinancialIntelligence";
 import AdminBehavioral from "./pages/admin/AdminBehavioral";
 import AdminWellbeing from "./pages/admin/AdminWellbeing";
 import AdminInventory from "./pages/admin/AdminInventory";
