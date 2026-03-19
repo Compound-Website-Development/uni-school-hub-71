@@ -47,6 +47,7 @@ const adminNavSections = [
     label: "Finance & Comms",
     items: [
       { icon: CreditCard, label: "Fee Management", href: "/admin/fees" },
+      { icon: BarChart2, label: "Financial Intelligence", href: "/admin/financial" },
       { icon: Megaphone, label: "Announcements", href: "/admin/announcements" },
       { icon: FileText, label: "Reports & Export", href: "/admin/reports" },
     ],

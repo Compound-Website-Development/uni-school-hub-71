@@ -60,6 +60,7 @@ import AdminIDCards from "./pages/admin/AdminIDCards";
 import AdminCertificates from "./pages/admin/AdminCertificates";
 import AdminComplaints from "./pages/admin/AdminComplaints";
 import AdminPredictiveAnalytics from "./pages/admin/AdminPredictiveAnalytics";
+import AdminFinancialIntelligence from "./pages/admin/AdminFinancialIntelligence";
 import AdminBehavioral from "./pages/admin/AdminBehavioral";
 import AdminWellbeing from "./pages/admin/AdminWellbeing";
 import AdminInventory from "./pages/admin/AdminInventory";
@@ -72,6 +73,7 @@ import ParentAttendance from "./pages/parent/ParentAttendance";
 import ParentFees from "./pages/parent/ParentFees";
 import ParentMessages from "./pages/parent/ParentMessages";
 import ParentForum from "./pages/parent/ParentForum";
+import VerifyCertificate from "./pages/VerifyCertificate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -149,6 +151,10 @@ const App = () => (
             <Route path="/admin/wellbeing" element={<ProtectedRoute allowedRoles={["admin"]}><AdminWellbeing /></ProtectedRoute>} />
             <Route path="/admin/inventory" element={<ProtectedRoute allowedRoles={["admin"]}><AdminInventory /></ProtectedRoute>} />
             <Route path="/admin/substitutions" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSubstitutions /></ProtectedRoute>} />
+            <Route path="/admin/financial" element={<ProtectedRoute allowedRoles={["admin"]}><AdminFinancialIntelligence /></ProtectedRoute>} />
+
+            {/* Public Verification */}
+            <Route path="/verify" element={<VerifyCertificate />} />
 
             {/* Parent Portal */}
             <Route path="/parent" element={<ProtectedRoute allowedRoles={["parent"]}><ParentDashboard /></ProtectedRoute>} />
