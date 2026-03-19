@@ -43,7 +43,7 @@ const AdminCertificates = () => {
     doc.rect(x, y, size, size);
     
     // Draw inner patterns to look like QR
-    doc.setFillColor(0);
+    (doc as any).setFillColor(0);
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
         if ((i + j) % 2 === 0) {
