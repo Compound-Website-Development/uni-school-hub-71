@@ -73,6 +73,7 @@ import ParentAttendance from "./pages/parent/ParentAttendance";
 import ParentFees from "./pages/parent/ParentFees";
 import ParentMessages from "./pages/parent/ParentMessages";
 import ParentForum from "./pages/parent/ParentForum";
+import VerifyCertificate from "./pages/VerifyCertificate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
