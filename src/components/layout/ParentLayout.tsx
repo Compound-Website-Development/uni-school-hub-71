@@ -130,7 +130,10 @@ export const ParentLayout = ({ children, title }: ParentLayoutProps) => {
         <main className="flex-1 flex flex-col overflow-hidden">
           <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
             <div>{title && <h1 className="text-xl font-bold text-foreground">{title}</h1>}</div>
-            <NotificationDropdown />
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <NotificationDropdown />
+            </div>
           </header>
           <div className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</div>
         </main>

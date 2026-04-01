@@ -214,6 +214,7 @@ export const AdminLayout = ({
                   <Input placeholder={searchPlaceholder} className="pl-9 w-56 h-9 text-sm rounded-md" />
                 </div>
               )}
+              <ThemeToggle />
               <NotificationDropdown />
             </div>
           </header>

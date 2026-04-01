@@ -148,6 +148,7 @@ export const StaffLayout = ({
                   <Input placeholder={searchPlaceholder} className="pl-10 w-64 rounded-md" />
                 </div>
               )}
+              <ThemeToggle />
               <NotificationDropdown />
             </div>
           </header>
