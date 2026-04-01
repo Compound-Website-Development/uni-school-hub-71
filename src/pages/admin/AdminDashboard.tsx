@@ -34,13 +34,21 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [studentsRes, teachersRes, classesRes, appsRes, announcementsRes] = await Promise.all([
+        const today = new Date().toISOString().split("T")[0];
+        const [studentsRes, teachersRes, classesRes, appsRes, announcementsRes, attendanceRes, paymentsRes] = await Promise.all([
           supabase.from("students").select("id", { count: "exact", head: true }).eq("status", "active"),
           supabase.from("teachers").select("id", { count: "exact", head: true }).eq("status", "active"),
           supabase.from("classes").select("id", { count: "exact", head: true }),
           supabase.from("applications").select("id", { count: "exact", head: true }).eq("status", "pending"),
           supabase.from("announcements").select("id", { count: "exact", head: true }),
+          supabase.from("attendance").select("status").gte("date", new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0]),
+          supabase.from("fee_payments").select("amount_paid").eq("status", "paid"),
         ]);
+
+        const attendanceData = attendanceRes.data || [];
+        const presentCount = attendanceData.filter((a: any) => a.status === "present").length;
+        const attendanceRate = attendanceData.length > 0 ? Math.round((presentCount / attendanceData.length) * 100) : 0;
+        const totalRevenue = (paymentsRes.data || []).reduce((s: number, p: any) => s + Number(p.amount_paid || 0), 0);
 
         setStats({
           totalStudents: studentsRes.count || 0,
@@ -48,8 +56,8 @@ const AdminDashboard = () => {
           totalClasses: classesRes.count || 0,
           activeApplications: appsRes.count || 0,
           pendingApprovals: appsRes.count || 0,
-          totalRevenue: 0,
-          attendanceRate: 92,
+          totalRevenue,
+          attendanceRate,
           announcementsSent: announcementsRes.count || 0,
         });
 

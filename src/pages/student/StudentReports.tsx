@@ -206,12 +206,12 @@ const StudentReports = () => {
     : "STUDENT";
 
   const getGradeColor = (grade: string | null) => {
-    switch(grade) {
-      case 'A': return 'text-success';
-      case 'B': return 'text-primary';
-      case 'C': return 'text-warning';
-      default: return 'text-destructive';
-    }
+    if (!grade) return 'text-muted-foreground';
+    if (grade.startsWith('A')) return 'text-success';
+    if (grade.startsWith('B')) return 'text-primary';
+    if (grade.startsWith('C')) return 'text-warning';
+    if (grade === 'D') return 'text-orange-500';
+    return 'text-destructive';
   };
 
   return (
