@@ -20,6 +20,7 @@ const AdminFinancialIntelligence = () => {
   const [students, setStudents] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isForecasting, setIsForecasting] = useState(false);
+  const [aiInsight, setAiInsight] = useState<string | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
