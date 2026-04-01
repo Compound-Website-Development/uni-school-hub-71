@@ -15,6 +15,7 @@ import {
   ClipboardList, BookOpenCheck, MessageSquare, MessagesSquare, CalendarOff
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 interface StaffLayoutProps {
