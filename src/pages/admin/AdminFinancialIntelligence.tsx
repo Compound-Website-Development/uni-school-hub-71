@@ -75,12 +75,45 @@ const AdminFinancialIntelligence = () => {
     return { totalExpected, totalCollected, totalPending, collectionRate, defaulters, monthlyTrend, feeDistribution, statusDist, avgMonthly, forecastedAnnual };
   }, [feeItems, payments, students]);
 
-  const runForecast = () => {
+  const runForecast = async () => {
     setIsForecasting(true);
-    setTimeout(() => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            type: "report_comment",
+            messages: [{ role: "user", content: "Analyze financial data and provide a forecast" }],
+            studentData: {
+              type: "financial_forecast",
+              totalCollected: metrics.totalCollected,
+              totalExpected: metrics.totalExpected,
+              collectionRate: metrics.collectionRate,
+              defaulterCount: metrics.defaulters.length,
+              totalStudents: students.length,
+              monthlyTrend: metrics.monthlyTrend,
+              forecastedAnnual: metrics.forecastedAnnual,
+            },
+          }),
+        }
+      );
+      const data = await response.json();
+      if (data.comment) {
+        setAiInsight(data.comment);
+        toast.success("AI financial forecast generated");
+      } else {
+        toast.error(data.error || "Failed to generate forecast");
+      }
+    } catch {
+      toast.error("Failed to connect to AI service");
+    } finally {
       setIsForecasting(false);
-      toast.success("Financial forecast updated based on current trends");
-    }, 1500);
+    }
   };
 
   if (isLoading) return <AdminLayout title="Financial Intelligence"><div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div></AdminLayout>;
