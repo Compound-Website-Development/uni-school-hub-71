@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import {
   TrendingUp, TrendingDown, DollarSign, AlertTriangle,
-  PieChart, BarChart2, Users, Loader2, Zap, ArrowRight
+  PieChart, BarChart2, Users, Loader2, Zap, ArrowRight, Brain
 } from "lucide-react";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RPieChart, Pie, Cell, LineChart, Line, CartesianGrid } from "recharts";
