@@ -133,6 +133,7 @@ const Login = () => {
       first_name: registerForm.firstName,
       last_name: registerForm.lastName,
       role,
+      phone: registerForm.phone,
     });
     setIsLoading(false);
 
