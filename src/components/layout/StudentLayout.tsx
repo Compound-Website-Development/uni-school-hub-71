@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { AIChatWidget } from "@/components/AIChatWidget";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -74,6 +75,9 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
         <div className="flex items-center justify-between px-4 h-16">
           <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 rounded-lg hover:bg-muted transition-colors"><Menu className="w-6 h-6 text-foreground" /></button>
           <div className="flex items-center gap-2"><img src={npsLogo} alt="NPS" className="h-8 w-auto" /></div>
+          <button className="p-2 -mr-2 rounded-lg hover:bg-muted transition-colors">
+            <ThemeToggle />
+          </button>
           <button className="p-2 -mr-2 rounded-lg hover:bg-muted transition-colors relative">
             <Bell className="w-5 h-5 text-muted-foreground" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" />
           </button>

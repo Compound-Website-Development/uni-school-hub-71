@@ -3,13 +3,16 @@ import { StaffLayout } from "@/components/layout/StaffLayout";
 import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Link } from "react-router-dom";
 import { DashboardSkeleton } from "@/components/ui/loading-skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   FileText, UserPlus, Users, ClipboardCheck, Clock, Eye,
-  Users as UsersIcon, BookOpen, AlertTriangle
+  Users as UsersIcon, BookOpen, AlertTriangle, BarChart2,
+  CheckCircle, TrendingUp
 } from "lucide-react";
 
 interface DashboardStats {
@@ -26,10 +29,18 @@ interface UpcomingClass {
   students: number;
 }
 
+interface PerformanceMetrics {
+  classesTeaching: number;
+  attendanceMarked: number;
+  gradesEntered: number;
+  lessonPlansCreated: number;
+}
+
 const StaffDashboard = () => {
   const { teacherData, userRole } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [upcomingClasses, setUpcomingClasses] = useState<UpcomingClass[]>([]);
+  const [performance, setPerformance] = useState<PerformanceMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const currentDate = new Date().toLocaleDateString("en-US", {
@@ -59,6 +70,23 @@ const StaffDashboard = () => {
           pendingGrades: gradesRes.count || 0,
           newApplications: applicationsRes.count || 0,
         });
+
+        // Fetch staff performance metrics
+        if (teacherData?.id) {
+          const [classSubjectsRes, attendanceRes, gradesEnteredRes, lessonPlansRes] = await Promise.all([
+            supabase.from("class_subjects").select("id", { count: "exact", head: true }).eq("teacher_id", teacherData.id),
+            supabase.from("attendance").select("id", { count: "exact", head: true }).eq("marked_by", teacherData.id),
+            supabase.from("grades").select("id", { count: "exact", head: true }).eq("entered_by", teacherData.id),
+            supabase.from("lesson_plans").select("id", { count: "exact", head: true }).eq("teacher_id", teacherData.id),
+          ]);
+
+          setPerformance({
+            classesTeaching: classSubjectsRes.count || 0,
+            attendanceMarked: attendanceRes.count || 0,
+            gradesEntered: gradesEnteredRes.count || 0,
+            lessonPlansCreated: lessonPlansRes.count || 0,
+          });
+        }
 
         const dayOfWeek = new Date().getDay();
         const { data: scheduleData } = await supabase
@@ -92,7 +120,7 @@ const StaffDashboard = () => {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [teacherData?.id]);
 
   if (isLoading) {
     return (
@@ -114,6 +142,13 @@ const StaffDashboard = () => {
     { task: `Review ${stats?.newApplications || 0} applications`, due: "Due in 5 days", priority: "medium" as const },
     { task: "Generate class reports", due: "Due in 7 days", priority: "low" as const },
   ];
+
+  const performanceItems = performance ? [
+    { label: "Classes Teaching", value: performance.classesTeaching, icon: BookOpen, color: "text-primary" },
+    { label: "Attendance Marked", value: performance.attendanceMarked, icon: ClipboardCheck, color: "text-success" },
+    { label: "Grades Entered", value: performance.gradesEntered, icon: FileText, color: "text-info" },
+    { label: "Lesson Plans", value: performance.lessonPlansCreated, icon: BarChart2, color: "text-warning" },
+  ] : [];
 
   return (
     <StaffLayout title="Dashboard">
@@ -145,6 +180,35 @@ const StaffDashboard = () => {
           <StatCard icon="assignment" label="Pending Grades" value={stats?.pendingGrades?.toString() || "0"} variant="warning" />
           <StatCard icon="person_add" label="New Applications" value={stats?.newApplications?.toString() || "0"} variant="destructive" />
         </div>
+
+        {/* Performance Metrics */}
+        {performance && (
+          <Card className="border-border/50 rounded-xl shadow-card">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" /> My Performance Metrics
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {performanceItems.map((item, idx) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
+                      <div className="p-2 rounded-lg bg-background">
+                        <Icon className={`w-4 h-4 ${item.color}`} />
+                      </div>
+                      <div>
+                        <p className="text-xl font-bold text-foreground">{item.value}</p>
+                        <p className="text-[11px] text-muted-foreground">{item.label}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

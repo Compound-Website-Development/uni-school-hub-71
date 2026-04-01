@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import {
   TrendingUp, TrendingDown, DollarSign, AlertTriangle,
-  PieChart, BarChart2, Users, Loader2, Zap, ArrowRight
+  PieChart, BarChart2, Users, Loader2, Zap, ArrowRight, Brain
 } from "lucide-react";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RPieChart, Pie, Cell, LineChart, Line, CartesianGrid } from "recharts";
@@ -20,6 +20,7 @@ const AdminFinancialIntelligence = () => {
   const [students, setStudents] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isForecasting, setIsForecasting] = useState(false);
+  const [aiInsight, setAiInsight] = useState<string | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
@@ -74,12 +75,45 @@ const AdminFinancialIntelligence = () => {
     return { totalExpected, totalCollected, totalPending, collectionRate, defaulters, monthlyTrend, feeDistribution, statusDist, avgMonthly, forecastedAnnual };
   }, [feeItems, payments, students]);
 
-  const runForecast = () => {
+  const runForecast = async () => {
     setIsForecasting(true);
-    setTimeout(() => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            type: "report_comment",
+            messages: [{ role: "user", content: "Analyze financial data and provide a forecast" }],
+            studentData: {
+              type: "financial_forecast",
+              totalCollected: metrics.totalCollected,
+              totalExpected: metrics.totalExpected,
+              collectionRate: metrics.collectionRate,
+              defaulterCount: metrics.defaulters.length,
+              totalStudents: students.length,
+              monthlyTrend: metrics.monthlyTrend,
+              forecastedAnnual: metrics.forecastedAnnual,
+            },
+          }),
+        }
+      );
+      const data = await response.json();
+      if (data.comment) {
+        setAiInsight(data.comment);
+        toast.success("AI financial forecast generated");
+      } else {
+        toast.error(data.error || "Failed to generate forecast");
+      }
+    } catch {
+      toast.error("Failed to connect to AI service");
+    } finally {
       setIsForecasting(false);
-      toast.success("Financial forecast updated based on current trends");
-    }, 1500);
+    }
   };
 
   if (isLoading) return <AdminLayout title="Financial Intelligence"><div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div></AdminLayout>;
@@ -98,6 +132,21 @@ const AdminFinancialIntelligence = () => {
             <Zap className="w-4 h-4" /> {isForecasting ? "Forecasting..." : "Run AI Forecast"}
           </Button>
         </div>
+
+        {/* AI Insight */}
+        {aiInsight && (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-primary/10"><Brain className="w-5 h-5 text-primary" /></div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground mb-1">AI Financial Insight</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">{aiInsight}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
