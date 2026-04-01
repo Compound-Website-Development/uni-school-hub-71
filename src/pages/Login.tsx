@@ -226,11 +226,7 @@ const Login = () => {
                   {loginErrors.password && <p className="text-xs text-destructive">{loginErrors.password}</p>}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="remember" />
-                    <Label htmlFor="remember" className="text-sm text-muted-foreground cursor-pointer">Remember me</Label>
-                  </div>
+                <div className="flex items-center justify-end">
                   <button
                     type="button"
                     onClick={async () => {
