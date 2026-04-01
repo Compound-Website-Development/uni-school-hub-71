@@ -133,6 +133,21 @@ const AdminFinancialIntelligence = () => {
           </Button>
         </div>
 
+        {/* AI Insight */}
+        {aiInsight && (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-primary/10"><Brain className="w-5 h-5 text-primary" /></div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground mb-1">AI Financial Insight</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-line">{aiInsight}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
