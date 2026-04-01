@@ -8,9 +8,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import {
   GraduationCap, BookOpen, Calendar, CreditCard, Loader2,
-  TrendingUp, Clock, MessageSquare, Bell, ChevronRight, Star
+  TrendingUp, Clock, MessageSquare, Bell, ChevronRight, Star,
+  ClipboardList, Monitor, AlertTriangle
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, isFuture, isToday, addDays } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 const ParentDashboard = () => {
@@ -20,6 +21,8 @@ const ParentDashboard = () => {
   const [childGrades, setChildGrades] = useState<Record<string, any[]>>({});
   const [childAttendance, setChildAttendance] = useState<Record<string, { present: number; total: number }>>({});
   const [recentAnnouncements, setRecentAnnouncements] = useState<any[]>([]);
+  const [upcomingHomework, setUpcomingHomework] = useState<any[]>([]);
+  const [upcomingExams, setUpcomingExams] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -32,6 +35,8 @@ const ParentDashboard = () => {
 
       if (links && links.length > 0) {
         const studentIds = links.map((l: any) => l.student_id);
+
+        // Get student class_ids for homework/exam queries
         const [studentsRes, gradesRes, attendanceRes, announcementsRes] = await Promise.all([
           supabase.from("students").select("*").in("id", studentIds),
           supabase.from("grades").select("student_id, total_score, letter_grade, subjects(name)").in("student_id", studentIds),
@@ -39,8 +44,20 @@ const ParentDashboard = () => {
           supabase.from("announcements").select("*").eq("is_published", true).order("created_at", { ascending: false }).limit(5),
         ]);
 
-        setChildren(studentsRes.data || []);
+        const studentList = studentsRes.data || [];
+        setChildren(studentList);
         setRecentAnnouncements(announcementsRes.data || []);
+
+        // Fetch upcoming homework and exams based on children's classes
+        const classIds = studentList.map((s: any) => s.class_id).filter(Boolean);
+        if (classIds.length > 0) {
+          const [hwRes, examRes] = await Promise.all([
+            supabase.from("assignments").select("title, due_date, subjects(name)").in("class_id", classIds).gte("due_date", new Date().toISOString()).order("due_date").limit(5),
+            supabase.from("exams").select("title, start_time, duration_minutes, subjects(name)").in("class_id", classIds).in("status", ["active", "draft"]).order("start_time").limit(5),
+          ]);
+          setUpcomingHomework(hwRes.data || []);
+          setUpcomingExams(examRes.data || []);
+        }
 
         // Process grades per child
         const gradeMap: Record<string, any[]> = {};
@@ -153,6 +170,75 @@ const ParentDashboard = () => {
             })}
           </>
         )}
+
+        {/* Upcoming Homework & Exams */}
+        <div className="grid lg:grid-cols-2 gap-4">
+          <Card className="border-border/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <ClipboardList className="w-4 h-4 text-warning" /> Upcoming Homework
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {upcomingHomework.length > 0 ? (
+                <div className="space-y-2">
+                  {upcomingHomework.map((hw, i) => {
+                    const due = new Date(hw.due_date);
+                    const isUrgent = due <= addDays(new Date(), 2);
+                    return (
+                      <div key={i} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30">
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{hw.title}</p>
+                          <p className="text-[10px] text-muted-foreground">{(hw as any).subjects?.name || "General"}</p>
+                        </div>
+                        <Badge className={`text-[10px] ${isUrgent ? "bg-destructive/10 text-destructive border-destructive/20" : "bg-warning/10 text-warning border-warning/20"}`}>
+                          {isToday(due) ? "Today" : format(due, "MMM d")}
+                        </Badge>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                  <p className="text-sm">No upcoming homework</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Monitor className="w-4 h-4 text-info" /> Upcoming Exams
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {upcomingExams.length > 0 ? (
+                <div className="space-y-2">
+                  {upcomingExams.map((exam, i) => (
+                    <div key={i} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{exam.title}</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {(exam as any).subjects?.name || "General"} · {exam.duration_minutes}min
+                        </p>
+                      </div>
+                      <Badge className="text-[10px] bg-info/10 text-info border-info/20">
+                        {exam.start_time ? format(new Date(exam.start_time), "MMM d") : "TBA"}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Monitor className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                  <p className="text-sm">No upcoming exams</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
