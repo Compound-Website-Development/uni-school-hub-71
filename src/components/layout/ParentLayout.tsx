@@ -13,6 +13,7 @@ import {
   MessagesSquare, LogOut
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 interface ParentLayoutProps {
