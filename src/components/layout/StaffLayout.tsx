@@ -27,6 +27,7 @@ interface StaffLayoutProps {
 
 const teacherNavItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/staff" },
+  { icon: MessagesSquare, label: "Community Wall", href: "/staff/wall" },
   { icon: Users, label: "Students", href: "/staff/students" },
   { icon: BookOpen, label: "Classes", href: "/staff/classes" },
   { icon: ClipboardCheck, label: "Attendance", href: "/staff/attendance" },

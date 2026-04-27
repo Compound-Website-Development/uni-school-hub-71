@@ -12,7 +12,7 @@ import npsLogo from "@/assets/nps-logo.png";
 import {
   Home, BookOpen, FileText, Calendar, User, LogOut, Menu, Bell,
   CreditCard, Megaphone, Monitor, ClipboardList, BookOpenCheck,
-  CalendarDays, AlertTriangle
+  CalendarDays, AlertTriangle, Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +23,7 @@ interface StudentLayoutProps {
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/student" },
+  { icon: Users, label: "Community Wall", href: "/student/wall" },
   { icon: BookOpen, label: "My Results", href: "/student/grades" },
   { icon: Calendar, label: "Attendance", href: "/student/attendance" },
   { icon: FileText, label: "Reports", href: "/student/reports" },
@@ -34,7 +35,7 @@ const navItems = [
   { icon: CalendarDays, label: "Calendar", href: "/student/calendar" },
   { icon: AlertTriangle, label: "Complaints", href: "/student/complaints" },
   { icon: BookOpen, label: "Resources", href: "/student/resources" },
-  { icon: User, label: "My Profile", href: "/student/settings" },
+  { icon: User, label: "My Profile", href: "/student/profile" },
 ];
 
 export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
