@@ -1536,6 +1536,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          bio: string | null
           created_at: string
           email: string
           first_name: string
@@ -1546,6 +1548,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email: string
           first_name: string
@@ -1556,6 +1560,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           email?: string
           first_name?: string
@@ -1746,18 +1752,26 @@ export type Database = {
         Row: {
           address: string | null
           admission_date: string | null
+          avatar_url: string | null
+          bio: string | null
+          blood_group: string | null
           class_id: string | null
           created_at: string
           date_of_birth: string | null
           email: string | null
+          emergency_contact: string | null
           first_name: string
           gender: string | null
           guardian_name: string | null
           guardian_phone: string | null
+          hobbies: string | null
           id: string
           last_name: string
+          nationality: string | null
           phone: string | null
           programme_id: string | null
+          religion: string | null
+          state_of_origin: string | null
           status: string | null
           student_id: string
           updated_at: string
@@ -1766,18 +1780,26 @@ export type Database = {
         Insert: {
           address?: string | null
           admission_date?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          blood_group?: string | null
           class_id?: string | null
           created_at?: string
           date_of_birth?: string | null
           email?: string | null
+          emergency_contact?: string | null
           first_name: string
           gender?: string | null
           guardian_name?: string | null
           guardian_phone?: string | null
+          hobbies?: string | null
           id?: string
           last_name: string
+          nationality?: string | null
           phone?: string | null
           programme_id?: string | null
+          religion?: string | null
+          state_of_origin?: string | null
           status?: string | null
           student_id: string
           updated_at?: string
@@ -1786,18 +1808,26 @@ export type Database = {
         Update: {
           address?: string | null
           admission_date?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          blood_group?: string | null
           class_id?: string | null
           created_at?: string
           date_of_birth?: string | null
           email?: string | null
+          emergency_contact?: string | null
           first_name?: string
           gender?: string | null
           guardian_name?: string | null
           guardian_phone?: string | null
+          hobbies?: string | null
           id?: string
           last_name?: string
+          nationality?: string | null
           phone?: string | null
           programme_id?: string | null
+          religion?: string | null
+          state_of_origin?: string | null
           status?: string | null
           student_id?: string
           updated_at?: string
@@ -1912,6 +1942,9 @@ export type Database = {
       }
       teachers: {
         Row: {
+          address: string | null
+          avatar_url: string | null
+          bio: string | null
           created_at: string
           department: string | null
           email: string
@@ -1921,11 +1954,17 @@ export type Database = {
           id: string
           last_name: string
           phone: string | null
+          qualification: string | null
+          specialization: string | null
           status: string | null
           updated_at: string
           user_id: string | null
+          years_experience: number | null
         }
         Insert: {
+          address?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           department?: string | null
           email: string
@@ -1935,11 +1974,17 @@ export type Database = {
           id?: string
           last_name: string
           phone?: string | null
+          qualification?: string | null
+          specialization?: string | null
           status?: string | null
           updated_at?: string
           user_id?: string | null
+          years_experience?: number | null
         }
         Update: {
+          address?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           department?: string | null
           email?: string
@@ -1949,9 +1994,12 @@ export type Database = {
           id?: string
           last_name?: string
           phone?: string | null
+          qualification?: string | null
+          specialization?: string | null
           status?: string | null
           updated_at?: string
           user_id?: string | null
+          years_experience?: number | null
         }
         Relationships: []
       }
@@ -2146,6 +2194,109 @@ export type Database = {
           purpose?: string
         }
         Relationships: []
+      }
+      wall_comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wall_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "wall_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wall_posts: {
+        Row: {
+          author_id: string
+          class_id: string | null
+          content: string
+          created_at: string
+          id: string
+          is_pinned: boolean | null
+          media_url: string | null
+          post_type: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_id: string
+          class_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean | null
+          media_url?: string | null
+          post_type?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_id?: string
+          class_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean | null
+          media_url?: string | null
+          post_type?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
+      wall_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          reaction?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wall_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "wall_posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
