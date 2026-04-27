@@ -75,6 +75,11 @@ import ParentFees from "./pages/parent/ParentFees";
 import ParentMessages from "./pages/parent/ParentMessages";
 import ParentForum from "./pages/parent/ParentForum";
 import VerifyCertificate from "./pages/VerifyCertificate";
+import StudentProfile from "./pages/student/StudentProfile";
+import StudentWall from "./pages/student/StudentWall";
+import StaffWall from "./pages/staff/StaffWall";
+import ParentProfile from "./pages/parent/ParentProfile";
+import ParentWall from "./pages/parent/ParentWall";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -165,7 +170,14 @@ const App = () => (
             <Route path="/parent/fees" element={<ProtectedRoute allowedRoles={["parent"]}><ParentFees /></ProtectedRoute>} />
             <Route path="/parent/messages" element={<ProtectedRoute allowedRoles={["parent"]}><ParentMessages /></ProtectedRoute>} />
             <Route path="/parent/forum" element={<ProtectedRoute allowedRoles={["parent"]}><ParentForum /></ProtectedRoute>} />
-            
+            <Route path="/parent/profile" element={<ProtectedRoute allowedRoles={["parent"]}><ParentProfile /></ProtectedRoute>} />
+            <Route path="/parent/wall" element={<ProtectedRoute allowedRoles={["parent"]}><ParentWall /></ProtectedRoute>} />
+
+            {/* Student/Staff profile + walls */}
+            <Route path="/student/profile" element={<ProtectedRoute allowedRoles={["student"]}><StudentProfile /></ProtectedRoute>} />
+            <Route path="/student/wall" element={<ProtectedRoute allowedRoles={["student"]}><StudentWall /></ProtectedRoute>} />
+            <Route path="/staff/wall" element={<ProtectedRoute allowedRoles={["teacher", "admin"]}><StaffWall /></ProtectedRoute>} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
