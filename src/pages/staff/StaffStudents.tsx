@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { InlineEmptyState } from "@/components/ui/empty-state";
 import { Users } from "lucide-react";
@@ -22,6 +23,7 @@ interface Student {
 }
 
 const StaffStudents = () => {
+  const { user, userRole } = useAuth();
   const [students, setStudents] = useState<Student[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,21 +32,47 @@ const StaffStudents = () => {
 
   useEffect(() => {
     const fetchStudents = async () => {
+      if (!user) return;
       try {
-        const { data, error } = await supabase
+        let allowedClassIds: string[] | null = null;
+
+        // Admins see everyone; teachers see only students in their assigned classes
+        if (userRole !== "admin") {
+          const { data: teacher } = await supabase
+            .from("teachers")
+            .select("id")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+          if (teacher?.id) {
+            const [{ data: ownClasses }, { data: subjClasses }] = await Promise.all([
+              supabase.from("classes").select("id").eq("class_teacher_id", teacher.id),
+              supabase.from("class_subjects").select("class_id").eq("teacher_id", teacher.id),
+            ]);
+            const ids = new Set<string>();
+            (ownClasses || []).forEach((c: any) => c.id && ids.add(c.id));
+            (subjClasses || []).forEach((c: any) => c.class_id && ids.add(c.class_id));
+            allowedClassIds = Array.from(ids);
+          } else {
+            allowedClassIds = [];
+          }
+        }
+
+        let query: any = supabase
           .from("students")
-          .select(`
-            id,
-            student_id,
-            first_name,
-            last_name,
-            email,
-            status,
-            classes (name),
-            programmes (name)
-          `)
+          .select(`id, student_id, first_name, last_name, email, status, classes (name), programmes (name)`)
           .order("last_name");
 
+        if (allowedClassIds !== null) {
+          if (allowedClassIds.length === 0) {
+            setStudents([]);
+            setIsLoading(false);
+            return;
+          }
+          query = query.in("class_id", allowedClassIds);
+        }
+
+        const { data, error } = await query;
         if (error) throw error;
 
         const formatted: Student[] = (data || []).map((s: any) => ({
@@ -67,7 +95,7 @@ const StaffStudents = () => {
     };
 
     fetchStudents();
-  }, []);
+  }, [user, userRole]);
 
   const classes = [...new Set(students.map((s) => s.class_name).filter(Boolean))];
   const programmes = [...new Set(students.map((s) => s.programme_name).filter(Boolean))];
