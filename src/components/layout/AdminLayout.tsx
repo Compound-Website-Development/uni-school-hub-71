@@ -179,7 +179,7 @@ export const AdminLayout = ({
         </SheetContent>
       </Sheet>
       <div className="hidden md:flex h-screen w-full overflow-hidden">
-        <aside className="w-[250px] bg-sidebar-background flex flex-col shrink-0 border-r border-sidebar-border">
+        <aside className="w-[250px] bg-sidebar flex flex-col shrink-0 border-r border-sidebar-border">
           <div className="p-4 flex items-center gap-2.5 border-b border-sidebar-border">
             <img src={npsLogo} alt="NPS" className="h-7 w-auto" />
             <div>
