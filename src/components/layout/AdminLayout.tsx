@@ -150,7 +150,7 @@ export const AdminLayout = ({
     <div className="min-h-screen bg-background">
       <MobileHeader title={title || "Admin Portal"} onMenuClick={() => setSidebarOpen(true)} showSearch={showSearch} searchPlaceholder={searchPlaceholder} />
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-72 p-0 bg-sidebar-background border-r-0">
+        <SheetContent side="left" className="w-72 p-0 bg-sidebar border-r-0">
           <SheetHeader className="p-5">
             <div className="flex items-center gap-3">
               <img src={npsLogo} alt="NPS" className="h-7 w-auto" />
