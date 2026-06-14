@@ -92,6 +92,7 @@ const adminNavSections = [
 const portalLinks = [
   { label: "Staff Portal", path: "/staff" },
   { label: "Student Portal", path: "/student" },
+  { label: "Parent Portal", path: "/parent" },
 ];
 
 export const AdminLayout = ({
@@ -113,7 +114,7 @@ export const AdminLayout = ({
     <div className="space-y-5">
       {adminNavSections.map((section) => (
         <div key={section.label}>
-          <p className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-[0.15em] mb-1.5 px-4">{section.label}</p>
+          <p className="text-[10px] font-bold text-sidebar-foreground/70 uppercase tracking-[0.15em] mb-1.5 px-4">{section.label}</p>
           <div className="space-y-0.5">
             {section.items.map((item) => {
               const isActive = location.pathname === item.href;
@@ -122,7 +123,7 @@ export const AdminLayout = ({
                 <Link key={item.href} to={item.href} onClick={onItemClick}
                   className={cn(
                     "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-[13px]",
-                    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold" : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/40"
+                    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold" : "text-sidebar-foreground/90 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
                   )}>
                   <Icon className="w-4 h-4 shrink-0" /><span>{item.label}</span>
                 </Link>
@@ -132,11 +133,11 @@ export const AdminLayout = ({
         </div>
       ))}
       <div>
-        <p className="text-[10px] font-bold text-sidebar-foreground/40 uppercase tracking-[0.15em] mb-1.5 px-4">Portals</p>
+        <p className="text-[10px] font-bold text-sidebar-foreground/70 uppercase tracking-[0.15em] mb-1.5 px-4">Portals</p>
         <div className="space-y-0.5">
           {portalLinks.map((portal) => (
             <button key={portal.path} onClick={() => { openPortal(portal.path); onItemClick?.(); }}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-[13px] text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 w-full text-left">
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-[13px] text-sidebar-foreground/90 hover:text-sidebar-foreground hover:bg-sidebar-accent/60 w-full text-left">
               <ExternalLink className="w-4 h-4 shrink-0" /><span>{portal.label}</span>
             </button>
           ))}
@@ -183,7 +184,7 @@ export const AdminLayout = ({
             <img src={npsLogo} alt="NPS" className="h-7 w-auto" />
             <div>
               <span className="text-sm font-bold text-sidebar-foreground">NPS Portal</span>
-              <p className="text-[10px] text-sidebar-foreground/40">Super Admin</p>
+              <p className="text-[10px] text-sidebar-foreground/70">Super Admin</p>
             </div>
           </div>
           <div className="px-4 py-3 border-b border-sidebar-border">
