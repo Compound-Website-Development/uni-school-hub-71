@@ -58,7 +58,7 @@ const StaffStudents = () => {
           }
         }
 
-        let query = supabase
+        let query: any = supabase
           .from("students")
           .select(`id, student_id, first_name, last_name, email, status, classes (name), programmes (name)`)
           .order("last_name");
