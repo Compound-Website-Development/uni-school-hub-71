@@ -146,16 +146,17 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
       </div>
       <div className="md:hidden pt-16 pb-20"><div className="p-4">{children}</div></div>
       <nav className="md:hidden fixed bottom-4 left-4 right-4 z-50 bg-card rounded-2xl shadow-lg border border-border/50 safe-bottom">
-        <div className="flex items-center justify-around h-16 px-2">
+        <div className="flex items-center justify-around h-16 px-1">
           {navItems.slice(0, 5).map((item) => {
             const isActive = location.pathname === item.href;
             const Icon = item.icon;
+            const shortLabel = item.label === "Community Wall" ? "Wall" : item.label === "My Results" ? "Results" : item.label;
             return (
-              <Link key={item.href} to={item.href} className={cn("flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all duration-200 rounded-xl", isActive ? "text-primary" : "text-muted-foreground")}>
-                <div className={cn("p-2 rounded-xl transition-all duration-200", isActive && "bg-primary/10")}>
+              <Link key={item.href} to={item.href} className={cn("flex flex-col items-center justify-center flex-1 h-full gap-0.5 min-w-0 transition-all duration-200 rounded-xl", isActive ? "text-primary" : "text-muted-foreground")}>
+                <div className={cn("p-1.5 rounded-xl transition-all duration-200", isActive && "bg-primary/10")}>
                   <Icon className={cn("w-5 h-5", isActive && "text-primary")} />
                 </div>
-                <span className={cn("text-[10px] font-medium", isActive && "text-primary")}>{item.label}</span>
+                <span className={cn("text-[10px] font-medium leading-none truncate max-w-full px-1", isActive && "text-primary")}>{shortLabel}</span>
               </Link>
             );
           })}
