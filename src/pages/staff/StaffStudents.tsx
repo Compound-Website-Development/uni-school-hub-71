@@ -45,13 +45,14 @@ const StaffStudents = () => {
             .maybeSingle();
 
           if (teacher?.id) {
-            const [{ data: ownClasses }, { data: subjClasses }] = await Promise.all([
-              supabase.from("classes").select("id").eq("class_teacher_id", teacher.id),
-              supabase.from("class_subjects").select("class_id").eq("teacher_id", teacher.id),
-            ]);
+            const sb: any = supabase;
+            const ownRes: any = await sb.from("classes").select("id").eq("class_teacher_id", teacher.id);
+            const subjRes: any = await sb.from("class_subjects").select("class_id").eq("teacher_id", teacher.id);
+            const ownClasses: any[] = ownRes.data || [];
+            const subjClasses: any[] = subjRes.data || [];
             const ids = new Set<string>();
-            (ownClasses || []).forEach((c: any) => c.id && ids.add(c.id));
-            (subjClasses || []).forEach((c: any) => c.class_id && ids.add(c.class_id));
+            ownClasses.forEach((c: any) => c.id && ids.add(c.id));
+            subjClasses.forEach((c: any) => c.class_id && ids.add(c.class_id));
             allowedClassIds = Array.from(ids);
           } else {
             allowedClassIds = [];
