@@ -45,10 +45,12 @@ const StaffStudents = () => {
             .maybeSingle();
 
           if (teacher?.id) {
-            const [{ data: ownClasses }, { data: subjClasses }] = await Promise.all([
-              supabase.from("classes").select("id").eq("class_teacher_id", teacher.id),
-              supabase.from("class_subjects").select("class_id").eq("teacher_id", teacher.id),
+            const [ownRes, subjRes] = await Promise.all([
+              (supabase.from("classes").select("id").eq("class_teacher_id", teacher.id) as any),
+              (supabase.from("class_subjects").select("class_id").eq("teacher_id", teacher.id) as any),
             ]);
+            const ownClasses = ownRes.data as any[] | null;
+            const subjClasses = subjRes.data as any[] | null;
             const ids = new Set<string>();
             (ownClasses || []).forEach((c: any) => c.id && ids.add(c.id));
             (subjClasses || []).forEach((c: any) => c.class_id && ids.add(c.class_id));
