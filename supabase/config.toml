@@ -1,4 +1,1 @@
 project_id = "weqzvfpzuybyuvruumae"
-
-[functions.mcp]
-verify_jwt = false
