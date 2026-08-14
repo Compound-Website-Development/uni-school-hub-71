@@ -1,148 +1,138 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { StudentLayout } from "@/components/layout/StudentLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
-import { CreditCard, CheckCircle, Clock, AlertTriangle } from "lucide-react";
+import { useStudentBilling } from "@/hooks/useStudentBilling";
+import { FeeSchedule } from "@/components/fees/FeeSchedule";
+import { naira, balanceOf, invoiceStatusLabel, invoiceStatusTone } from "@/lib/finance";
+import { CreditCard, CheckCircle, AlertTriangle, Loader2, Receipt } from "lucide-react";
 
 const StudentFees = () => {
   const { studentData } = useAuth();
-  const [feeItems, setFeeItems] = useState<any[]>([]);
-  const [payments, setPayments] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const ids = useMemo(() => (studentData?.id ? [studentData.id] : []), [studentData?.id]);
+  const { invoices, lines, receipts, terms, currentTermId, isLoading } = useStudentBilling(ids);
 
-  useEffect(() => {
-    const fetchFees = async () => {
-      if (!studentData?.id) return;
-      const itemsQuery = supabase.from("fee_items").select("*");
-      const [{ data: items }, { data: pays }] = await Promise.all([
-        studentData.class_id ? itemsQuery.eq("class_id", studentData.class_id) : itemsQuery,
-        supabase.from("fee_payments").select("*").eq("student_id", studentData.id),
-      ]);
+  const current = invoices.find((i: any) => i.term_id === currentTermId) || invoices[0];
+  const termName = (id?: string | null) => (terms.find((t: any) => t.id === id) as any)?.name || "Term";
+  const totalOwing = invoices.reduce((s: number, i: any) => s + Math.max(balanceOf(i), 0), 0);
+  const totalPaid = receipts.reduce((s: number, r: any) => s + Number(r.amount || 0), 0);
+  const paidPct = current && Number(current.total) > 0
+    ? Math.min(100, Math.round((Number(current.amount_paid) / Number(current.total)) * 100))
+    : 0;
 
-      setFeeItems(items || []);
-      setPayments(pays || []);
-      setIsLoading(false);
-    };
-    fetchFees();
-  }, [studentData]);
-
-  const getPaymentForItem = (itemId: string) => payments.find(p => p.fee_item_id === itemId);
-
-  const totalFees = feeItems.reduce((sum, f) => sum + (f.amount || 0), 0);
-  const totalPaid = payments.reduce((sum, p) => sum + (p.amount_paid || 0), 0);
-  const outstanding = totalFees - totalPaid;
+  if (isLoading) {
+    return (
+      <StudentLayout title="Fees">
+        <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+      </StudentLayout>
+    );
+  }
 
   return (
     <StudentLayout title="Fee Payments">
       <div className="space-y-6 animate-fade-in">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Fee Payments</h1>
-          <p className="text-muted-foreground text-sm mt-1">View your fee breakdown and payment status</p>
+          <h1 className="text-2xl font-bold text-foreground">Fees</h1>
+          <p className="text-muted-foreground text-sm mt-1">Your term invoice, payments and outstanding balance</p>
         </div>
 
-        {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="rounded-xl border-border/50 shadow-card">
+          <Card className="rounded-xl border-border/50 shadow-card card-hover-subtle">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-primary/10 text-primary"><CreditCard className="w-5 h-5" /></div>
               <div>
-                <p className="text-2xl font-bold text-foreground">₦{totalFees.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">Total Fees</p>
+                <p className="text-2xl font-bold text-foreground">{naira(current?.total)}</p>
+                <p className="text-xs text-muted-foreground">{termName(current?.term_id)} total</p>
               </div>
             </CardContent>
           </Card>
-          <Card className="rounded-xl border-border/50 shadow-card">
+          <Card className="rounded-xl border-border/50 shadow-card card-hover-subtle">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-success/10 text-success"><CheckCircle className="w-5 h-5" /></div>
               <div>
-                <p className="text-2xl font-bold text-foreground">₦{totalPaid.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">Total Paid</p>
+                <p className="text-2xl font-bold text-foreground">{naira(totalPaid)}</p>
+                <p className="text-xs text-muted-foreground">Total paid</p>
               </div>
             </CardContent>
           </Card>
-          <Card className="rounded-xl border-border/50 shadow-card">
+          <Card className="rounded-xl border-border/50 shadow-card card-hover-subtle">
             <CardContent className="p-4 flex items-center gap-3">
-              <div className={`p-2.5 rounded-lg ${outstanding > 0 ? "bg-destructive/10 text-destructive" : "bg-success/10 text-success"}`}>
-                {outstanding > 0 ? <AlertTriangle className="w-5 h-5" /> : <CheckCircle className="w-5 h-5" />}
+              <div className={`p-2.5 rounded-lg ${totalOwing > 0 ? "bg-destructive/10 text-destructive" : "bg-success/10 text-success"}`}>
+                {totalOwing > 0 ? <AlertTriangle className="w-5 h-5" /> : <CheckCircle className="w-5 h-5" />}
               </div>
               <div>
-                <p className="text-2xl font-bold text-foreground">₦{outstanding.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-foreground">{naira(totalOwing)}</p>
                 <p className="text-xs text-muted-foreground">Outstanding</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Fee Items Table */}
-        <Card className="rounded-xl border-border/50 shadow-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-primary" />
-              Fee Breakdown
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {feeItems.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">No fee items found for the current term.</p>
-            ) : (
-              <div className="divide-y divide-border">
-                {feeItems.map((item) => {
-                  const payment = getPaymentForItem(item.id);
-                  const isPaid = payment && payment.status === "paid";
-                  return (
-                    <div key={item.id} className="flex items-center justify-between py-4">
-                      <div>
-                        <p className="font-medium text-foreground text-sm">{item.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.is_mandatory ? "Mandatory" : "Optional"}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <p className="font-bold text-foreground">₦{(item.amount || 0).toLocaleString()}</p>
-                        <Badge className={isPaid ? "bg-success/10 text-success border-0" : "bg-warning/10 text-warning border-0"}>
-                          {isPaid ? "Paid" : "Pending"}
-                        </Badge>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Payment History */}
-        {payments.length > 0 && (
+        {current && (
           <Card className="rounded-xl border-border/50 shadow-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-primary" />
-                Payment History
+            <CardHeader className="pb-2 flex flex-row items-center justify-between gap-3">
+              <CardTitle className="text-sm font-semibold">{current.serial} · {termName(current.term_id)}</CardTitle>
+              <Badge variant="outline" className={`${invoiceStatusTone(current.status)} text-[10px]`}>
+                {invoiceStatusLabel(current.status)}
+              </Badge>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[11px] text-muted-foreground">
+                  <span>Paid {naira(current.amount_paid)}</span>
+                  <span>Balance {naira(balanceOf(current))}</span>
+                </div>
+                <Progress value={paidPct} className="h-2" />
+              </div>
+              <div className="divide-y divide-border">
+                {(lines[current.id] || []).map((l: any) => (
+                  <div key={l.id} className="flex items-center justify-between py-2.5 text-sm">
+                    <span className="text-foreground">{l.description}</span>
+                    <span className="font-medium">{naira(l.amount)}</span>
+                  </div>
+                ))}
+                {Number(current.discount_total) > 0 && (
+                  <div className="flex items-center justify-between py-2.5 text-sm text-success">
+                    <span>Discount / scholarship</span>
+                    <span className="font-medium">- {naira(current.discount_total)}</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Payments are recorded by the school bursar. Speak to your parent or guardian about settling any balance.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {receipts.length > 0 && (
+          <Card className="rounded-xl border-border/50 shadow-card">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Receipt className="w-4 h-4 text-primary" /> Payment history
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="divide-y divide-border">
-                {payments.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between py-3">
+                {receipts.map((r: any) => (
+                  <div key={r.id} className="flex items-center justify-between py-3">
                     <div>
-                      <p className="font-medium text-foreground text-sm">₦{(p.amount_paid || 0).toLocaleString()}</p>
-                      <p className="text-xs text-muted-foreground">{p.payment_method || "N/A"} • {p.reference || "No ref"}</p>
+                      <p className="font-medium text-foreground text-sm">{naira(r.amount)}</p>
+                      <p className="text-xs text-muted-foreground capitalize">{r.method} · {r.serial}</p>
                     </div>
-                    <div className="text-right">
-                      <Badge className={p.status === "paid" ? "bg-success/10 text-success border-0" : "bg-warning/10 text-warning border-0"}>
-                        {p.status}
-                      </Badge>
-                      {p.paid_at && <p className="text-xs text-muted-foreground mt-1">{new Date(p.paid_at).toLocaleDateString()}</p>}
-                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(r.issued_at || r.created_at).toLocaleDateString()}
+                    </p>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
         )}
+
+        <FeeSchedule classId={studentData?.class_id} className={(studentData as any)?.classes?.name} />
       </div>
     </StudentLayout>
   );

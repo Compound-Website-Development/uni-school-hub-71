@@ -55,6 +55,9 @@ import AdminStudentsPage from "./pages/admin/AdminStudentsPage";
 import AdminStaffPage from "./pages/admin/AdminStaffPage";
 import AdminAnnouncementsPage from "./pages/admin/AdminAnnouncementsPage";
 import AdminFeesPage from "./pages/admin/AdminFeesPage";
+import AdminFinancePage from "./pages/admin/AdminFinancePage";
+import AdminCommunicationPage from "./pages/admin/AdminCommunicationPage";
+import AdminPoliciesPage from "./pages/admin/AdminPoliciesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminApprovalsPage from "./pages/admin/AdminApprovalsPage";
 import AdminReportsPage from "./pages/admin/AdminReportsPage";
@@ -152,6 +155,9 @@ const App = () => (
             <Route path="/admin/students" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStudentsPage /></ProtectedRoute>} />
             <Route path="/admin/staff" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStaffPage /></ProtectedRoute>} />
             <Route path="/admin/approvals" element={<ProtectedRoute allowedRoles={["admin"]}><AdminApprovalsPage /></ProtectedRoute>} />
+            <Route path="/admin/finance" element={<ProtectedRoute allowedRoles={["admin"]}><AdminFinancePage /></ProtectedRoute>} />
+            <Route path="/admin/communication" element={<ProtectedRoute allowedRoles={["admin"]}><AdminCommunicationPage /></ProtectedRoute>} />
+            <Route path="/admin/policies" element={<ProtectedRoute allowedRoles={["admin"]}><AdminPoliciesPage /></ProtectedRoute>} />
             <Route path="/admin/fees" element={<ProtectedRoute allowedRoles={["admin"]}><AdminFeesPage /></ProtectedRoute>} />
             <Route path="/admin/announcements" element={<ProtectedRoute allowedRoles={["admin"]}><AdminAnnouncementsPage /></ProtectedRoute>} />
             <Route path="/admin/register-import" element={<ProtectedRoute allowedRoles={["admin"]}><AdminRegisterImport /></ProtectedRoute>} />
