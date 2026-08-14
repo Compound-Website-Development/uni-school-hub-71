@@ -48,6 +48,8 @@ const adminNavSections = [
     label: "Finance & Comms",
     items: [
       { icon: CreditCard, label: "Fee Management", href: "/admin/fees" },
+      { icon: FileText, label: "Invoices & Receipts", href: "/admin/finance" },
+      { icon: Megaphone, label: "Message Templates", href: "/admin/communication" },
       { icon: BarChart2, label: "Financial Intelligence", href: "/admin/financial" },
       { icon: Megaphone, label: "Announcements", href: "/admin/announcements" },
       { icon: FileText, label: "Reports & Export", href: "/admin/reports" },
@@ -85,6 +87,7 @@ const adminNavSections = [
       { icon: BookUser, label: "Admission Register", href: "/admin/register-import" },
       { icon: Upload, label: "Bulk Upload", href: "/admin/bulk-upload" },
       { icon: Database, label: "Manage Users", href: "/admin/users" },
+      { icon: FileText, label: "Policy Documents", href: "/admin/policies" },
       { icon: Settings, label: "School Settings", href: "/admin/settings" },
     ],
   },
