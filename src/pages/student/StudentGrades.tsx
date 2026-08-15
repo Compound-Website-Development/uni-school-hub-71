@@ -122,12 +122,18 @@ const StudentGrades = () => {
     <StudentLayout title="My Grades">
       <div className="space-y-6">
         {/* Header */}
-        <div className="animate-fade-up">
-          <h1 className="text-2xl font-bold text-foreground">My Grades</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            View your academic performance
-          </p>
+        <div className="animate-fade-up flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">My Grades</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              View your academic performance
+            </p>
+          </div>
+          <Button asChild variant="outline" className="shadow-sm">
+            <Link to="/student/report-card"><FileText className="w-4 h-4 mr-2" /> View Report Card</Link>
+          </Button>
         </div>
+
 
         {/* GPA Summary Cards */}
         {loading ? (
