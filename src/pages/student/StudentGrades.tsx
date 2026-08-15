@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { StudentLayout } from "@/components/layout/StudentLayout";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { TrendingUp, BarChart3, Trophy, BookOpen, History, ChevronDown } from "lucide-react";
+import { TrendingUp, BarChart3, Trophy, BookOpen, History, ChevronDown, FileText } from "lucide-react";
+
 
 interface Grade {
   id: string;
@@ -122,12 +125,18 @@ const StudentGrades = () => {
     <StudentLayout title="My Grades">
       <div className="space-y-6">
         {/* Header */}
-        <div className="animate-fade-up">
-          <h1 className="text-2xl font-bold text-foreground">My Grades</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            View your academic performance
-          </p>
+        <div className="animate-fade-up flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">My Grades</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              View your academic performance
+            </p>
+          </div>
+          <Button asChild variant="outline" className="shadow-sm">
+            <Link to="/student/report-card"><FileText className="w-4 h-4 mr-2" /> View Report Card</Link>
+          </Button>
         </div>
+
 
         {/* GPA Summary Cards */}
         {loading ? (

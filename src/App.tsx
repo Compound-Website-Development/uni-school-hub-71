@@ -85,6 +85,10 @@ import ParentForum from "./pages/parent/ParentForum";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import StudentProfile from "./pages/student/StudentProfile";
 import StudentWall from "./pages/student/StudentWall";
+import StudentHomeworkDetail from "./pages/student/StudentHomeworkDetail";
+import StudentLearningHub from "./pages/student/StudentLearningHub";
+import StudentLessonNote from "./pages/student/StudentLessonNote";
+import StudentReportCard from "./pages/student/StudentReportCard";
 import StaffWall from "./pages/staff/StaffWall";
 import ParentProfile from "./pages/parent/ParentProfile";
 import ParentWall from "./pages/parent/ParentWall";
@@ -124,6 +128,10 @@ const App = () => (
             <Route path="/student/exams" element={<ProtectedRoute allowedRoles={["student"]}><StudentExams /></ProtectedRoute>} />
             <Route path="/student/exams/:id" element={<ProtectedRoute allowedRoles={["student"]}><TakeExam /></ProtectedRoute>} />
             <Route path="/student/homework" element={<ProtectedRoute allowedRoles={["student"]}><StudentHomework /></ProtectedRoute>} />
+            <Route path="/student/homework/:id" element={<ProtectedRoute allowedRoles={["student"]}><StudentHomeworkDetail /></ProtectedRoute>} />
+            <Route path="/student/learning" element={<ProtectedRoute allowedRoles={["student"]}><StudentLearningHub /></ProtectedRoute>} />
+            <Route path="/student/learning/:id" element={<ProtectedRoute allowedRoles={["student"]}><StudentLessonNote /></ProtectedRoute>} />
+            <Route path="/student/report-card" element={<ProtectedRoute allowedRoles={["student"]}><StudentReportCard /></ProtectedRoute>} />
             <Route path="/student/library" element={<ProtectedRoute allowedRoles={["student"]}><StudentLibrary /></ProtectedRoute>} />
             <Route path="/student/calendar" element={<ProtectedRoute allowedRoles={["student"]}><StudentCalendar /></ProtectedRoute>} />
             <Route path="/student/complaints" element={<ProtectedRoute allowedRoles={["student"]}><StudentComplaints /></ProtectedRoute>} />
