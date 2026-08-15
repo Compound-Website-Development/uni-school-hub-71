@@ -25,7 +25,9 @@ const navItems = [
   { icon: Home, label: "Dashboard", href: "/student" },
   { icon: Users, label: "Community Wall", href: "/student/wall" },
   { icon: BookOpen, label: "My Results", href: "/student/grades" },
+  { icon: CalendarDays, label: "Schedule", href: "/student/schedule" },
   { icon: Calendar, label: "Attendance", href: "/student/attendance" },
+  { icon: BookOpenCheck, label: "Learning Hub", href: "/student/learning" },
   { icon: FileText, label: "Reports", href: "/student/reports" },
   { icon: CreditCard, label: "Fee Payments", href: "/student/fees" },
   { icon: Megaphone, label: "Announcements", href: "/student/announcements" },
@@ -53,7 +55,7 @@ export const StudentLayout = ({ children, title }: StudentLayoutProps) => {
   const SidebarNav = ({ onItemClick }: { onItemClick?: () => void }) => (
     <div className="space-y-1">
       {navItems.map((item) => {
-        const isActive = location.pathname === item.href;
+        const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + "/");
         const Icon = item.icon;
         return (
           <Link key={item.href} to={item.href} onClick={onItemClick}
