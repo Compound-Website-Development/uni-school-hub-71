@@ -16,7 +16,7 @@ import { format, isFuture, isToday, addDays } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 const ParentDashboard = () => {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const navigate = useNavigate();
   const [children, setChildren] = useState<any[]>([]);
   const [childGrades, setChildGrades] = useState<Record<string, any[]>>({});
@@ -34,8 +34,21 @@ const ParentDashboard = () => {
         .select("student_id")
         .eq("parent_user_id", user.id);
 
-      if (links && links.length > 0) {
-        const studentIds = links.map((l: any) => l.student_id);
+      let studentIds: string[] = (links || []).map((l: any) => l.student_id);
+
+      // Admins can open the parent portal with their own email. When they have no
+      // real linked child, fall back to a sample pupil so the portal is testable.
+      if (studentIds.length === 0 && userRole === "admin") {
+        const { data: sample } = await supabase
+          .from("students")
+          .select("id")
+          .eq("status", "active")
+          .order("created_at", { ascending: true })
+          .limit(1);
+        studentIds = (sample || []).map((s: any) => s.id);
+      }
+
+      if (studentIds.length > 0) {
 
         // Get student class_ids for homework/exam queries
         const [studentsRes, gradesRes, attendanceRes, announcementsRes] = await Promise.all([
@@ -82,7 +95,7 @@ const ParentDashboard = () => {
       setIsLoading(false);
     };
     fetchAll();
-  }, [user]);
+  }, [user, userRole]);
 
   const getAvgGrade = (studentId: string) => {
     const grades = childGrades[studentId] || [];
