@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Apply from "./pages/Apply";
 import ResetPassword from "./pages/ResetPassword";
 import ParentAccess from "./pages/ParentAccess";
+import StudentPortalEntry from "./pages/StudentPortalEntry";
 import OAuthConsent from "./pages/OAuthConsent";
 import PublicStudentProfile from "./pages/PublicStudentProfile";
 // Student
@@ -111,7 +112,8 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/apply" element={<Apply />} />
             <Route path="/parent-access" element={<ParentAccess />} />
-            <Route path="/s/:token" element={<PublicStudentProfile />} />
+            <Route path="/s/:token" element={<StudentPortalEntry />} />
+            <Route path="/p/:token" element={<PublicStudentProfile />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             

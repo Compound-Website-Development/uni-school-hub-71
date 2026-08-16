@@ -232,7 +232,7 @@ const StudentDashboard = () => {
         <Card className="rounded-3xl border-0 bg-primary text-primary-foreground shadow-lg overflow-hidden animate-fade-up">
           <CardContent className="p-6 relative">
             <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-primary-foreground/10" />
-            <div className="absolute right-10 bottom--6 w-24 h-24 rounded-full bg-primary-foreground/5" />
+            <div className="absolute right-10 bottom-0 w-24 h-24 rounded-full bg-primary-foreground/5" />
             <p className="text-xs font-medium opacity-80">{getGreeting()}</p>
             <h1 className="text-2xl md:text-3xl font-bold mt-1">
               {studentData?.first_name || "Student"} 👋
