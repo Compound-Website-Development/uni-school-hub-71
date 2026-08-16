@@ -9,6 +9,8 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   userRole: UserRole | null;
+  /** True when an admin is viewing a portal through a shadow (non-real) student identity. */
+  isShadowIdentity: boolean;
   studentData: StudentData | null;
   teacherData: TeacherData | null;
   signUp: (email: string, password: string, metadata?: { first_name?: string; last_name?: string; role?: string; phone?: string }) => Promise<{ error: Error | null }>;
@@ -47,6 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [teacherData, setTeacherData] = useState<TeacherData | null>(null);
+  const [isShadowIdentity, setIsShadowIdentity] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -57,6 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTimeout(() => { fetchUserData(session.user.id); }, 0);
         } else {
           setUserRole(null);
+          setIsShadowIdentity(false);
           setStudentData(null);
           setTeacherData(null);
           setIsLoading(false);
@@ -153,11 +157,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    setUser(null); setSession(null); setUserRole(null); setStudentData(null); setTeacherData(null);
+    setUser(null); setSession(null); setUserRole(null); setIsShadowIdentity(false); setStudentData(null); setTeacherData(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, userRole, studentData, teacherData, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, isLoading, userRole, isShadowIdentity, studentData, teacherData, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
