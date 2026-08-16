@@ -100,6 +100,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             .rpc('staff_teacher_records');
           const teacher = (teacherRows || []).find((t: any) => t.user_id === userId) || null;
           if (teacher) setTeacherData(teacher as TeacherData);
+
+          if (roleData.role === 'admin') {
+            // Admins carry a shadow student identity so they can open the student
+            // and parent portals with their own email — no second device needed.
+            const { data: ownRecord } = await supabase
+              .from('students')
+              .select('*')
+              .eq('user_id', userId)
+              .maybeSingle();
+
+            if (ownRecord) {
+              setStudentData(ownRecord as StudentData);
+              setIsShadowIdentity(false);
+            } else {
+              const { data: sample } = await supabase
+                .from('students')
+                .select('*')
+                .eq('status', 'active')
+                .order('created_at', { ascending: true })
+                .limit(1)
+                .maybeSingle();
+              if (sample) {
+                setStudentData(sample as StudentData);
+                setIsShadowIdentity(true);
+              }
+            }
+          }
         }
         // Parent role doesn't need additional profile data fetching
       }
