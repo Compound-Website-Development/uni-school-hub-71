@@ -129,7 +129,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Portal Switcher */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/staff")}>
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-info/10">
@@ -149,7 +149,19 @@ const AdminDashboard = () => {
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-foreground">Student Portal</p>
-                <p className="text-xs text-muted-foreground">Preview student dashboard in a new tab</p>
+                <p className="text-xs text-muted-foreground">Open with your admin email — no second device needed</p>
+              </div>
+              <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            </CardContent>
+          </Card>
+          <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/parent")}>
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-accent/15">
+                <Users className="w-6 h-6 text-accent-foreground" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-foreground">Parent Portal</p>
+                <p className="text-xs text-muted-foreground">Preview the parent experience in a new tab</p>
               </div>
               <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
             </CardContent>

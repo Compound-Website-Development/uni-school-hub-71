@@ -9,6 +9,8 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   userRole: UserRole | null;
+  /** True when an admin is viewing a portal through a shadow (non-real) student identity. */
+  isShadowIdentity: boolean;
   studentData: StudentData | null;
   teacherData: TeacherData | null;
   signUp: (email: string, password: string, metadata?: { first_name?: string; last_name?: string; role?: string; phone?: string }) => Promise<{ error: Error | null }>;
@@ -47,6 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [teacherData, setTeacherData] = useState<TeacherData | null>(null);
+  const [isShadowIdentity, setIsShadowIdentity] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -57,6 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTimeout(() => { fetchUserData(session.user.id); }, 0);
         } else {
           setUserRole(null);
+          setIsShadowIdentity(false);
           setStudentData(null);
           setTeacherData(null);
           setIsLoading(false);
@@ -100,6 +104,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             .rpc('staff_teacher_records');
           const teacher = (teacherRows || []).find((t: any) => t.user_id === userId) || null;
           if (teacher) setTeacherData(teacher as TeacherData);
+
+          if (roleData.role === 'admin') {
+            // Admins carry a shadow student identity so they can open the student
+            // and parent portals with their own email — no second device needed.
+            const { data: ownRecord } = await supabase
+              .from('students')
+              .select('*')
+              .eq('user_id', userId)
+              .maybeSingle();
+
+            if (ownRecord) {
+              setStudentData(ownRecord as StudentData);
+              setIsShadowIdentity(false);
+            } else {
+              const { data: sample } = await supabase
+                .from('students')
+                .select('*')
+                .eq('status', 'active')
+                .order('created_at', { ascending: true })
+                .limit(1)
+                .maybeSingle();
+              if (sample) {
+                setStudentData(sample as StudentData);
+                setIsShadowIdentity(true);
+              }
+            }
+          }
         }
         // Parent role doesn't need additional profile data fetching
       }
@@ -126,11 +157,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    setUser(null); setSession(null); setUserRole(null); setStudentData(null); setTeacherData(null);
+    setUser(null); setSession(null); setUserRole(null); setIsShadowIdentity(false); setStudentData(null); setTeacherData(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, userRole, studentData, teacherData, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, isLoading, userRole, isShadowIdentity, studentData, teacherData, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
