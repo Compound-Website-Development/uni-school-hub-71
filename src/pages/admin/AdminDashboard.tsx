@@ -129,7 +129,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Portal Switcher */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/staff")}>
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-info/10">
