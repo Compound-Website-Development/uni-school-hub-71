@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { formatNaira } from "@/lib/finance";
+import { naira } from "@/lib/finance";
 import {
   BookOpen, FileText, Calendar, TrendingUp, Award, Clock, ChevronRight,
   ClipboardList, CreditCard, CalendarDays, Megaphone, ShieldCheck, CheckCircle2,
@@ -205,7 +205,7 @@ const StudentDashboard = () => {
     },
     {
       label: "Fee Balance",
-      value: formatNaira(balance),
+      value: naira(balance),
       icon: CreditCard,
       hint: balance > 0 ? "Payment outstanding" : "Fully paid — thank you",
       progress: null,
