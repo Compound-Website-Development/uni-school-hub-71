@@ -75,12 +75,14 @@ const Field = ({
   onChange,
   className = "",
   type = "text",
+  readOnly = false,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   className?: string;
   type?: string;
+  readOnly?: boolean;
 }) => (
   <label className={`flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground ${className}`}>
     <span className="shrink-0">{label}</span>
@@ -88,7 +90,8 @@ const Field = ({
       type={type}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-8 text-sm font-normal normal-case tracking-normal text-foreground"
+      readOnly={readOnly}
+      className={`h-8 text-sm font-normal normal-case tracking-normal text-foreground ${readOnly ? "border-transparent bg-transparent px-0 font-semibold shadow-none focus-visible:ring-0" : ""}`}
     />
   </label>
 );
@@ -96,9 +99,11 @@ const Field = ({
 const RatingBoxes = ({
   value,
   onChange,
+  readOnly = false,
 }: {
   value: number;
   onChange: (v: number) => void;
+  readOnly?: boolean;
 }) => (
   <div className="flex gap-1">
     {RATING_KEY.map((r) => (
@@ -106,7 +111,8 @@ const RatingBoxes = ({
         key={r.value}
         type="button"
         aria-label={`${r.value} – ${r.label}`}
-        onClick={() => onChange(value === r.value ? 0 : r.value)}
+        disabled={readOnly}
+        onClick={() => (readOnly ? undefined : onChange(value === r.value ? 0 : r.value))}
         className={`w-6 h-6 border border-border rounded-sm text-[11px] leading-none flex items-center justify-center transition-colors ${
           value === r.value
             ? "bg-primary text-primary-foreground border-primary"
@@ -126,9 +132,11 @@ interface Props {
   saveLabel?: string;
   saving?: boolean;
   extraActions?: React.ReactNode;
+  /** Renders the official sheet as a read-only document (pupil/parent view). */
+  readOnly?: boolean;
 }
 
-export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving = false, extraActions }: Props) => {
+export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving = false, extraActions, readOnly = false }: Props) => {
   const { toast } = useToast();
   const [data, setData] = useState<ReportCardData>(() => ({ ...emptyReportCard(), ...initial }));
 
@@ -168,17 +176,21 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2 print:hidden">
-        <Button onClick={handleSave} disabled={saving} className="bg-gradient-primary">
-          <Save className="w-4 h-4 mr-2" /> {saving ? "Saving…" : saveLabel}
-        </Button>
+        {!readOnly && (
+          <Button onClick={handleSave} disabled={saving} className="bg-gradient-primary">
+            <Save className="w-4 h-4 mr-2" /> {saving ? "Saving…" : saveLabel}
+          </Button>
+        )}
         {extraActions}
 
         <Button variant="outline" onClick={() => window.print()}>
           <Printer className="w-4 h-4 mr-2" /> Print / PDF
         </Button>
-        <Button variant="ghost" onClick={handleReset}>
-          <RotateCcw className="w-4 h-4 mr-2" /> Clear
-        </Button>
+        {!readOnly && (
+          <Button variant="ghost" onClick={handleReset}>
+            <RotateCcw className="w-4 h-4 mr-2" /> Clear
+          </Button>
+        )}
       </div>
 
       <Card className="rounded-xl border-border/50 shadow-card print:shadow-none print:border-0">
@@ -202,14 +214,15 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
 
           {/* Pupil details */}
           <div className="grid gap-3 md:grid-cols-3">
-            <Field label="Pupil's Name" value={data.pupilName} onChange={(v) => set("pupilName", v)} className="md:col-span-2" />
-            <Field label="ID" value={data.pupilId} onChange={(v) => set("pupilId", v)} />
-            <Field label="Gender" value={data.gender} onChange={(v) => set("gender", v)} />
-            <Field label="Age" value={data.age} onChange={(v) => set("age", v)} />
+            <Field label="Pupil's Name" value={data.pupilName} onChange={(v) => set("pupilName", v)} className="md:col-span-2" readOnly={readOnly} />
+            <Field label="ID" value={data.pupilId} onChange={(v) => set("pupilId", v)} readOnly={readOnly} />
+            <Field label="Gender" value={data.gender} onChange={(v) => set("gender", v)} readOnly={readOnly} />
+            <Field label="Age" value={data.age} onChange={(v) => set("age", v)} readOnly={readOnly} />
             <label className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               <span className="shrink-0">Class</span>
               <select
                 value={data.className}
+                disabled={readOnly}
                 onChange={(e) => set("className", e.target.value)}
                 className="h-8 w-full rounded-md border border-input bg-background px-2 text-sm font-normal normal-case tracking-normal text-foreground"
               >
@@ -218,11 +231,12 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                 ))}
               </select>
             </label>
-            <Field label="Year" value={data.year} onChange={(v) => set("year", v)} />
+            <Field label="Year" value={data.year} onChange={(v) => set("year", v)} readOnly={readOnly} />
             <label className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
               <span className="shrink-0">Term</span>
               <select
                 value={data.term}
+                disabled={readOnly}
                 onChange={(e) => set("term", e.target.value)}
                 className="h-8 w-full rounded-md border border-input bg-background px-2 text-sm font-normal normal-case tracking-normal text-foreground"
               >
@@ -233,9 +247,9 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                 ))}
               </select>
             </label>
-            <Field label="Next Term Begins" value={data.nextTermBegins} onChange={(v) => set("nextTermBegins", v)} />
-            <Field label="Times Opened" value={data.timesOpened} onChange={(v) => set("timesOpened", v)} />
-            <Field label="Times Present" value={data.timesPresent} onChange={(v) => set("timesPresent", v)} />
+            <Field label="Next Term Begins" value={data.nextTermBegins} onChange={(v) => set("nextTermBegins", v)} readOnly={readOnly} />
+            <Field label="Times Opened" value={data.timesOpened} onChange={(v) => set("timesOpened", v)} readOnly={readOnly} />
+            <Field label="Times Present" value={data.timesPresent} onChange={(v) => set("timesPresent", v)} readOnly={readOnly} />
           </div>
 
           <div className="grid gap-6 lg:grid-cols-3">
@@ -249,7 +263,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                     <th className="border border-border p-1.5 w-16">Exam<br /><span className="font-normal">{ASSESSMENT_WEIGHTS.exam}</span></th>
                     <th className="border border-border p-1.5 w-16">Total<br /><span className="font-normal">{ASSESSMENT_WEIGHTS.total}</span></th>
                     <th className="border border-border p-1.5 text-left">Remark</th>
-                    <th className="border border-border p-1.5 w-8 print:hidden"></th>
+                    {!readOnly && <th className="border border-border p-1.5 w-8 print:hidden"></th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -261,6 +275,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                         <td className="border border-border p-0">
                           <input
                             value={row.subject}
+                            readOnly={readOnly}
                             onChange={(e) => updateSubject(i, { subject: e.target.value })}
                             list="subject-options"
                             className="w-full h-8 px-2 bg-transparent outline-none focus:bg-muted/40"
@@ -271,6 +286,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                             type="number"
                             min={0}
                             max={ASSESSMENT_WEIGHTS.ca}
+                            readOnly={readOnly}
                             value={row.ca ?? ""}
                             onChange={(e) => updateSubject(i, { ca: e.target.value === "" ? null : Number(e.target.value) })}
                             className="w-full h-8 px-2 text-center bg-transparent outline-none focus:bg-muted/40"
@@ -281,6 +297,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                             type="number"
                             min={0}
                             max={ASSESSMENT_WEIGHTS.exam}
+                            readOnly={readOnly}
                             value={row.exam ?? ""}
                             onChange={(e) => updateSubject(i, { exam: e.target.value === "" ? null : Number(e.target.value) })}
                             className="w-full h-8 px-2 text-center bg-transparent outline-none focus:bg-muted/40"
@@ -292,6 +309,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                         <td className="border border-border p-1.5 text-muted-foreground">
                           {hasScore ? remarkForScore(total) : ""}
                         </td>
+                        {!readOnly && (
                         <td className="border border-border p-0 text-center print:hidden">
                           <button
                             type="button"
@@ -304,6 +322,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </td>
+                        )}
                       </tr>
                     );
                   })}
@@ -317,7 +336,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
               <Button
                 variant="outline"
                 size="sm"
-                className="print:hidden"
+                className={readOnly ? "hidden" : "print:hidden"}
                 onClick={() =>
                   setData((d) => ({ ...d, subjects: [...d.subjects, { subject: "", ca: null, exam: null }] }))
                 }
@@ -335,6 +354,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                     <div key={t} className="flex items-center justify-between gap-2 text-sm">
                       <span className="text-muted-foreground">{t}</span>
                       <RatingBoxes
+                        readOnly={readOnly}
                         value={data.affective[t] ?? 0}
                         onChange={(v) => set("affective", { ...data.affective, [t]: v })}
                       />
@@ -350,6 +370,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
                     <div key={t} className="flex items-center justify-between gap-2 text-sm">
                       <span className="text-muted-foreground">{t}</span>
                       <RatingBoxes
+                        readOnly={readOnly}
                         value={data.psychomotor[t] ?? 0}
                         onChange={(v) => set("psychomotor", { ...data.psychomotor, [t]: v })}
                       />
@@ -390,8 +411,9 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
               <p className="text-[11px] uppercase text-muted-foreground">Position</p>
               <Input
                 value={data.position}
+                readOnly={readOnly}
                 onChange={(e) => set("position", e.target.value)}
-                className="h-8 text-center"
+                className={`h-8 text-center ${readOnly ? "border-transparent bg-transparent font-bold shadow-none focus-visible:ring-0" : ""}`}
               />
             </div>
           </div>
@@ -402,6 +424,7 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
               <p className="text-[11px] uppercase font-semibold text-muted-foreground mb-1">Class Teacher's Comment</p>
               <Textarea
                 rows={2}
+                readOnly={readOnly}
                 value={data.classTeacherComment}
                 onChange={(e) => set("classTeacherComment", e.target.value)}
               />
@@ -410,13 +433,14 @@ export const ReportCardEditor = ({ initial, onSave, saveLabel = "Save", saving =
               <p className="text-[11px] uppercase font-semibold text-muted-foreground mb-1">Head Teacher's Comment</p>
               <Textarea
                 rows={2}
+                readOnly={readOnly}
                 value={data.headTeacherComment}
                 onChange={(e) => set("headTeacherComment", e.target.value)}
               />
             </div>
             <div className="grid md:grid-cols-2 gap-3 pt-2">
-              <Field label="Class Teacher" value={data.classTeacherName} onChange={(v) => set("classTeacherName", v)} />
-              <Field label="Head Teacher" value={data.headTeacherName} onChange={(v) => set("headTeacherName", v)} />
+              <Field label="Class Teacher" value={data.classTeacherName} onChange={(v) => set("classTeacherName", v)} readOnly={readOnly} />
+              <Field label="Head Teacher" value={data.headTeacherName} onChange={(v) => set("headTeacherName", v)} readOnly={readOnly} />
             </div>
           </div>
         </CardContent>

@@ -9,7 +9,7 @@
 @layer base {
   :root {
     /* Sky Blue primary + Navy support + Gold accent */
-    --primary: 199 92% 56%;
+    --primary: 199 89% 48%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 199 94% 70%;
     --primary-soft: 199 90% 96%;
@@ -17,7 +17,7 @@
     --navy-foreground: 0 0% 100%;
     
     /* Background — very light, airy */
-    --background: 205 40% 98%;
+    --background: 210 33% 98%;
     --foreground: 200 15% 15%;
     
     /* Surface */
@@ -33,12 +33,12 @@
     --secondary: 202 75% 38%;
     --secondary-foreground: 0 0% 100%;
     
-    --muted: 205 25% 95%;
+    --muted: 205 45% 93%;
     --muted-foreground: 215 10% 50%;
     
     /* Accent — soft orange */
-    --accent: 43 80% 48%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 55% 55%;
+    --accent-foreground: 45 60% 12%;
     
     /* Status Colors */
     --success: 152 60% 42%;
@@ -69,7 +69,7 @@
     /* Border & Input — very subtle */
     --border: 205 30% 89%;
     --input: 205 25% 90%;
-    --ring: 199 92% 56%;
+    --ring: 199 89% 48%;
     
     --radius: 0.75rem;
     
@@ -402,4 +402,17 @@
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
+}
+
+
+@layer utilities {
+  /* Native-app press feedback */
+  .press { @apply transition-transform duration-150 active:scale-[0.97]; }
+  .tap-target { @apply min-h-11 min-w-11; }
+  .num { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .headline { @apply font-display font-bold tracking-tight; }
+  .overline { @apply text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground; }
+  .app-card { @apply rounded-3xl bg-card shadow-elev-1 border border-border/60; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { scrollbar-width: none; }
 }
