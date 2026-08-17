@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { SCHOOL } from "@/lib/schoolConfig";
+import { SCHOOL, AFFECTIVE_TRAITS, PSYCHOMOTOR_SKILLS } from "@/lib/schoolConfig";
+import { ReportCardEditor } from "@/components/reports/ReportCardEditor";
 import { printDocument } from "@/lib/finance";
 import { ArrowLeft, BadgeCheck, BarChart3, CalendarCheck, Download, Medal, Sparkles, ShieldCheck } from "lucide-react";
 
@@ -91,6 +92,33 @@ const StudentReportCard = () => {
 
   const studentName = studentData ? `${studentData.first_name} ${studentData.last_name}` : "Student";
 
+  /** The same official sheet the school office uses in the admin portal, rendered read-only. */
+  const officialSheet = {
+    pupilName: studentName,
+    pupilId: studentData?.student_id || "",
+    gender: (studentData as any)?.gender || "",
+    className: (studentData as any)?.classes?.name || "",
+    year: term?.session || String(new Date().getFullYear()),
+    term: term?.name || "",
+    nextTermBegins: result?.next_term_begins || "",
+    timesOpened: result?.times_opened != null ? String(result.times_opened) : String(attendance.total || ""),
+    timesPresent: result?.times_present != null ? String(result.times_present) : String(attendance.present || ""),
+    subjects: grades.map((g: any) => ({
+      subject: g.subjects?.name || "",
+      ca: g.continuous_assessment === null || g.continuous_assessment === undefined ? null : Number(g.continuous_assessment),
+      exam: g.exam_score === null || g.exam_score === undefined ? null : Number(g.exam_score),
+    })),
+    affective: result?.affective && Object.keys(result.affective).length
+      ? result.affective
+      : Object.fromEntries(AFFECTIVE_TRAITS.map((t) => [t, 0])),
+    psychomotor: result?.psychomotor && Object.keys(result.psychomotor).length
+      ? result.psychomotor
+      : Object.fromEntries(PSYCHOMOTOR_SKILLS.map((t) => [t, 0])),
+    position: result?.class_position ? String(result.class_position) : "",
+    classTeacherComment: result?.teacher_comment || "",
+    headTeacherComment: result?.principal_comment || "",
+  };
+
   return (
     <StudentLayout title="Report Card">
       <div className="space-y-5 animate-fade-in max-w-2xl">
@@ -165,35 +193,18 @@ const StudentReportCard = () => {
               ))}
             </div>
 
-            <Card className="rounded-2xl shadow-card">
-              <CardContent className="p-5 space-y-3">
-                <h2 className="font-semibold text-foreground">Subject Performance</h2>
-                {grades.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No results recorded for this term yet.</p>
-                ) : (
-                  grades.map((g, i) => (
-                    <div key={i} className="rounded-xl border border-border p-3">
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium text-sm text-foreground">{g.subjects?.name || "Subject"}</p>
-                        <Badge variant="secondary" className="text-xs">{g.letter_grade || letterFor(Number(g.total_score))}</Badge>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 mt-2 text-center text-sm">
-                        <div><p className="text-[11px] text-muted-foreground">CA</p><p className="font-semibold">{g.continuous_assessment ?? "—"}</p></div>
-                        <div><p className="text-[11px] text-muted-foreground">Exam</p><p className="font-semibold">{g.exam_score ?? "—"}</p></div>
-                        <div><p className="text-[11px] text-muted-foreground">Total</p><p className="font-bold">{g.total_score ?? "—"}</p></div>
-                      </div>
-                      {g.remark && <p className="text-xs text-muted-foreground mt-2">{g.remark}</p>}
-                    </div>
-                  ))
-                )}
-                {result?.class_position && (
-                  <p className="text-xs text-muted-foreground text-right">
-                    Class position: {result.class_position}
-                    {result.class_size ? ` / ${result.class_size}` : ""}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+            <div>
+              <p className="overline mb-2">Official school sheet</p>
+              {grades.length === 0 ? (
+                <Card className="rounded-2xl shadow-card">
+                  <CardContent className="p-5">
+                    <p className="text-sm text-muted-foreground">No results recorded for this term yet.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <ReportCardEditor readOnly initial={officialSheet} />
+              )}
+            </div>
 
             {(result?.teacher_comment || result?.principal_comment) && (
               <Card className="rounded-2xl bg-primary/5 border-0 shadow-card">
