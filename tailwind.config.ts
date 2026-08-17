@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Manrope", "system-ui", "sans-serif"],
+        display: ["Sora", "Manrope", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -109,6 +109,10 @@ export default {
         'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 30px -5px rgba(0, 0, 0, 0.04)',
         'glow': '0 0 40px -10px hsl(var(--primary) / 0.3)',
         'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
+        'elev-1': '0 1px 2px hsl(205 40% 30% / 0.08), 0 1px 3px hsl(205 40% 30% / 0.06)',
+        'elev-2': '0 2px 6px hsl(205 40% 30% / 0.10), 0 6px 16px -6px hsl(205 40% 30% / 0.14)',
+        'elev-3': '0 8px 24px -8px hsl(205 40% 25% / 0.24), 0 2px 6px hsl(205 40% 25% / 0.08)',
+        'btn': '0 2px 0 0 hsl(var(--primary) / 0.35), 0 8px 20px -8px hsl(var(--primary) / 0.55)',
       },
       keyframes: {
         "accordion-down": {
