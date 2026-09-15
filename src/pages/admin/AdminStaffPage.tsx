@@ -22,8 +22,16 @@ const AdminStaffPage = () => {
   const [accounts, setAccounts] = useState<any[] | null>(null);
 
 
+  const [classMap, setClassMap] = useState<Record<string, string>>({});
+
   const fetchStaff = useCallback(async () => {
-    const { data } = await (supabase as any).rpc("staff_teacher_records");
+    const [{ data }, { data: classes }] = await Promise.all([
+      (supabase as any).rpc("staff_teacher_records"),
+      (supabase as any).from("classes").select("name, class_teacher_id"),
+    ]);
+    const map: Record<string, string> = {};
+    (classes || []).forEach((c: any) => { if (c.class_teacher_id) map[c.class_teacher_id] = c.name; });
+    setClassMap(map);
     setStaff([...(data || [])].sort((a: any, b: any) => (b.created_at || "").localeCompare(a.created_at || "")));
     setIsLoading(false);
   }, []);
@@ -108,6 +116,7 @@ const AdminStaffPage = () => {
                   <TableHead className="text-xs">Employee ID</TableHead>
                   <TableHead className="text-xs">Name</TableHead>
                   <TableHead className="text-xs">Email</TableHead>
+                  <TableHead className="text-xs">Assigned class</TableHead>
                   <TableHead className="text-xs">Department</TableHead>
                   <TableHead className="text-xs">Status</TableHead>
                   <TableHead className="text-xs">Actions</TableHead>
@@ -119,6 +128,9 @@ const AdminStaffPage = () => {
                     <TableCell className="text-xs font-mono">{s.employee_id || "—"}</TableCell>
                     <TableCell className="text-sm font-medium">{s.first_name} {s.last_name}</TableCell>
                     <TableCell className="text-xs">{s.email || "—"}</TableCell>
+                    <TableCell className="text-xs">
+                      {classMap[s.id] ? <Badge variant="secondary" className="text-[10px]">{classMap[s.id]}</Badge> : "—"}
+                    </TableCell>
                     <TableCell className="text-xs">{s.department || "—"}</TableCell>
                     <TableCell>
                       <Badge variant={s.status === "active" ? "default" : "secondary"} className="text-[10px]">
@@ -140,7 +152,7 @@ const AdminStaffPage = () => {
                 ))}
                 {!isLoading && filtered.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground text-sm">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground text-sm">
                       <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-20" />
                       No staff members found
                     </TableCell>
