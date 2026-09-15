@@ -152,7 +152,7 @@ const AdminStaffPage = () => {
                 ))}
                 {!isLoading && filtered.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground text-sm">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground text-sm">
                       <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-20" />
                       No staff members found
                     </TableCell>
