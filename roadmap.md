@@ -1,0 +1,5 @@
+- [ ] Complete parent balance calculations from invoices, discounts, and receipts
+- [ ] Persist teacher grade uploads into grades and term_results and expose published results
+- [ ] Remove mock finance trends and use live student/fee/debtor metrics
+- [ ] Verify existing real students, classes, and terms without overwriting school data
+- [ ] Run build and preview validation
