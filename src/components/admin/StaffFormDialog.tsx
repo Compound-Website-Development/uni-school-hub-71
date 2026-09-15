@@ -38,6 +38,10 @@ export const generateEmployeeId = () =>
 export const StaffFormDialog = ({ open, onOpenChange, staff, onSaved }: Props) => {
   const [form, setForm] = useState({ ...emptyForm });
   const [saving, setSaving] = useState(false);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [subjects, setSubjects] = useState<any[]>([]);
+  const [classId, setClassId] = useState<string>("");
+  const [subjectIds, setSubjectIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!open) return;
@@ -50,6 +54,51 @@ export const StaffFormDialog = ({ open, onOpenChange, staff, onSaved }: Props) =
       setForm({ ...emptyForm, employee_id: generateEmployeeId(), hire_date: new Date().toISOString().slice(0, 10) });
     }
   }, [open, staff]);
+
+  // Load classes and subjects for class-teacher assignment
+  useEffect(() => {
+    if (!open) return;
+    const load = async () => {
+      const sb: any = supabase;
+      const [{ data: cls }, { data: subs }] = await Promise.all([
+        sb.from("classes").select("id, name, class_teacher_id").order("name"),
+        sb.from("subjects").select("id, name").order("name"),
+      ]);
+      setClasses(cls || []);
+      setSubjects(subs || []);
+
+      if (staff?.id) {
+        const assigned = (cls || []).find((c: any) => c.class_teacher_id === staff.id);
+        setClassId(assigned?.id || "");
+        const { data: links } = await sb
+          .from("class_subjects")
+          .select("subject_id")
+          .eq("teacher_id", staff.id);
+        setSubjectIds((links || []).map((l: any) => l.subject_id).filter(Boolean));
+      } else {
+        setClassId("");
+        setSubjectIds([]);
+      }
+    };
+    load();
+  }, [open, staff]);
+
+  const toggleSubject = (id: string) =>
+    setSubjectIds((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+
+  const saveClassAssignment = async (teacherId: string) => {
+    const sb: any = supabase;
+    // A teacher owns at most one class: release any previous class
+    await sb.from("classes").update({ class_teacher_id: null }).eq("class_teacher_id", teacherId);
+    await sb.from("class_subjects").delete().eq("teacher_id", teacherId);
+    if (!classId) return;
+    await sb.from("classes").update({ class_teacher_id: teacherId }).eq("id", classId);
+    if (subjectIds.length) {
+      await sb.from("class_subjects").insert(
+        subjectIds.map((subject_id) => ({ class_id: classId, subject_id, teacher_id: teacherId })),
+      );
+    }
+  };
 
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
