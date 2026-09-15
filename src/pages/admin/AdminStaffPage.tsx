@@ -128,6 +128,9 @@ const AdminStaffPage = () => {
                     <TableCell className="text-xs font-mono">{s.employee_id || "—"}</TableCell>
                     <TableCell className="text-sm font-medium">{s.first_name} {s.last_name}</TableCell>
                     <TableCell className="text-xs">{s.email || "—"}</TableCell>
+                    <TableCell className="text-xs">
+                      {classMap[s.id] ? <Badge variant="secondary" className="text-[10px]">{classMap[s.id]}</Badge> : "—"}
+                    </TableCell>
                     <TableCell className="text-xs">{s.department || "—"}</TableCell>
                     <TableCell>
                       <Badge variant={s.status === "active" ? "default" : "secondary"} className="text-[10px]">
