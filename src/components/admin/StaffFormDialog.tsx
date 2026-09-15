@@ -217,6 +217,55 @@ export const StaffFormDialog = ({ open, onOpenChange, staff, onSaved }: Props) =
           </div>
         </div>
 
+        {/* Class-teacher access: one class per teacher, all subjects of that class */}
+        <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
+          <div>
+            <Label className="text-sm font-semibold">Teacher access</Label>
+            <p className="text-xs text-muted-foreground">
+              Assign the class this teacher is responsible for. They will only see and record for pupils in that class.
+            </p>
+          </div>
+          <div className="space-y-1.5 sm:max-w-xs">
+            <Label>Assigned class</Label>
+            <Select value={classId || "none"} onValueChange={(v) => setClassId(v === "none" ? "" : v)}>
+              <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No class</SelectItem>
+                {classes.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                    {c.class_teacher_id && c.class_teacher_id !== staff?.id ? " (already assigned)" : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {classId && (
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Label>Subjects taught</Label>
+                <Button type="button" size="sm" variant="outline" className="h-7 text-xs"
+                  onClick={() => setSubjectIds(subjects.map((s) => s.id))}>
+                  Select all subjects
+                </Button>
+                <Button type="button" size="sm" variant="ghost" className="h-7 text-xs"
+                  onClick={() => setSubjectIds([])}>
+                  Clear
+                </Button>
+              </div>
+              <div className="grid gap-1.5 sm:grid-cols-3 max-h-48 overflow-y-auto">
+                {subjects.map((s) => (
+                  <label key={s.id} className="flex items-center gap-2 text-xs cursor-pointer">
+                    <Checkbox checked={subjectIds.includes(s.id)} onCheckedChange={() => toggleSubject(s.id)} />
+                    <span>{s.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={save} disabled={saving}>
