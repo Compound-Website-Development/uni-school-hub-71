@@ -4,182 +4,266 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Users, BookOpen, ClipboardCheck, FileText } from "lucide-react";
+import { Users, BookOpen, ClipboardCheck, FileText, GraduationCap, School } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { DashboardSkeleton } from "@/components/ui/loading-skeleton";
+import { InlineEmptyState } from "@/components/ui/empty-state";
 
-interface ClassData {
+interface ClassRow {
   id: string;
   name: string;
-  grade_level: number;
-  arm: string;
+  level: string | null;
+  arm: string | null;
+  room: string | null;
   capacity: number | null;
-  student_count: number;
+}
+
+interface StudentRow {
+  id: string;
+  student_id: string;
+  first_name: string;
+  last_name: string;
+  status: string | null;
+}
+
+interface SpecialistRow {
+  subject: string;
+  teacher: string;
 }
 
 const StaffClasses = () => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
+  const { user, userRole } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
+  /** Classes the signed-in staff member is class teacher for (admins: all classes). */
+  const [myClasses, setMyClasses] = useState<ClassRow[]>([]);
+  const [activeClass, setActiveClass] = useState<ClassRow | null>(null);
+  const [students, setStudents] = useState<StudentRow[]>([]);
+  const [specialists, setSpecialists] = useState<SpecialistRow[]>([]);
 
   useEffect(() => {
-    const fetchClasses = async () => {
+    const load = async () => {
+      if (!user) return;
       setIsLoading(true);
+      const sb: any = supabase;
 
-      const { data: classData, error: classError } = await supabase
-        .from("classes")
-        .select(`id, name, grade_level, arm, capacity`)
-        .order("grade_level");
-
-      if (classError) {
-        console.error("Error fetching classes:", classError);
-        setIsLoading(false);
-        return;
+      let classRows: ClassRow[] = [];
+      if (userRole === "admin") {
+        const { data } = await sb
+          .from("classes")
+          .select("id, name, level, arm, room, capacity")
+          .order("name");
+        classRows = data || [];
+      } else {
+        const { data: teacher } = await sb
+          .from("teachers")
+          .select("id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (teacher?.id) {
+          const { data } = await sb
+            .from("classes")
+            .select("id, name, level, arm, room, capacity")
+            .eq("class_teacher_id", teacher.id)
+            .order("name");
+          classRows = data || [];
+        }
       }
 
-      const classesWithCounts = await Promise.all(
-        (classData || []).map(async (cls) => {
-          const { count } = await supabase
-            .from("students")
-            .select("*", { count: "exact", head: true })
-            .eq("class_id", cls.id)
-            .eq("status", "active");
-
-          return { ...cls, student_count: count || 0 };
-        })
-      );
-
-      setClasses(classesWithCounts);
+      setMyClasses(classRows);
+      setActiveClass(classRows[0] ?? null);
       setIsLoading(false);
     };
+    load();
+  }, [user, userRole]);
 
-    fetchClasses();
-  }, []);
+  useEffect(() => {
+    const loadClassDetail = async () => {
+      if (!activeClass) {
+        setStudents([]);
+        setSpecialists([]);
+        return;
+      }
+      const sb: any = supabase;
+      const [{ data: pupils }, { data: links }] = await Promise.all([
+        sb
+          .from("students")
+          .select("id, student_id, first_name, last_name, status")
+          .eq("class_id", activeClass.id)
+          .order("last_name"),
+        sb
+          .from("class_subjects")
+          .select("subjects (name), teachers (first_name, last_name)")
+          .eq("class_id", activeClass.id),
+      ]);
+
+      setStudents(pupils || []);
+      setSpecialists(
+        (links || [])
+          .filter((l: any) => l.teachers && l.subjects)
+          .map((l: any) => ({
+            subject: l.subjects.name,
+            teacher: `${l.teachers.first_name} ${l.teachers.last_name}`,
+          })),
+      );
+    };
+    loadClassDetail();
+  }, [activeClass]);
 
   if (isLoading) {
     return (
-      <StaffLayout title="Classes">
+      <StaffLayout title="My Class">
         <DashboardSkeleton />
       </StaffLayout>
     );
   }
 
+  if (!activeClass) {
+    return (
+      <StaffLayout title="My Class">
+        <Card>
+          <CardContent className="py-12">
+            <InlineEmptyState
+              icon={School}
+              title="No class assigned yet"
+              description="You will see your pupils here once the school assigns you as a class teacher."
+            />
+          </CardContent>
+        </Card>
+      </StaffLayout>
+    );
+  }
+
+  const activePupils = students.filter((s) => (s.status || "active") === "active");
+
   return (
-    <StaffLayout title="Classes">
+    <StaffLayout title="My Class">
       <div className="space-y-6">
-        {/* Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="pt-4 text-center">
-              <p className="text-3xl font-bold text-foreground">{classes.length}</p>
-              <p className="text-sm text-muted-foreground">Total Classes</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4 text-center">
-              <p className="text-3xl font-bold text-foreground">
-                {classes.reduce((sum, cls) => sum + cls.student_count, 0)}
-              </p>
-              <p className="text-sm text-muted-foreground">Total Students</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4 text-center">
-              <p className="text-3xl font-bold text-foreground">
-                {new Set(classes.map((c) => c.grade_level)).size}
-              </p>
-              <p className="text-sm text-muted-foreground">Grade Levels</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4 text-center">
-              <p className="text-3xl font-bold text-foreground">
-                {Math.round(
-                  classes.reduce((sum, cls) => sum + cls.student_count, 0) /
-                    Math.max(classes.length, 1)
-                )}
-              </p>
-              <p className="text-sm text-muted-foreground">Avg. Class Size</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Class Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {classes.map((cls) => (
-            <Card key={cls.id} className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">{cls.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      Section {cls.arm}
-                    </p>
-                  </div>
-                  <Badge variant="secondary">Grade {cls.grade_level}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Users className="w-4 h-4" />
-                  <span>
-                    {cls.student_count} / {cls.capacity || "∞"} Students
-                  </span>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="grid grid-cols-3 gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    asChild
-                  >
-                    <Link to={`/staff/students?class=${cls.id}`}>
-                      <Users className="w-4 h-4 mr-1" />
-                      View
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    asChild
-                  >
-                    <Link to={`/staff/attendance?class=${cls.id}`}>
-                      <ClipboardCheck className="w-4 h-4 mr-1" />
-                      Attend
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full"
-                    asChild
-                  >
-                    <Link to={`/staff/gradebook?class=${cls.id}`}>
-                      <FileText className="w-4 h-4 mr-1" />
-                      Grades
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {classes.length === 0 && (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <BookOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">
-                No Classes Found
-              </h3>
-              <p className="text-muted-foreground">
-                Classes will appear here once they are set up in the system.
-              </p>
-            </CardContent>
-          </Card>
+        {/* Class switcher — only shown when a staff member covers more than one class */}
+        {myClasses.length > 1 && (
+          <div className="flex flex-wrap gap-2">
+            {myClasses.map((c) => (
+              <Button
+                key={c.id}
+                variant={c.id === activeClass.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveClass(c)}
+              >
+                {c.name}
+              </Button>
+            ))}
+          </div>
         )}
+
+        {/* Class header */}
+        <Card className="shadow-elev-1">
+          <CardHeader className="pb-3">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle className="text-2xl">{activeClass.name}</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {[activeClass.level, activeClass.arm && `${activeClass.arm} arm`, activeClass.room && `Room ${activeClass.room}`]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              </div>
+              <Badge variant="secondary" className="gap-1">
+                <Users className="w-3.5 h-3.5" />
+                {activePupils.length}
+                {activeClass.capacity ? ` / ${activeClass.capacity}` : ""} pupils
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <Button variant="outline" asChild className="justify-start">
+                <Link to={`/staff/attendance?class=${activeClass.id}`}>
+                  <ClipboardCheck className="w-4 h-4 mr-2" />
+                  Mark attendance
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="justify-start">
+                <Link to={`/staff/gradebook?class=${activeClass.id}`}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Enter results
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="justify-start">
+                <Link to="/staff/report-card">
+                  <GraduationCap className="w-4 h-4 mr-2" />
+                  Report cards
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pupils in this class */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Users className="w-5 h-5 text-primary" />
+              Pupils
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            {students.length === 0 ? (
+              <div className="p-6">
+                <InlineEmptyState
+                  icon={Users}
+                  title="No pupils in this class yet"
+                  description="Pupils appear here as soon as they are enrolled into this class."
+                />
+              </div>
+            ) : (
+              <div className="divide-y divide-border/60">
+                {students.map((s) => (
+                  <div key={s.id} className="flex items-center gap-3 px-4 py-3">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold">
+                      {s.first_name.charAt(0)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-foreground truncate">
+                        {s.first_name} {s.last_name}
+                      </p>
+                      <p className="text-xs text-muted-foreground font-mono">{s.student_id}</p>
+                    </div>
+                    <Badge variant={(s.status || "active") === "active" ? "default" : "secondary"}>
+                      {s.status || "active"}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Specialist subjects, only where the school has specialist teachers */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <BookOpen className="w-5 h-5 text-primary" />
+              Specialist subjects
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {specialists.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No specialist teacher assigned to this class. As class teacher you record results for the normal
+                class subjects.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {specialists.map((s, i) => (
+                  <div key={`${s.subject}-${i}`} className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-foreground">{s.subject}</span>
+                    <span className="text-muted-foreground">{s.teacher}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </StaffLayout>
   );
