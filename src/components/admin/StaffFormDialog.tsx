@@ -124,15 +124,19 @@ export const StaffFormDialog = ({ open, onOpenChange, staff, onSaved }: Props) =
       status: form.status || "active",
     };
 
-    const { error } = staff
-      ? await supabase.from("teachers").update(payload).eq("id", staff.id)
-      : await supabase.from("teachers").insert(payload);
+    const { data, error } = staff
+      ? await supabase.from("teachers").update(payload).eq("id", staff.id).select("id").maybeSingle()
+      : await supabase.from("teachers").insert(payload).select("id").maybeSingle();
 
-    setSaving(false);
     if (error) {
+      setSaving(false);
       toast.error(error.message);
       return;
     }
+
+    const teacherId = staff?.id || data?.id;
+    if (teacherId) await saveClassAssignment(teacherId);
+    setSaving(false);
     toast.success(staff ? "Staff member updated" : "Staff member added");
     onOpenChange(false);
     onSaved();
