@@ -22,8 +22,16 @@ const AdminStaffPage = () => {
   const [accounts, setAccounts] = useState<any[] | null>(null);
 
 
+  const [classMap, setClassMap] = useState<Record<string, string>>({});
+
   const fetchStaff = useCallback(async () => {
-    const { data } = await (supabase as any).rpc("staff_teacher_records");
+    const [{ data }, { data: classes }] = await Promise.all([
+      (supabase as any).rpc("staff_teacher_records"),
+      (supabase as any).from("classes").select("name, class_teacher_id"),
+    ]);
+    const map: Record<string, string> = {};
+    (classes || []).forEach((c: any) => { if (c.class_teacher_id) map[c.class_teacher_id] = c.name; });
+    setClassMap(map);
     setStaff([...(data || [])].sort((a: any, b: any) => (b.created_at || "").localeCompare(a.created_at || "")));
     setIsLoading(false);
   }, []);
