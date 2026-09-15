@@ -116,6 +116,7 @@ const AdminStaffPage = () => {
                   <TableHead className="text-xs">Employee ID</TableHead>
                   <TableHead className="text-xs">Name</TableHead>
                   <TableHead className="text-xs">Email</TableHead>
+                  <TableHead className="text-xs">Assigned class</TableHead>
                   <TableHead className="text-xs">Department</TableHead>
                   <TableHead className="text-xs">Status</TableHead>
                   <TableHead className="text-xs">Actions</TableHead>
