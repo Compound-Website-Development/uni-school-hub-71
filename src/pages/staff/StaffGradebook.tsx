@@ -431,16 +431,17 @@ const StaffGradebook = () => {
               {/* School Type */}
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">School</label>
-                <Select value={schoolType} onValueChange={(v) => {
+                  <Select value={schoolType} onValueChange={(v) => {
                   setSchoolType(v);
                   setSelectedClass("");
-                }}>
+                  }} disabled={userRole !== "admin" && classes.length <= 1}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select school" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="upper_basic">Upper Basic School</SelectItem>
-                    <SelectItem value="senior_secondary">Senior Secondary School</SelectItem>
+                    {schoolTypes.map((type) => (
+                      <SelectItem key={type} value={type}>{schoolTypeLabel(type)}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -448,7 +449,7 @@ const StaffGradebook = () => {
               {/* Class */}
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Class</label>
-                <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!schoolType}>
+                  <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!filteredClasses.length}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select class" />
                   </SelectTrigger>
