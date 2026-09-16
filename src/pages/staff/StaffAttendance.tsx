@@ -15,6 +15,8 @@ import { Calendar, Check, X, Clock, UserX } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { useAuth } from "@/hooks/useAuth";
+import { useSearchParams } from "react-router-dom";
 
 interface ClassData {
   id: string;
@@ -54,15 +56,28 @@ const StaffAttendance = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+  const { userRole, teacherData } = useAuth();
+  const [searchParams] = useSearchParams();
 
   // Fetch classes and today's schedule
   useEffect(() => {
     const fetchInitialData = async () => {
-      const [classesRes, scheduleRes] = await Promise.all([
-        supabase
+      let classQuery = supabase
           .from("classes")
           .select("id, name, grade_level, school_type")
-          .order("grade_level"),
+          .order("grade_level");
+
+      if (userRole !== "admin" && teacherData?.id) {
+        const [{ data: assigned }, { data: mapped }] = await Promise.all([
+          supabase.from("classes").select("id").eq("class_teacher_id", teacherData.id),
+          supabase.from("class_subjects").select("class_id").eq("teacher_id", teacherData.id),
+        ]);
+        const allowedIds = [...new Set([...(assigned || []).map((row) => row.id), ...(mapped || []).map((row) => row.class_id)])];
+        classQuery = allowedIds.length ? classQuery.in("id", allowedIds) : classQuery.in("id", ["00000000-0000-0000-0000-000000000000"]);
+      }
+
+      const [classesRes, scheduleRes] = await Promise.all([
+        classQuery,
         supabase
           .from("schedules")
           .select(`
@@ -76,7 +91,16 @@ const StaffAttendance = () => {
           .order("start_time"),
       ]);
 
-      if (classesRes.data) setClasses(classesRes.data);
+      if (classesRes.data) {
+        setClasses(classesRes.data);
+        const requestedClass = searchParams.get("class");
+        const initialClass = classesRes.data.find((cls) => cls.id === requestedClass) ||
+          (userRole !== "admin" && classesRes.data.length === 1 ? classesRes.data[0] : null);
+        if (initialClass) {
+          setSelectedClass(initialClass.id);
+          setSelectedSchoolType(initialClass.school_type || "");
+        }
+      }
       
       if (scheduleRes.data) {
         setTodaySchedule(scheduleRes.data.map((s: any) => ({
@@ -90,7 +114,7 @@ const StaffAttendance = () => {
     };
 
     fetchInitialData();
-  }, []);
+  }, [searchParams, teacherData?.id, userRole]);
 
   // Filter classes by school type
   const filteredClasses = selectedSchoolType
@@ -189,6 +213,7 @@ const StaffAttendance = () => {
         class_id: selectedClass,
         date: selectedDate,
         status,
+          marked_by: teacherData?.id || null,
       }));
 
       const { error } = await supabase.from("attendance").insert(records);
@@ -286,8 +311,9 @@ const StaffAttendance = () => {
                     <SelectValue placeholder="Select school" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="upper_basic">Upper Basic School</SelectItem>
-                    <SelectItem value="senior_secondary">Senior Secondary School</SelectItem>
+                    {[...new Set(classes.map((cls) => cls.school_type).filter(Boolean))].map((type) => (
+                      <SelectItem key={type} value={type as string}>{String(type).replace(/_/g, " ")}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -295,7 +321,7 @@ const StaffAttendance = () => {
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">
                   Class
                 </label>
-                <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!selectedSchoolType}>
+                <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!classes.length}>
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a class" />
                   </SelectTrigger>

@@ -17,6 +17,7 @@ interface ClassRow {
   arm: string | null;
   room: string | null;
   capacity: number | null;
+  class_teacher_id: string | null;
 }
 
 interface StudentRow {
@@ -51,7 +52,7 @@ const StaffClasses = () => {
       if (userRole === "admin") {
         const { data } = await sb
           .from("classes")
-          .select("id, name, level, arm, room, capacity")
+          .select("id, name, level, arm, room, capacity, class_teacher_id")
           .order("name");
         classRows = data || [];
       } else {
@@ -63,7 +64,7 @@ const StaffClasses = () => {
         if (teacher?.id) {
           const { data } = await sb
             .from("classes")
-            .select("id, name, level, arm, room, capacity")
+            .select("id, name, level, arm, room, capacity, class_teacher_id")
             .eq("class_teacher_id", teacher.id)
             .order("name");
           classRows = data || [];
@@ -98,9 +99,9 @@ const StaffClasses = () => {
       ]);
 
       setStudents(pupils || []);
-      setSpecialists(
+       setSpecialists(
         (links || [])
-          .filter((l: any) => l.teachers && l.subjects)
+           .filter((l: any) => l.teachers && l.subjects && l.teacher_id !== activeClass.class_teacher_id)
           .map((l: any) => ({
             subject: l.subjects.name,
             teacher: `${l.teachers.first_name} ${l.teachers.last_name}`,
