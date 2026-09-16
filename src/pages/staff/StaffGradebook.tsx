@@ -56,6 +56,7 @@ const StaffGradebook = () => {
   const { user, userRole, teacherData } = useAuth();
   const [classes, setClasses] = useState<ClassOption[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [classSubjectIds, setClassSubjectIds] = useState<string[] | null>(null);
   const [terms, setTerms] = useState<Term[]>([]);
   const [students, setStudents] = useState<StudentGrade[]>([]);
   
@@ -126,7 +127,6 @@ const StaffGradebook = () => {
         setSelectedClass(visibleClasses[0].id);
         setSchoolType(visibleClasses[0].school_type || "");
       }
-      if (subjectsRes.data) setSubjects(subjectsRes.data);
       if (termsRes.data) {
         setTerms(termsRes.data);
         if (termsRes.data.length > 0) {
@@ -149,6 +149,36 @@ const StaffGradebook = () => {
 
   const schoolTypeLabel = (value: string) =>
     value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+  // A mapped subject list is authoritative for a subject teacher or a class
+  // teacher whose admin has bulk-mapped subjects. With no mappings, the class
+  // teacher can enter every normal class subject.
+  useEffect(() => {
+    if (!selectedClass) {
+      setClassSubjectIds(null);
+      setSelectedSubject("");
+      return;
+    }
+
+    const loadClassSubjects = async () => {
+      const { data } = await supabase
+        .from("class_subjects")
+        .select("subject_id")
+        .eq("class_id", selectedClass);
+      const ids = (data || []).map((row) => row.subject_id).filter(Boolean) as string[];
+      setClassSubjectIds(ids.length ? ids : null);
+      if (userRole !== "admin" && selectedSubject && ids.length && !ids.includes(selectedSubject)) {
+        setSelectedSubject("");
+      }
+    };
+
+    loadClassSubjects();
+  }, [selectedClass, selectedSubject, userRole]);
+
+  const availableSubjects =
+    userRole !== "admin" && classSubjectIds?.length
+      ? subjects.filter((subject) => classSubjectIds.includes(subject.id))
+      : subjects;
 
   // Fetch students and grades when class/term/subject changes
   useEffect(() => {
@@ -471,7 +501,7 @@ const StaffGradebook = () => {
                     <SelectValue placeholder="Select subject" />
                   </SelectTrigger>
                   <SelectContent>
-                    {subjects.map((subj) => (
+                    {availableSubjects.map((subj) => (
                       <SelectItem key={subj.id} value={subj.id}>{subj.name}</SelectItem>
                     ))}
                   </SelectContent>
