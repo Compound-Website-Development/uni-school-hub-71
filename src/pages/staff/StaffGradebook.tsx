@@ -25,6 +25,7 @@ interface ClassOption {
   school_type: string | null;
   grade_level: number;
   specialization: string | null;
+  class_teacher_id: string | null;
 }
 
 interface Subject {
@@ -52,7 +53,7 @@ interface Term {
 
 const StaffGradebook = () => {
   const { toast } = useToast();
-  const { teacherData } = useAuth();
+  const { user, userRole, teacherData } = useAuth();
   const [classes, setClasses] = useState<ClassOption[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [terms, setTerms] = useState<Term[]>([]);
@@ -79,7 +80,7 @@ const StaffGradebook = () => {
       const [classesRes, subjectsRes, termsRes] = await Promise.all([
         supabase
           .from("classes")
-          .select("id, name, school_type, grade_level, specialization")
+          .select("id, name, school_type, grade_level, specialization, class_teacher_id")
           .order("grade_level"),
         supabase
           .from("subjects")
@@ -91,7 +92,40 @@ const StaffGradebook = () => {
           .order("term_number"),
       ]);
 
-      if (classesRes.data) setClasses(classesRes.data);
+      const allClasses = (classesRes.data || []) as ClassOption[];
+      let visibleClasses = allClasses;
+      let visibleSubjects = subjectsRes.data || [];
+
+      // Class teachers work from their single assigned class. Subject teachers
+      // can still use the existing class_subjects mapping for their classes.
+      if (userRole !== "admin" && teacherData?.id) {
+        const [{ data: mappedSubjects }] = await Promise.all([
+          supabase
+            .from("class_subjects")
+            .select("class_id, subject_id")
+            .eq("teacher_id", teacherData.id),
+        ]);
+        const assignedClassIds = allClasses
+          .filter((classRow) => classRow.class_teacher_id === teacherData.id)
+          .map((classRow) => classRow.id);
+        const mappedClassIds = (mappedSubjects || []).map((row) => row.class_id).filter(Boolean);
+        const visibleClassIds = new Set([...assignedClassIds, ...mappedClassIds]);
+        visibleClasses = allClasses.filter((classRow) => visibleClassIds.has(classRow.id));
+
+        // A class teacher can enter every subject for their assigned class.
+        // Mapped subject teachers remain limited by their existing mappings.
+        if (assignedClassIds.length === 0) {
+          const subjectIds = new Set((mappedSubjects || []).map((row) => row.subject_id));
+          visibleSubjects = visibleSubjects.filter((subject) => subjectIds.has(subject.id));
+        }
+      }
+
+      setClasses(visibleClasses);
+      setSubjects(visibleSubjects);
+      if (userRole !== "admin" && visibleClasses.length === 1) {
+        setSelectedClass(visibleClasses[0].id);
+        setSchoolType(visibleClasses[0].school_type || "");
+      }
       if (subjectsRes.data) setSubjects(subjectsRes.data);
       if (termsRes.data) {
         setTerms(termsRes.data);
@@ -104,12 +138,17 @@ const StaffGradebook = () => {
     };
 
     fetchInitialData();
-  }, []);
+  }, [user, userRole, teacherData]);
 
   // Filter classes by school type
   const filteredClasses = schoolType
     ? classes.filter(c => c.school_type === schoolType)
     : classes;
+
+  const schoolTypes = [...new Set(classes.map((classRow) => classRow.school_type).filter(Boolean))] as string[];
+
+  const schoolTypeLabel = (value: string) =>
+    value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 
   // Fetch students and grades when class/term/subject changes
   useEffect(() => {
