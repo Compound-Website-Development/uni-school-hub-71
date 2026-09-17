@@ -193,7 +193,7 @@ const StaffGradebook = () => {
   const isAssignedClassTeacher = classes.find((classRow) => classRow.id === selectedClass)?.class_teacher_id === teacherData?.id;
   const availableSubjects =
     userRole !== "admin" && teacherData?.id && isAssignedClassTeacher
-      ? (classSubjectIds?.length ? subjects.filter((subject) => classSubjectIds.includes(subject.id)) : subjects)
+      ? (teacherSubjectIds?.length ? subjects.filter((subject) => teacherSubjectIds.includes(subject.id)) : subjects)
       : userRole !== "admin" && teacherSubjectIds?.length
         ? subjects.filter((subject) => teacherSubjectIds.includes(subject.id))
         : subjects;
