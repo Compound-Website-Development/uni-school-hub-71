@@ -190,10 +190,13 @@ const StaffGradebook = () => {
     loadClassSubjects();
   }, [selectedClass, selectedSubject, userRole, teacherData?.id, classes]);
 
+  const isAssignedClassTeacher = classes.find((classRow) => classRow.id === selectedClass)?.class_teacher_id === teacherData?.id;
   const availableSubjects =
-    userRole !== "admin" && teacherData?.id && classes.find((classRow) => classRow.id === selectedClass)?.class_teacher_id !== teacherData.id && teacherSubjectIds?.length
-      ? subjects.filter((subject) => teacherSubjectIds.includes(subject.id))
-      : subjects;
+    userRole !== "admin" && teacherData?.id && isAssignedClassTeacher
+      ? (classSubjectIds?.length ? subjects.filter((subject) => classSubjectIds.includes(subject.id)) : subjects)
+      : userRole !== "admin" && teacherSubjectIds?.length
+        ? subjects.filter((subject) => teacherSubjectIds.includes(subject.id))
+        : subjects;
 
   // Fetch students and grades when class/term/subject changes
   useEffect(() => {
@@ -494,7 +497,7 @@ const StaffGradebook = () => {
               {/* Class */}
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Class</label>
-                  <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!filteredClasses.length}>
+                  <Select value={selectedClass} onValueChange={(value) => { setSelectedClass(value); setSelectedSubject(""); }} disabled={!filteredClasses.length}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select class" />
                   </SelectTrigger>
