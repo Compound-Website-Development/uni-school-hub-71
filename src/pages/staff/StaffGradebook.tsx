@@ -57,6 +57,7 @@ const StaffGradebook = () => {
   const [classes, setClasses] = useState<ClassOption[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [classSubjectIds, setClassSubjectIds] = useState<string[] | null>(null);
+  const [teacherSubjectIds, setTeacherSubjectIds] = useState<string[] | null>(null);
   const [terms, setTerms] = useState<Term[]>([]);
   const [students, setStudents] = useState<StudentGrade[]>([]);
   
@@ -156,6 +157,7 @@ const StaffGradebook = () => {
   useEffect(() => {
     if (!selectedClass) {
       setClassSubjectIds(null);
+      setTeacherSubjectIds(null);
       setSelectedSubject("");
       return;
     }
@@ -167,18 +169,34 @@ const StaffGradebook = () => {
         .eq("class_id", selectedClass);
       const ids = (data || []).map((row) => row.subject_id).filter(Boolean) as string[];
       setClassSubjectIds(ids.length ? ids : null);
-      if (userRole !== "admin" && selectedSubject && ids.length && !ids.includes(selectedSubject)) {
-        setSelectedSubject("");
+
+      if (userRole !== "admin" && teacherData?.id) {
+        const { data: teacherLinks } = await supabase
+          .from("class_subjects")
+          .select("subject_id")
+          .eq("class_id", selectedClass)
+          .eq("teacher_id", teacherData.id);
+        const teacherIds = (teacherLinks || []).map((row) => row.subject_id).filter(Boolean) as string[];
+        setTeacherSubjectIds(teacherIds.length ? teacherIds : null);
+        const isClassTeacher = classes.find((classRow) => classRow.id === selectedClass)?.class_teacher_id === teacherData.id;
+        if (!isClassTeacher && selectedSubject && teacherIds.length && !teacherIds.includes(selectedSubject)) {
+          setSelectedSubject("");
+        }
+      } else {
+        setTeacherSubjectIds(null);
       }
     };
 
     loadClassSubjects();
-  }, [selectedClass, selectedSubject, userRole]);
+  }, [selectedClass, selectedSubject, userRole, teacherData?.id, classes]);
 
+  const isAssignedClassTeacher = classes.find((classRow) => classRow.id === selectedClass)?.class_teacher_id === teacherData?.id;
   const availableSubjects =
-    userRole !== "admin" && classSubjectIds?.length
-      ? subjects.filter((subject) => classSubjectIds.includes(subject.id))
-      : subjects;
+    userRole !== "admin" && teacherData?.id && isAssignedClassTeacher
+      ? (teacherSubjectIds?.length ? subjects.filter((subject) => teacherSubjectIds.includes(subject.id)) : subjects)
+      : userRole !== "admin" && teacherSubjectIds?.length
+        ? subjects.filter((subject) => teacherSubjectIds.includes(subject.id))
+        : subjects;
 
   // Fetch students and grades when class/term/subject changes
   useEffect(() => {
@@ -479,7 +497,7 @@ const StaffGradebook = () => {
               {/* Class */}
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Class</label>
-                  <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!filteredClasses.length}>
+                  <Select value={selectedClass} onValueChange={(value) => { setSelectedClass(value); setSelectedSubject(""); }} disabled={!filteredClasses.length}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select class" />
                   </SelectTrigger>

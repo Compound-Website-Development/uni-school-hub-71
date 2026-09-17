@@ -94,7 +94,7 @@ const StaffClasses = () => {
           .order("last_name"),
         sb
           .from("class_subjects")
-          .select("subjects (name), teachers (first_name, last_name)")
+          .select("teacher_id, subject_id, subjects (name), teachers (first_name, last_name)")
           .eq("class_id", activeClass.id),
       ]);
 
