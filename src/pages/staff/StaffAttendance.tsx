@@ -66,14 +66,15 @@ const StaffAttendance = () => {
           .from("classes")
           .select("id, name, grade_level, school_type")
           .order("grade_level");
+      let allowedClassIds: string[] | null = null;
 
       if (userRole !== "admin" && teacherData?.id) {
         const [{ data: assigned }, { data: mapped }] = await Promise.all([
           supabase.from("classes").select("id").eq("class_teacher_id", teacherData.id),
           supabase.from("class_subjects").select("class_id").eq("teacher_id", teacherData.id),
         ]);
-        const allowedIds = [...new Set([...(assigned || []).map((row) => row.id), ...(mapped || []).map((row) => row.class_id)])];
-        classQuery = allowedIds.length ? classQuery.in("id", allowedIds) : classQuery.in("id", ["00000000-0000-0000-0000-000000000000"]);
+        allowedClassIds = [...new Set([...(assigned || []).map((row) => row.id), ...(mapped || []).map((row) => row.class_id)])];
+        classQuery = allowedClassIds.length ? classQuery.in("id", allowedClassIds) : classQuery.in("id", ["00000000-0000-0000-0000-000000000000"]);
       }
 
       const [classesRes, scheduleRes] = await Promise.all([
@@ -103,7 +104,10 @@ const StaffAttendance = () => {
       }
       
       if (scheduleRes.data) {
-        setTodaySchedule(scheduleRes.data.map((s: any) => ({
+        const visibleSchedule = allowedClassIds
+          ? scheduleRes.data.filter((schedule: any) => allowedClassIds?.includes(schedule.class_id))
+          : scheduleRes.data;
+        setTodaySchedule(visibleSchedule.map((s: any) => ({
           class_id: s.class_id,
           class_name: s.classes?.name || "Unknown",
           subject_name: s.subjects?.name || "Unknown",
