@@ -1,6 +1,22 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import npsLogo from "@/assets/logo";
+import {
+  BarChart3,
+  BookOpen,
+  CalendarDays,
+  FileText,
+  Gauge,
+  GraduationCap,
+  Library,
+  LogOut,
+  MessageSquare,
+  NotebookPen,
+  Settings,
+  UserPlus,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
 interface NavItem {
   icon: string;
@@ -16,6 +32,22 @@ interface SidebarProps {
   userSubtitle: string;
   onLogout?: () => void;
 }
+
+const iconMap: Record<string, LucideIcon> = {
+  dashboard: Gauge,
+  grade: GraduationCap,
+  library_books: Library,
+  calendar_today: CalendarDays,
+  description: FileText,
+  chat: MessageSquare,
+  group: Users,
+  book: BookOpen,
+  edit_note: NotebookPen,
+  analytics: BarChart3,
+  person_add: UserPlus,
+  school: GraduationCap,
+  settings: Settings,
+};
 
 export const Sidebar = ({ navItems, userType, userName, userSubtitle, onLogout }: SidebarProps) => {
   const location = useLocation();
@@ -35,6 +67,7 @@ export const Sidebar = ({ navItems, userType, userName, userSubtitle, onLogout }
       <nav className="flex-1 px-3 space-y-1 overflow-y-auto scrollbar-thin">
         {navItems.map((item) => {
           const isActive = location.pathname === item.href;
+          const Icon = iconMap[item.icon] || FileText;
           return (
             <Link
               key={item.href}
@@ -46,7 +79,7 @@ export const Sidebar = ({ navItems, userType, userName, userSubtitle, onLogout }
                   : "text-primary-foreground/70 hover:text-primary-foreground hover:bg-sidebar-accent/50"
               )}
             >
-              <span className={cn("material-symbols-outlined", isActive && "filled")}>{item.icon}</span>
+              <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
               <span className="font-medium flex-1">{item.label}</span>
               {item.badge && item.badge > 0 && (
                 <span className="bg-accent text-accent-foreground text-xs font-bold px-2 py-0.5 rounded-full">{item.badge}</span>
@@ -62,7 +95,7 @@ export const Sidebar = ({ navItems, userType, userName, userSubtitle, onLogout }
           onClick={onLogout}
           className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-primary-foreground/60 hover:text-primary-foreground hover:bg-sidebar-accent transition-colors"
         >
-          <span className="material-symbols-outlined">logout</span>
+          <LogOut className="h-5 w-5" aria-hidden="true" />
           <span className="text-sm font-medium">Logout</span>
         </button>
         

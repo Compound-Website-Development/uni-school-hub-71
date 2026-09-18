@@ -3,3 +3,5 @@
 - [ ] Remove mock finance trends and use live student/fee/debtor metrics
 - [ ] Verify existing real students, classes, and terms without overwriting school data
 - [ ] Run build and preview validation
+- [x] Bind staff assignments, lesson plans, and reports to each teacher's assigned class
+- [x] Replace broken text-based icons and standardize portal fonts

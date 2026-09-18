@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { InlineEmptyState } from "@/components/ui/empty-state";
-import { Users } from "lucide-react";
+import { Eye, Pencil, Search, Users } from "lucide-react";
 
 interface Student {
   id: string;
@@ -122,7 +122,7 @@ const StaffStudents = () => {
             <p className="text-muted-foreground text-sm">Manage and view all enrolled students</p>
           </div>
           <Badge variant="secondary" className="text-lg py-2 px-4 w-fit">
-            <span className="material-symbols-outlined mr-2">groups</span>
+            <Users className="mr-2 h-5 w-5" />
             {students.length} Students
           </Badge>
         </div>
@@ -133,7 +133,7 @@ const StaffStudents = () => {
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground material-symbols-outlined">search</span>
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     placeholder="Search by name or ID..."
                     value={searchQuery}
@@ -176,7 +176,7 @@ const StaffStudents = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">group</span>
+              <Users className="h-5 w-5 text-primary" />
               Student Directory
             </CardTitle>
           </CardHeader>
@@ -222,10 +222,10 @@ const StaffStudents = () => {
                         <td className="py-3 px-4 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <Button variant="ghost" size="sm">
-                              <span className="material-symbols-outlined text-lg">visibility</span>
+                              <Eye className="h-4 w-4" />
                             </Button>
                             <Button variant="ghost" size="sm">
-                              <span className="material-symbols-outlined text-lg">edit</span>
+                              <Pencil className="h-4 w-4" />
                             </Button>
                           </div>
                         </td>

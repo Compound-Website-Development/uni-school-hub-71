@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { InlineEmptyState } from "@/components/ui/empty-state";
-import { FileText } from "lucide-react";
+import { Check, CheckCheck, CircleX, Clock3, FileText, Search, X } from "lucide-react";
 
 interface Application {
   id: string;
@@ -150,7 +150,7 @@ const StaffAdmissions = () => {
             <p className="text-muted-foreground text-sm">Review and process student applications</p>
           </div>
           <Badge variant="secondary" className="text-lg py-2 px-4 w-fit">
-            <span className="material-symbols-outlined mr-2 text-warning">pending</span>
+            <Clock3 className="mr-2 h-5 w-5 text-warning" />
             {pendingApplications.length} Pending
           </Badge>
         </div>
@@ -160,7 +160,7 @@ const StaffAdmissions = () => {
           <Card className="bg-warning/5 border-warning/20">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-lg bg-warning/10">
-                <span className="material-symbols-outlined text-warning text-2xl">pending</span>
+                <Clock3 className="h-6 w-6 text-warning" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">{pendingApplications.length}</p>
@@ -171,7 +171,7 @@ const StaffAdmissions = () => {
           <Card className="bg-success/5 border-success/20">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-lg bg-success/10">
-                <span className="material-symbols-outlined text-success text-2xl">check_circle</span>
+                <Check className="h-6 w-6 text-success" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">
@@ -184,7 +184,7 @@ const StaffAdmissions = () => {
           <Card className="bg-destructive/5 border-destructive/20">
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-lg bg-destructive/10">
-                <span className="material-symbols-outlined text-destructive text-2xl">cancel</span>
+                <CircleX className="h-6 w-6 text-destructive" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">
@@ -200,18 +200,18 @@ const StaffAdmissions = () => {
         <Tabs defaultValue="pending">
           <TabsList>
             <TabsTrigger value="pending" className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg">pending</span>
+              <Clock3 className="h-4 w-4" />
               Pending ({pendingApplications.length})
             </TabsTrigger>
             <TabsTrigger value="processed" className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg">done_all</span>
+              <CheckCheck className="h-4 w-4" />
               Processed
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="pending" className="mt-6 space-y-4">
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground material-symbols-outlined">search</span>
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search by name or application ID..."
                 value={searchQuery}
@@ -267,7 +267,7 @@ const StaffAdmissions = () => {
                             onClick={() => handleReject(app)}
                             disabled={processingId === app.id}
                           >
-                            <span className="material-symbols-outlined mr-1 text-sm">close</span>
+                            <X className="mr-1 h-4 w-4" />
                             Reject
                           </Button>
                           <Button
@@ -276,7 +276,7 @@ const StaffAdmissions = () => {
                             onClick={() => handleAccept(app)}
                             disabled={processingId === app.id}
                           >
-                            <span className="material-symbols-outlined mr-1 text-sm">check</span>
+                            <Check className="mr-1 h-4 w-4" />
                             Accept
                           </Button>
                         </div>

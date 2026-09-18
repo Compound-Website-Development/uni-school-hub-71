@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, GraduationCap, TrendingUp, Award } from "lucide-react";
+import { AlertCircle, GraduationCap, TrendingUp, Award, ScrollText } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface TermGrades {
@@ -180,7 +180,7 @@ const StudentTranscript = () => {
         <Card className="rounded-2xl shadow-card overflow-hidden animate-fade-up animation-delay-400">
           <CardHeader className="border-b border-border">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <span className="material-symbols-outlined text-primary">history_edu</span>
+              <ScrollText className="h-5 w-5 text-primary" />
               Academic History
             </CardTitle>
           </CardHeader>

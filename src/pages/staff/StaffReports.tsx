@@ -10,13 +10,9 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, Users, TrendingUp, TrendingDown } from "lucide-react";
+import { FileText, Download, Users, TrendingUp, TrendingDown, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
-interface ClassData {
-  id: string;
-  name: string;
-}
+import { useAssignedClass } from "@/hooks/useAssignedClass";
 
 interface TermData {
   id: string;
@@ -39,22 +35,17 @@ interface GradeStats {
 }
 
 const StaffReports = () => {
-  const [classes, setClasses] = useState<ClassData[]>([]);
+  const { assignedClass, isLoading: isClassLoading } = useAssignedClass();
   const [terms, setTerms] = useState<TermData[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [selectedTerm, setSelectedTerm] = useState<string>("");
   const [stats, setStats] = useState<GradeStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch classes and terms
+  // Fetch terms; the class comes from the teacher's admin assignment.
   useEffect(() => {
     const fetchData = async () => {
-      const [classRes, termRes] = await Promise.all([
-        supabase.from("classes").select("id, name").order("grade_level"),
-        supabase.from("terms").select("id, name, session, is_current").order("term_number"),
-      ]);
-
-      setClasses(classRes.data || []);
+      const termRes = await supabase.from("terms").select("id, name, session, is_current").order("term_number");
       setTerms(termRes.data || []);
       const currentTerm = (termRes.data || []).find((term) => term.is_current);
       if (currentTerm) setSelectedTerm(currentTerm.id);
@@ -62,6 +53,10 @@ const StaffReports = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    setSelectedClass(assignedClass?.id || "");
+  }, [assignedClass?.id]);
 
   // Fetch stats when class and term are selected
   useEffect(() => {
@@ -120,20 +115,11 @@ const StaffReports = () => {
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                  Select Class
+                  Assigned Class
                 </label>
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose a class" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {classes.map((cls) => (
-                      <SelectItem key={cls.id} value={cls.id}>
-                        {cls.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex h-10 items-center rounded-md border border-border bg-muted/40 px-3 text-sm font-semibold text-foreground">
+                  {isClassLoading ? "Loading class…" : assignedClass?.name || "No class assigned"}
+                </div>
               </div>
               <div className="flex-1">
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">
@@ -275,7 +261,7 @@ const StaffReports = () => {
 
         {isLoading && (
           <div className="flex items-center justify-center py-12">
-            <span className="material-symbols-outlined animate-spin text-primary text-3xl mr-3">progress_activity</span>
+            <Loader2 className="mr-3 h-7 w-7 animate-spin text-primary" />
             <span className="text-muted-foreground">Loading report data...</span>
           </div>
         )}
@@ -285,10 +271,10 @@ const StaffReports = () => {
             <CardContent className="py-12 text-center">
               <FileText className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">
-                Select Filters
+                Select a Term
               </h3>
               <p className="text-muted-foreground">
-                Choose a class and term above to view reports
+                {assignedClass ? "Choose a term above to view your class report" : "Ask an administrator to assign your class first"}
               </p>
             </CardContent>
           </Card>

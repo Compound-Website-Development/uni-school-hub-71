@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ArrowLeft, ArrowRight, Check, Loader2, School, Send } from "lucide-react";
 
 // Subject lists
 const UPPER_BASIC_SUBJECTS = [
@@ -290,7 +291,7 @@ const Apply = () => {
         <div className="flex items-center justify-between mb-8">
           <Link to="/" className="flex items-center gap-3">
             <div className="bg-primary/10 p-2 rounded-lg">
-              <span className="material-symbols-outlined text-primary">school</span>
+              <School className="h-5 w-5 text-primary" />
             </div>
             <span className="text-xl font-bold text-foreground">Jarreng Schools</span>
           </Link>
@@ -315,7 +316,7 @@ const Apply = () => {
                 }`}
               >
                 {s < step ? (
-                  <span className="material-symbols-outlined text-lg">check</span>
+                  <Check className="h-5 w-5" />
                 ) : (
                   s
                 )}
@@ -650,7 +651,7 @@ const Apply = () => {
               <div className="flex justify-between mt-8">
                 {step > 1 ? (
                   <Button type="button" variant="outline" onClick={() => setStep(step - 1)}>
-                    <span className="material-symbols-outlined mr-2">arrow_back</span>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
                     Previous
                   </Button>
                 ) : (
@@ -660,18 +661,18 @@ const Apply = () => {
                 {step < 4 ? (
                   <Button type="button" onClick={handleNext}>
                     Next
-                    <span className="material-symbols-outlined ml-2">arrow_forward</span>
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
                   <Button type="submit" disabled={isSubmitting} className="bg-gradient-primary">
                     {isSubmitting ? (
                       <>
-                        <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Submitting...
                       </>
                     ) : (
                       <>
-                        <span className="material-symbols-outlined mr-2">send</span>
+                        <Send className="mr-2 h-4 w-4" />
                         Submit Application
                       </>
                     )}
