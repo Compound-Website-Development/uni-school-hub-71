@@ -25,8 +25,14 @@ const StaffAssignments = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (isClassLoading) return;
+      if (!assignedClass) {
+        setAssignments([]);
+        setIsLoading(false);
+        return;
+      }
       const [assignRes, subRes] = await Promise.all([
-        supabase.from("assignments").select("*, classes(name), subjects(name)").order("created_at", { ascending: false }),
+        supabase.from("assignments").select("*, classes(name), subjects(name)").eq("class_id", assignedClass.id).order("created_at", { ascending: false }),
         supabase.from("subjects").select("*"),
       ]);
       setAssignments(assignRes.data || []);
@@ -34,7 +40,7 @@ const StaffAssignments = () => {
       setIsLoading(false);
     };
     fetchData();
-  }, []);
+  }, [assignedClass?.id, isClassLoading]);
 
   const handleCreate = async () => {
     if (!assignedClass) { toast({ title: "No class assigned", description: "Ask an administrator to assign your class first.", variant: "destructive" }); return; }
@@ -48,7 +54,7 @@ const StaffAssignments = () => {
     toast({ title: "Assignment created" });
     setForm({ title: "", description: "", subject_id: "", due_date: "" });
     setDialogOpen(false);
-    const { data } = await supabase.from("assignments").select("*, classes(name), subjects(name)").order("created_at", { ascending: false });
+    const { data } = await supabase.from("assignments").select("*, classes(name), subjects(name)").eq("class_id", assignedClass.id).order("created_at", { ascending: false });
     setAssignments(data || []);
   };
 
