@@ -271,7 +271,7 @@ const StaffAttendance = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <span className="material-symbols-outlined text-primary">schedule</span>
+                <Clock className="h-5 w-5 text-primary" />
                 Today's Classes
               </CardTitle>
             </CardHeader>

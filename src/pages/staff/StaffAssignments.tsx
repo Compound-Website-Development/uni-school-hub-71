@@ -11,26 +11,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { ClipboardList, Plus, Loader2, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useAssignedClass } from "@/hooks/useAssignedClass";
 
 const StaffAssignments = () => {
   const { user } = useAuth();
+  const { assignedClass, isLoading: isClassLoading } = useAssignedClass();
   const { toast } = useToast();
   const [assignments, setAssignments] = useState<any[]>([]);
-  const [classes, setClasses] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", class_id: "", subject_id: "", due_date: "" });
+  const [form, setForm] = useState({ title: "", description: "", subject_id: "", due_date: "" });
 
   useEffect(() => {
     const fetchData = async () => {
-      const [assignRes, classRes, subRes] = await Promise.all([
+      const [assignRes, subRes] = await Promise.all([
         supabase.from("assignments").select("*, classes(name), subjects(name)").order("created_at", { ascending: false }),
-        supabase.from("classes").select("*"),
         supabase.from("subjects").select("*"),
       ]);
       setAssignments(assignRes.data || []);
-      setClasses(classRes.data || []);
       setSubjects(subRes.data || []);
       setIsLoading(false);
     };
@@ -38,21 +37,22 @@ const StaffAssignments = () => {
   }, []);
 
   const handleCreate = async () => {
+    if (!assignedClass) { toast({ title: "No class assigned", description: "Ask an administrator to assign your class first.", variant: "destructive" }); return; }
     if (!form.title || !form.due_date) { toast({ title: "Title and due date required", variant: "destructive" }); return; }
     const { error } = await supabase.from("assignments").insert({
       title: form.title, description: form.description,
-      class_id: form.class_id || null, subject_id: form.subject_id || null,
+      class_id: assignedClass.id, subject_id: form.subject_id || null,
       due_date: form.due_date, created_by: user?.id,
     });
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     toast({ title: "Assignment created" });
-    setForm({ title: "", description: "", class_id: "", subject_id: "", due_date: "" });
+    setForm({ title: "", description: "", subject_id: "", due_date: "" });
     setDialogOpen(false);
     const { data } = await supabase.from("assignments").select("*, classes(name), subjects(name)").order("created_at", { ascending: false });
     setAssignments(data || []);
   };
 
-  if (isLoading) {
+  if (isLoading || isClassLoading) {
     return <StaffLayout title="Assignments"><div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div></StaffLayout>;
   }
 
@@ -62,16 +62,16 @@ const StaffAssignments = () => {
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Homework & Assignments</h2>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild><Button><Plus className="w-4 h-4 mr-2" /> New Assignment</Button></DialogTrigger>
+            <DialogTrigger asChild><Button disabled={!assignedClass}><Plus className="w-4 h-4 mr-2" /> New Assignment</Button></DialogTrigger>
             <DialogContent>
               <DialogHeader><DialogTitle>Create Assignment</DialogTitle></DialogHeader>
               <div className="space-y-3">
                 <Input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
                 <Textarea placeholder="Instructions" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
-                <Select value={form.class_id} onValueChange={(v) => setForm({ ...form, class_id: v })}>
-                  <SelectTrigger><SelectValue placeholder="Select class" /></SelectTrigger>
-                  <SelectContent>{classes.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
-                </Select>
+                <div className="rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
+                  <span className="text-muted-foreground">Assigned class</span>
+                  <span className="ml-2 font-semibold text-foreground">{assignedClass?.name || "Not assigned"}</span>
+                </div>
                 <Select value={form.subject_id} onValueChange={(v) => setForm({ ...form, subject_id: v })}>
                   <SelectTrigger><SelectValue placeholder="Select subject" /></SelectTrigger>
                   <SelectContent>{subjects.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>

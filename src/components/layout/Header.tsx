@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Bell, Menu, Search } from "lucide-react";
 
 interface HeaderProps {
   title?: string;
@@ -23,9 +24,9 @@ export const Header = ({
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0 transition-colors z-10">
       {/* Mobile Menu */}
       <div className="flex items-center gap-4 md:hidden">
-        <button className="text-muted-foreground hover:text-foreground">
-          <span className="material-symbols-outlined">menu</span>
-        </button>
+        <Button variant="ghost" size="icon" aria-label="Open menu">
+          <Menu className="h-5 w-5" />
+        </Button>
         {title && <span className="font-bold text-lg text-foreground">{title}</span>}
       </div>
 
@@ -34,7 +35,7 @@ export const Header = ({
         <div className="hidden md:flex flex-1 max-w-lg">
           <div className="relative w-full">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-              <span className="material-symbols-outlined text-xl">search</span>
+              <Search className="h-4 w-4" />
             </div>
             <Input
               type="text"
@@ -50,12 +51,12 @@ export const Header = ({
       {/* Right Actions */}
       <div className="flex items-center gap-4">
         {/* Notifications */}
-        <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-secondary">
-          <span className="material-symbols-outlined">notifications</span>
+        <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
+          <Bell className="h-5 w-5" />
           {notifications > 0 && (
             <span className="absolute top-1 right-1 h-2 w-2 bg-destructive rounded-full ring-2 ring-card"></span>
           )}
-        </button>
+        </Button>
 
         {/* Custom Actions */}
         {actions}
