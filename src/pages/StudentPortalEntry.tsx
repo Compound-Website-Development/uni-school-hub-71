@@ -3,11 +3,13 @@ import { Navigate, useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import npsLogo from "@/assets/logo";
 import { SCHOOL } from "@/lib/schoolConfig";
+import PublicStudentProfile from "./PublicStudentProfile";
 
 /**
  * Entry point for scanned ID-card QR codes (`/s/:token`).
- * Signed-in users land straight in the student portal; everyone else is sent to
- * the login screen. The public verification view stays available at `/p/:token`.
+ * Signed-in pupils land straight in the student portal. Signed-out scans stay
+ * on the verified public profile so an ID card can be checked without a login.
+ * The `/p/:token` route remains available as a direct public-profile alias.
  */
 const StudentPortalEntry = () => {
   const { token } = useParams();
@@ -27,7 +29,11 @@ const StudentPortalEntry = () => {
     );
   }
 
-  return <Navigate to={user ? "/student" : "/login"} replace />;
+  if (!user) return <PublicStudentProfile />;
+
+  // Admin and staff accounts may not have a linked pupil record. Do not send
+  // those accounts into a pupil dashboard that has no student identity to load.
+  return <Navigate to="/student" replace />;
 };
 
 export default StudentPortalEntry;
