@@ -19,17 +19,28 @@ export const QRScanner = ({ onScan, onClose, className }: QRScannerProps) => {
 
   useEffect(() => {
     let cancelled = false;
+    let stopping = false;
     const scanner = new Html5Qrcode(containerId.current, false);
     scannerRef.current = scanner;
+
+    const stopScanner = async () => {
+      if (stopping || !scanner.isScanning) return;
+      stopping = true;
+      try {
+        await scanner.stop();
+      } catch {
+        // The camera may already have stopped while the dialog is closing.
+      }
+    };
 
     scanner
       .start(
         { facingMode: "environment" },
         { fps: 10, qrbox: { width: 220, height: 220 } },
-        (decoded) => {
+        async (decoded) => {
           if (cancelled) return;
           cancelled = true;
-          scanner.stop().catch(() => undefined);
+          await stopScanner();
           onScan(decoded);
         },
         () => undefined,
@@ -42,7 +53,7 @@ export const QRScanner = ({ onScan, onClose, className }: QRScannerProps) => {
 
     return () => {
       cancelled = true;
-      scanner.stop().catch(() => undefined);
+      void stopScanner();
     };
   }, [onScan]);
 

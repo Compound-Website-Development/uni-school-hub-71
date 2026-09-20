@@ -1,5 +1,7 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import PublicStudentProfile from "./PublicStudentProfile";
 
 /**
@@ -10,10 +12,21 @@ import PublicStudentProfile from "./PublicStudentProfile";
  */
 const StudentPortalEntry = () => {
   const { token } = useParams();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
     if (token) sessionStorage.setItem("scanned_student_token", token);
   }, [token]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-7 w-7 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (user) return <Navigate to="/student" replace />;
 
   return <PublicStudentProfile />;
 };
