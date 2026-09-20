@@ -1,6 +1,8 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import PublicStudentProfile from "./PublicStudentProfile";
+import { Navigate, useParams } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import StudentDashboard from "./student/StudentDashboard";
 
 /**
  * Entry point for scanned ID-card QR codes (`/s/:token`).
@@ -10,12 +12,25 @@ import PublicStudentProfile from "./PublicStudentProfile";
  */
 const StudentPortalEntry = () => {
   const { token } = useParams();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
     if (token) sessionStorage.setItem("scanned_student_token", token);
   }, [token]);
 
-  return <PublicStudentProfile />;
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-7 w-7 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (user) return <Navigate to="/student" replace />;
+
+  if (!token) return <Navigate to="/login" replace />;
+
+  return <StudentDashboard scannedToken={token} />;
 };
 
 export default StudentPortalEntry;
