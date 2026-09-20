@@ -34,6 +34,18 @@ interface SchoolMoment {
   kind: "event" | "announcement";
 }
 
+interface ScannedProfile {
+  full_name: string;
+  admission_no: string;
+  class_name: string | null;
+  attendance_present: number;
+  attendance_total: number;
+}
+
+interface StudentDashboardProps {
+  scannedToken?: string;
+}
+
 const timeLabel = (value: string) => {
   const [hour, minute] = value.split(":").map(Number);
   return new Intl.DateTimeFormat("en-NG", { hour: "numeric", minute: "2-digit" }).format(new Date(2026, 0, 1, hour, minute));
@@ -46,8 +58,10 @@ const dayLabel = (iso?: string | null) => {
   return new Intl.DateTimeFormat("en-NG", { weekday: "long", day: "numeric", month: "long" }).format(d);
 };
 
-const StudentDashboard = () => {
+const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
   const { studentData, isShadowIdentity } = useAuth();
+  const [scannedProfile, setScannedProfile] = useState<ScannedProfile | null>(null);
+  const [scannedAttendanceRate, setScannedAttendanceRate] = useState<number | null>(null);
   const [recentGrades, setRecentGrades] = useState<Grade[]>([]);
   const [todayClasses, setTodayClasses] = useState<ClassSlot[]>([]);
   const [attendance, setAttendance] = useState<{ status: string }[]>([]);
@@ -61,6 +75,36 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     const load = async () => {
+      if (!studentData?.id && scannedToken) {
+        setLoading(true);
+        setFailed(false);
+        const [{ data: profileRows, error: profileError }, { data: resultRows, error: resultsError }] = await Promise.all([
+          supabase.rpc("public_student_profile", { _token: scannedToken }),
+          supabase.rpc("public_student_results", { _token: scannedToken }),
+        ]);
+        if (profileError || resultsError) {
+          setFailed(true);
+          setLoading(false);
+          return;
+        }
+        const profile = ((profileRows as ScannedProfile[]) || [])[0] || null;
+        setScannedProfile(profile);
+        setClassName(profile?.class_name || "");
+        setScannedAttendanceRate(
+          profile && profile.attendance_total > 0
+            ? Math.round((profile.attendance_present / profile.attendance_total) * 100)
+            : null,
+        );
+        setRecentGrades(((resultRows as any[]) || []).map((result, index) => ({
+          id: `${scannedToken}-${index}`,
+          total_score: result.total_score,
+          letter_grade: result.letter_grade,
+          created_at: null,
+          subjects: { name: result.subject || "Subject" },
+        })));
+        setLoading(false);
+        return;
+      }
       if (!studentData?.id) {
         setLoading(false);
         return;
@@ -110,11 +154,16 @@ const StudentDashboard = () => {
       }
     };
     load();
-  }, [studentData?.id, studentData?.class_id, reloadKey]);
+  }, [studentData?.id, studentData?.class_id, scannedToken, reloadKey]);
 
-  const firstName = studentData?.first_name || "Pupil";
+  const scannedNames = scannedProfile?.full_name.trim().split(/\s+/) || [];
+  const firstName = studentData?.first_name || scannedNames[0] || "Pupil";
   const presentCount = attendance.filter((item) => item.status === "present").length;
-  const attendanceRate = attendance.length ? Math.round((presentCount / attendance.length) * 100) : null;
+  const attendanceRate = scannedToken
+    ? scannedAttendanceRate
+    : attendance.length
+      ? Math.round((presentCount / attendance.length) * 100)
+      : null;
   const nextClass = todayClasses[0];
   const todayLabel = new Intl.DateTimeFormat("en-NG", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
   const statusCopy = useMemo(() => {
@@ -125,7 +174,11 @@ const StudentDashboard = () => {
   }, [attendanceRate, balance, pendingHomework]);
 
   return (
-    <StudentLayout title="Home">
+    <StudentLayout
+      title="Home"
+      studentNameOverride={scannedProfile?.full_name}
+      studentIdOverride={scannedProfile?.admission_no}
+    >
       <main className="student-home mx-auto w-full max-w-5xl overflow-hidden">
         {isShadowIdentity && (
           <div className="mx-5 mt-3 flex items-center gap-2 border-l-2 border-accent px-3 py-2 text-xs text-muted-foreground md:mx-0">
@@ -142,7 +195,7 @@ const StudentDashboard = () => {
             <span className="student-blue-bg mt-3 block h-1 w-20 -rotate-2 rounded-full" />
             <p className="mt-4 text-[11px] font-semibold text-muted-foreground md:text-sm">{todayLabel}</p>
             <p className="mt-5 text-[13px] font-medium text-muted-foreground md:text-base">
-              {[className, studentData?.student_id].filter(Boolean).join("  ·  ") || "Pupil record"}
+              {[className, studentData?.student_id || scannedProfile?.admission_no].filter(Boolean).join("  ·  ") || "Pupil record"}
             </p>
             <p className="mt-7 max-w-[18ch] text-[17px] leading-relaxed text-foreground/75 md:text-xl">Consistency today,<br />confidence <em className="student-blue font-semibold">tomorrow.</em></p>
           </div>

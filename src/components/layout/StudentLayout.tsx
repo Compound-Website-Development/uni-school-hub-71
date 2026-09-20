@@ -17,6 +17,8 @@ interface StudentLayoutProps {
   children: ReactNode;
   title?: string;
   back?: string;
+  studentNameOverride?: string;
+  studentIdOverride?: string;
 }
 
 const navGroups: { heading: string; items: { icon: any; label: string; href: string }[] }[] = [
@@ -63,7 +65,7 @@ const bottomNavItems = [
   { icon: User, label: "Profile", href: "/student/profile" },
 ];
 
-export const StudentLayout = ({ children, title, back }: StudentLayoutProps) => {
+export const StudentLayout = ({ children, title, back, studentNameOverride, studentIdOverride }: StudentLayoutProps) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { signOut, studentData } = useAuth();
   useRealtimeNotifications();
@@ -72,7 +74,7 @@ export const StudentLayout = ({ children, title, back }: StudentLayoutProps) => 
 
   const handleLogout = async () => { await signOut(); navigate("/login"); };
 
-  const studentName = studentData ? `${studentData.first_name} ${studentData.last_name}` : "Student";
+  const studentName = studentNameOverride || (studentData ? `${studentData.first_name} ${studentData.last_name}` : "Student");
   const studentInitials = studentData
     ? `${studentData.first_name?.[0] || ""}${studentData.last_name?.[0] || ""}`
     : "ST";
@@ -172,7 +174,7 @@ export const StudentLayout = ({ children, title, back }: StudentLayoutProps) => 
             <img src={npsLogo} alt="Imagemakers" className="h-8 w-auto" />
             <div className="min-w-0">
               <p className="font-display truncate text-sm font-bold text-foreground">Student Portal</p>
-              <p className="num truncate text-[11px] text-muted-foreground">{studentData?.student_id || studentName}</p>
+              <p className="num truncate text-[11px] text-muted-foreground">{studentIdOverride || studentData?.student_id || studentName}</p>
             </div>
           </div>
           <nav className="flex-1 overflow-y-auto px-5 py-6 scrollbar-thin"><NavList /></nav>
