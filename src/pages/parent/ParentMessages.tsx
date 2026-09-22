@@ -49,12 +49,7 @@ const ParentMessages = () => {
     if (!newBody.trim() || !user) return;
     setSending(true);
     // For now, messages go to admin - in real implementation, a receiver picker would be shown
-    const { error } = await supabase.from("messages").insert({
-      sender_id: user.id,
-      receiver_id: user.id, // placeholder
-      subject: newSubject || "No Subject",
-      body: newBody,
-    });
+    const { error } = await supabase.rpc("send_message_to_admin", { _subject: newSubject || "No Subject", _body: newBody });
     setSending(false);
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     toast({ title: "Message sent" });
