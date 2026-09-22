@@ -37,17 +37,17 @@ The canonical report-card implementation remains `ReportCardEditor` / `ReportCar
 - **23 August 2026 — Audit correction:** the live `announcements` body field is `body`, not `content`; the Student Dashboard query was corrected accordingly.
 
 ---
-\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
+\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
 ### Automated repository change snapshot
 
-- Last synchronisation: 2026-09-22T11:38:44.514Z
-- Commit: `f21c5f6940b5d0a3110547b5fb0ee640ac9e02f7`
+- Last synchronisation: 2026-09-22T11:38:53.204Z
+- Commit: `848b032c106c26a73b039923aad13c5ef397bf47`
 - Trigger: push
 
-- `M` `src/index.css`
+- `M` `src/components/layout/AdminLayout.tsx`
 
 > This block is maintained automatically from Git history. It records added, modified and deleted files so documentation does not silently drift. It does not invent feature descriptions: meaningful behavioural, data-model, permission and visual changes should still update the affected specification sections in the same change.
-<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
 # TABLE OF CONTENTS
 
 1. Project Overview
