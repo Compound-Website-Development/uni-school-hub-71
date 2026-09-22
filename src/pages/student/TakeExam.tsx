@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Clock, ChevronLeft, ChevronRight, Send, AlertTriangle } from "lucide-react";
+import { PortalIconArt } from "@/components/PortalIconArt";
 import { cn } from "@/lib/utils";
 
 const TakeExam = () => {
@@ -125,9 +126,9 @@ const TakeExam = () => {
   const options = Array.isArray(question?.options) ? question.options : [];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen portal-page-bg">
       {/* Top Bar */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border px-4 py-3">
+      <header className="sticky top-0 z-50 border-b border-border/50 bg-card/85 px-4 py-3 backdrop-blur-2xl">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="font-bold text-foreground text-sm md:text-base">{exam.title}</h1>
@@ -143,15 +144,15 @@ const TakeExam = () => {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
+      <div className="mx-auto max-w-5xl space-y-6 p-4 md:p-8">
         {/* Question */}
-        <Card className="rounded-xl border-border/50 shadow-card">
+        <Card className="portal-feature-card rounded-[30px] border-border/60 shadow-xl">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-xs">Q{currentQ + 1}</Badge>
               <span className="text-xs text-muted-foreground">{question.points || 1} point(s)</span>
             </div>
-            <CardTitle className="text-lg mt-2">{question.question_text}</CardTitle>
+            <CardTitle className="portal-display mt-2 text-xl md:text-2xl">{question.question_text}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -160,7 +161,7 @@ const TakeExam = () => {
                   key={idx}
                   onClick={() => setAnswers(prev => ({ ...prev, [question.id]: idx }))}
                   className={cn(
-                    "w-full text-left p-4 rounded-lg border-2 transition-all text-sm",
+                    "w-full rounded-2xl border-2 p-4 text-left text-sm transition-all duration-300",
                     answers[question.id] === idx
                       ? "border-primary bg-primary/5 font-medium"
                       : "border-border hover:border-primary/40 hover:bg-muted/30"
