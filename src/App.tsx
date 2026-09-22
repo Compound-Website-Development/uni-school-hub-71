@@ -65,7 +65,6 @@ import AdminApprovalsPage from "./pages/admin/AdminApprovalsPage";
 import AdminReportsPage from "./pages/admin/AdminReportsPage";
 import AdminLibrary from "./pages/admin/AdminLibrary";
 import AdminTransport from "./pages/admin/AdminTransport";
-import StaffCBT from "./pages/staff/StaffCBT";
 import AdminVisitors from "./pages/admin/AdminVisitors";
 import AdminIDCards from "./pages/admin/AdminIDCards";
 import AdminCertificates from "./pages/admin/AdminCertificates";
