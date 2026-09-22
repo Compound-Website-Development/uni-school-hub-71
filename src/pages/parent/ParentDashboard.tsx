@@ -33,6 +33,18 @@ const ParentDashboard = () => {
   useEffect(() => {
     const fetchAll = async () => {
       if (!user) return;
+      if (userRole === "admin") {
+        setIsPreview(true);
+        setChildren([]);
+        setChildGrades({});
+        setChildAttendance({});
+        setChildBalance({});
+        setRecentAnnouncements([]);
+        setUpcomingHomework([]);
+        setUpcomingExams([]);
+        setIsLoading(false);
+        return;
+      }
       const { data: links } = await supabase
         .from("parent_student_links")
         .select("student_id")
