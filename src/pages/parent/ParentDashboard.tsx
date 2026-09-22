@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { PortalIconArt } from "@/components/PortalIconArt";
 
 const ParentDashboard = () => {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const navigate = useNavigate();
   const [children, setChildren] = useState<any[]>([]);
   const [childGrades, setChildGrades] = useState<Record<string, any[]>>({});
@@ -107,7 +107,7 @@ const ParentDashboard = () => {
       setIsLoading(false);
     };
     fetchAll();
-  }, [user]);
+  }, [user, userRole]);
 
   const getAvgGrade = (studentId: string) => {
     const grades = childGrades[studentId] || [];
