@@ -19,6 +19,7 @@ interface StudentLayoutProps {
   back?: string;
   studentNameOverride?: string;
   studentIdOverride?: string;
+  publicView?: boolean;
 }
 
 const navGroups: { heading: string; items: { icon: any; label: string; href: string }[] }[] = [
@@ -65,7 +66,7 @@ const bottomNavItems = [
   { icon: User, label: "Profile", href: "/student/profile" },
 ];
 
-export const StudentLayout = ({ children, title, back, studentNameOverride, studentIdOverride }: StudentLayoutProps) => {
+export const StudentLayout = ({ children, title, back, studentNameOverride, studentIdOverride, publicView = false }: StudentLayoutProps) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { signOut, studentData } = useAuth();
   useRealtimeNotifications();
@@ -192,8 +193,8 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
       {/* Mobile content */}
       <div className="md:hidden pb-28"><div className="px-4 pt-4">{children}</div></div>
 
-      {/* Bottom nav — app tab bar with pill indicator */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-card/95 backdrop-blur-xl shadow-elev-3 safe-bottom md:hidden">
+      {/* Authenticated tab bar — public QR views must not expose protected routes. */}
+      {!publicView && <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-card/95 backdrop-blur-xl shadow-elev-3 safe-bottom md:hidden">
         <div className="flex h-[64px] items-stretch px-1">
           {bottomNavItems.map((item) => {
             const active = isActive(item.href);
@@ -224,8 +225,7 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
             );
           })}
         </div>
-      </nav>
-      <AIChatWidget />
+      </nav>}
     </div>
   );
 };

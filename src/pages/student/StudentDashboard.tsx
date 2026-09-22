@@ -178,6 +178,7 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
       title="Home"
       studentNameOverride={scannedProfile?.full_name}
       studentIdOverride={scannedProfile?.admission_no}
+      publicView={Boolean(scannedToken)}
     >
       <main className="student-home mx-auto w-full max-w-5xl overflow-hidden">
         {isShadowIdentity && (
