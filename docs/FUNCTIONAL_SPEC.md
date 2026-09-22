@@ -1,8 +1,8 @@
 # Imagemakers Nursery and Primary School — Portal
 ## Complete Software Design & Functional Specification
 
-Document version: 1.3
-Date: 31 August 2026
+Document version: 1.4
+Date: 22 September 2026
 Status: Living as-built documentation; update this document whenever application functionality or presentation changes
 Audience: Product managers, designers (Readdy AI / Google Stitch), engineers, QA, and AI systems rebuilding this application from scratch
 
@@ -13,6 +13,20 @@ Audience: Product managers, designers (Readdy AI / Google Stitch), engineers, QA
 This file is the canonical functional record for the project. Every future feature addition, removal, route change, data-model change, permission change, or substantial visual change must update only the affected sections and append a concise entry to the change log below. This is an implementation workflow requirement rather than a scheduled AI cron job: it adds no recurring Lovable AI credit usage and keeps documentation changes in the same reviewed change set as the code they describe.
 
 ### Change log
+### Current live-state verification — 22 September 2026
+
+The repository and connected Supabase project were re-checked before the September handoff work. Live counts currently include **132 students, 13 classes, 18 teacher records, 3 terms and 21 subjects**. Academic/finance operational rows are still largely unpopulated: **3 grades, 3 term_results, 0 class_subjects, 0 attendance, 0 invoices, 0 invoice_lines, 0 receipts, 0 discounts, 0 exams, 0 exam_questions, 0 exam_submissions, 0 policy_documents, 0 activity_logs and 0 staff_attendance**. These empty tables must not be filled with invented marks, attendance, payments, exam results or other fake school records.
+
+The staff class-teacher model is represented by `classes.class_teacher_id`; teachers should be scoped to their assigned class, while specialist-subject relationships remain optional through `class_subjects`. The current live `class_subjects` table has zero rows, so specialist mappings must be entered only from confirmed school information.
+
+The finance schema already contains `invoices`, `invoice_lines`, `receipts`, `student_discounts`, `finance_audit` and payment-proof infrastructure, but the live database currently has no invoice/receipt rows. Online card payment is therefore not live yet. A real school-owned merchant account and provider configuration are still required; secrets must remain server-side and never be committed to the repository.
+
+The repository contains an existing QR authentication exchange at `/s/:token`. The frontend invokes `qr-student-login`, verifies the returned magic-link token and now explicitly persists the returned access/refresh session before rendering the student dashboard. This is intended to prevent the previous QR navigation regression where the first screen loaded but protected bottom-nav routes redirected to `/login`. Final browser verification still needs to be performed with a newly generated ID card QR in a clean/private browser session.
+
+The transport schema/UI exists (`transport_routes` and an admin transport page), but there is no live driver GPS/continuous location tracking implementation. Building a driver tracking workflow requires confirmed driver identity, vehicle/route data, parent eligibility rules, location-consent/privacy rules and a safe location-sharing design before it can be considered complete.
+
+The canonical report-card implementation remains `ReportCardEditor` / `ReportCardWorkspace`, with `grades` and `term_results` as the academic data path. No real marks should be invented to make reports look populated.
+
 
 - **31 August 2026 — Pupil login provisioning:** closed the gap where no pupil could sign in (0 of 132 student records were linked to an auth user and only 1 held an email address). Added the `provision-student-accounts` edge function (admin-only, service-role) which, for active pupils without a linked account, creates a confirmed auth user with a deterministic login address derived from the admission number (`pupil.<admissionno>@imagemakers.local`), sets `app_metadata.role = 'student'`, writes back `students.user_id`, and upserts the `student` role. Added a **Create pupil logins** action on `/admin/students` that respects the current class filter and returns a one-time credential sheet with copy and CSV download. Pupil accounts cannot use email password reset — an admin re-issues credentials instead. No schema changes.
 - **30 August 2026 — Pre-demo audit:** added Section 16 (Demo Readiness Audit) with the per-dashboard feature list, principal-facing platform explanation, verified RLS isolation results, and the outstanding-items list. Fixed an `unknown`-typed error handler in the `seed-admin` edge function. No route, data-model, or permission changes.
