@@ -59,7 +59,7 @@ const StudentAttendance = () => {
 
   return (
     <StudentLayout title="My Attendance" back="/student">
-      <div className="mx-auto w-full max-w-3xl space-y-4 pb-6">
+      <div className="student-attendance-page mx-auto w-full max-w-4xl space-y-5 pb-6">
         {/* Overall card */}
         <AppCard className="animate-fade-up">
           <div className="flex items-center gap-3.5">
