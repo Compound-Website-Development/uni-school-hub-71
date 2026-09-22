@@ -455,7 +455,7 @@ const StaffGradebook = () => {
 
   return (
     <StaffLayout title="Gradebook">
-      <div className="space-y-6">
+      <div className="staff-tool-page staff-gradebook-page space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
