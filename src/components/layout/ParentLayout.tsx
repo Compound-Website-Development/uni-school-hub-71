@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import npsLogo from "@/assets/logo";
 import {
   LayoutDashboard, BookOpen, Calendar, CreditCard, MessageSquare,
-  MessagesSquare, LogOut, User, Users
+  MessagesSquare, LogOut, User, Users, BusFront
 } from "lucide-react";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -30,6 +30,7 @@ const navItems = [
   { icon: MessageSquare, label: "Messages", href: "/parent/messages" },
   { icon: MessagesSquare, label: "Forum", href: "/parent/forum" },
   { icon: User, label: "My Profile", href: "/parent/profile" },
+  { icon: BusFront, label: "School Bus", href: "/parent/transport" },
 ];
 
 export const ParentLayout = ({ children, title }: ParentLayoutProps) => {
