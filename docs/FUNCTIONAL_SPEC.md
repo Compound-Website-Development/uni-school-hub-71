@@ -37,17 +37,17 @@ The canonical report-card implementation remains `ReportCardEditor` / `ReportCar
 - **23 August 2026 — Audit correction:** the live `announcements` body field is `body`, not `content`; the Student Dashboard query was corrected accordingly.
 
 ---
-\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
+\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
 ### Automated repository change snapshot
 
-- Last synchronisation: 2026-09-22T11:19:58.071Z
-- Commit: `f63dc21d0e65fc3c668c2111dab998927f1bc1ab`
+- Last synchronisation: 2026-09-22T11:38:15.589Z
+- Commit: `d1b09fc4c29a7f72d6d804aa2af151043b80980b`
 - Trigger: push
 
-- `M` `src/pages/driver/DriverDashboard.tsx`
+- `A` `src/components/PortalHeroArt.tsx`
 
 > This block is maintained automatically from Git history. It records added, modified and deleted files so documentation does not silently drift. It does not invent feature descriptions: meaningful behavioural, data-model, permission and visual changes should still update the affected specification sections in the same change.
-<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
 # TABLE OF CONTENTS
 
 1. Project Overview
