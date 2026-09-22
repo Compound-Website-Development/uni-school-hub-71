@@ -93,6 +93,7 @@ import StudentLessonNote from "./pages/student/StudentLessonNote";
 import StudentReportCard from "./pages/student/StudentReportCard";
 import StaffWall from "./pages/staff/StaffWall";
 import ParentProfile from "./pages/parent/ParentProfile";
+import ParentTransport from "./pages/parent/ParentTransport";
 import ParentWall from "./pages/parent/ParentWall";
 import NotFound from "./pages/NotFound";
 import DriverDashboard from "./pages/driver/DriverDashboard";
@@ -208,6 +209,7 @@ const App = () => (
             <Route path="/parent/messages" element={<ProtectedRoute allowedRoles={["parent"]}><ParentMessages /></ProtectedRoute>} />
             <Route path="/parent/forum" element={<ProtectedRoute allowedRoles={["parent"]}><ParentForum /></ProtectedRoute>} />
             <Route path="/parent/profile" element={<ProtectedRoute allowedRoles={["parent"]}><ParentProfile /></ProtectedRoute>} />
+            <Route path="/parent/transport" element={<ProtectedRoute allowedRoles={["parent"]}><ParentTransport /></ProtectedRoute>} />
             <Route path="/parent/wall" element={<ProtectedRoute allowedRoles={["parent"]}><ParentWall /></ProtectedRoute>} />
 
             {/* Student/Staff profile + walls */}
