@@ -37,17 +37,17 @@ The canonical report-card implementation remains `ReportCardEditor` / `ReportCar
 - **23 August 2026 — Audit correction:** the live `announcements` body field is `body`, not `content`; the Student Dashboard query was corrected accordingly.
 
 ---
-\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
+\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
 ### Automated repository change snapshot
 
-- Last synchronisation: 2026-09-22T04:54:27.840Z
-- Commit: `a80df4a641d12a9f44cb155f24e19a2e22aecbd7`
+- Last synchronisation: 2026-09-22T04:55:02.638Z
+- Commit: `2a9c649b71b5cad3b95bf96152513818c3ed0f4f`
 - Trigger: push
 
-- `M` `src/integrations/supabase/types.ts`
+- `M` `src/pages/parent/ParentProfile.tsx`
 
 > This block is maintained automatically from Git history. It records added, modified and deleted files so documentation does not silently drift. It does not invent feature descriptions: meaningful behavioural, data-model, permission and visual changes should still update the affected specification sections in the same change.
-<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n
+<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n
 # TABLE OF CONTENTS
 
 1. Project Overview
