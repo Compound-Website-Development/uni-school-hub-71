@@ -184,7 +184,7 @@ const ParentDashboard = () => {
               return (
                 <Card key={child.id} className="border-border/50 overflow-hidden">
                   <CardHeader className="relative overflow-hidden bg-gradient-to-br from-primary/8 via-card to-accent/8 pb-3">
-                    <PortalIllustration kind="profile" size="md" className="absolute -right-2 -top-3 opacity-35" />
+                    <div className="portal-css-art portal-css-art-profile" aria-hidden="true"><span/><i/></div>
                     <CardTitle className="relative flex items-center gap-3 text-base">
                       <span className="grid h-12 w-12 place-items-center rounded-2xl bg-card shadow-sm"><PortalIllustration kind="profile" size="lg" className="h-10 w-10" /></span>
                       <span><span className="block portal-display text-lg font-extrabold">{child.first_name} {child.last_name}</span><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Linked child</span></span>
