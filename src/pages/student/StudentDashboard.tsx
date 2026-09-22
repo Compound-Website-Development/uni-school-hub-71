@@ -1,3 +1,4 @@
+import { PortalHeroArt } from "@/components/PortalHeroArt";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, BellRing, CalendarCheck, CalendarDays, ChevronRight, Clock3, CreditCard, FolderOpen, MapPin, RefreshCw, Sparkles } from "lucide-react";
@@ -180,7 +181,7 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
       studentIdOverride={scannedProfile?.admission_no}
       publicView={Boolean(scannedToken)}
     >
-      <main className="student-home mx-auto w-full max-w-5xl overflow-hidden">
+      <main className="student-home portal-page-bg mx-auto w-full max-w-5xl overflow-hidden rounded-[28px] shadow-2xl shadow-primary/10">
         {isShadowIdentity && (
           <div className="mx-5 mt-3 flex items-center gap-2 border-l-2 border-accent px-3 py-2 text-xs text-muted-foreground md:mx-0">
             <BellRing className="student-blue h-4 w-4" /> Admin preview identity — you are viewing a pupil record, not your own.
@@ -189,7 +190,7 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
 
         <section className="relative min-h-[330px] overflow-hidden px-5 pt-8 md:min-h-[390px] md:px-10 md:pt-12">
           <img src={heroImage} alt="School backpack, books and a plant in a sunlit courtyard" width={1200} height={900} className="absolute inset-y-0 right-0 h-full w-[72%] object-cover object-center md:w-[62%]" />
-          <div className="student-hero-fade absolute inset-0" />
+          <div className="student-hero-fade absolute inset-0" /><PortalHeroArt variant="learning" />
           <div className="relative z-10 max-w-[62%] md:max-w-md">
             <p className="font-editorial student-ink text-[18px] md:text-2xl">{new Date().getHours() < 12 ? "Good morning," : new Date().getHours() < 17 ? "Good afternoon," : "Good evening,"}</p>
             <h1 className="font-editorial student-ink mt-0.5 text-[52px] font-semibold leading-[0.98] md:text-7xl">{firstName}</h1>
