@@ -4,237 +4,30 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { MobileHeader } from "./MobileHeader";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import npsLogo from "@/assets/logo";
-import {
-  LayoutDashboard, Users, GraduationCap, Briefcase, ShieldCheck,
-  CreditCard, Megaphone, Settings, LogOut, Search, BarChart2,
-  Activity, Upload, BookUser, Database, ExternalLink, BookOpen, Bus,
-  UserCheck, CreditCard as IdCard, Award, AlertTriangle, FileText,
-  Brain, Shield, Heart, Package, RefreshCw, Monitor
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { PortalIconArt } from "@/components/PortalIconArt";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LogOut, ChevronRight, ExternalLink } from "lucide-react";
+import npsLogo from "@/assets/logo";
+import { cn } from "@/lib/utils";
 
-interface AdminLayoutProps {
-  children: ReactNode;
-  title?: string;
-  showSearch?: boolean;
-  searchPlaceholder?: string;
-}
+interface AdminLayoutProps { children: ReactNode; title?: string; showSearch?: boolean; searchPlaceholder?: string; }
 
-const adminNavSections = [
-  {
-    label: "Overview",
-    items: [
-      { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
-      { icon: BarChart2, label: "Analytics", href: "/admin/analytics" },
-      { icon: Activity, label: "Activity Logs", href: "/admin/activity" },
-    ],
-  },
-  {
-    label: "People",
-    items: [
-      { icon: GraduationCap, label: "Students", href: "/admin/students" },
-      { icon: Briefcase, label: "Staff", href: "/admin/staff" },
-      { icon: ShieldCheck, label: "Pending Approvals", href: "/admin/approvals" },
-    ],
-  },
-  {
-    label: "Finance & Comms",
-    items: [
-      { icon: CreditCard, label: "Fee Management", href: "/admin/fees" },
-      { icon: FileText, label: "Invoices & Receipts", href: "/admin/finance" },
-      { icon: Megaphone, label: "Message Templates", href: "/admin/communication" },
-      { icon: BarChart2, label: "Financial Intelligence", href: "/admin/financial" },
-      { icon: Megaphone, label: "Announcements", href: "/admin/announcements" },
-      { icon: FileText, label: "Reports & Export", href: "/admin/reports" },
-    ],
-  },
-  {
-    label: "AI & Analytics",
-    items: [
-      { icon: Brain, label: "Predictive Analytics", href: "/admin/predictive" },
-      { icon: Shield, label: "Behavioral Records", href: "/admin/behavioral" },
-      { icon: Heart, label: "Student Wellbeing", href: "/admin/wellbeing" },
-    ],
-  },
-  {
-    label: "Academics & Transport",
-    items: [
-      { icon: Monitor, label: "CBT Exams", href: "/admin/cbt" },
-      { icon: Bus, label: "Driver & Bus Tracking", href: "/admin/transport" },
-    ],
-  },
-  {
-    label: "Facilities",
-    items: [
-      { icon: BookOpen, label: "Library", href: "/admin/library" },
-      { icon: Bus, label: "Transport", href: "/admin/transport" },
-      { icon: UserCheck, label: "Visitors", href: "/admin/visitors" },
-      { icon: Package, label: "Inventory", href: "/admin/inventory" },
-      { icon: RefreshCw, label: "Substitutions", href: "/admin/substitutions" },
-    ],
-  },
-  {
-    label: "Documents",
-    items: [
-      { icon: IdCard, label: "ID Cards", href: "/admin/id-cards" },
-      { icon: Award, label: "Certificates", href: "/admin/certificates" },
-      { icon: AlertTriangle, label: "Complaints", href: "/admin/complaints" },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      { icon: BookUser, label: "Admission Register", href: "/admin/register-import" },
-      { icon: Upload, label: "Bulk Upload", href: "/admin/bulk-upload" },
-      { icon: Database, label: "Manage Users", href: "/admin/users" },
-      { icon: FileText, label: "Policy Documents", href: "/admin/policies" },
-      { icon: FileText, label: "All Documents", href: "/admin/documents" },
-      { icon: Settings, label: "School Settings", href: "/admin/settings" },
-    ],
-  },
-];
+const sections=[
+ {label:"Overview",items:[["home","Dashboard","/admin"],["book","Analytics","/admin/analytics"],["message","Activity Logs","/admin/activity"]]},
+ {label:"People",items:[["people","Students","/admin/students"],["people","Staff","/admin/staff"],["people","Pending Approvals","/admin/approvals"]]},
+ {label:"Finance & communication",items:[["finance","Fee Management","/admin/fees"],["finance","Invoices & Receipts","/admin/finance"],["message","Message Templates","/admin/communication"],["finance","Financial Intelligence","/admin/financial"],["message","Announcements","/admin/announcements"],["book","Reports & Export","/admin/reports"]]},
+ {label:"AI & wellbeing",items:[["ai","Predictive Analytics","/admin/predictive"],["people","Behavioural Records","/admin/behavioral"],["people","Student Wellbeing","/admin/wellbeing"]]},
+ {label:"Academics & transport",items:[["cbt","CBT Exams","/admin/cbt"],["bus","Driver & Bus Tracking","/admin/transport"]]},
+ {label:"School operations",items:[["book","Library","/admin/library"],["bus","Transport Setup","/admin/transport"],["people","Visitors","/admin/visitors"],["finance","Inventory","/admin/inventory"],["calendar","Substitutions","/admin/substitutions"]]},
+ {label:"Documents & system",items:[["book","ID Cards","/admin/id-cards"],["book","Certificates","/admin/certificates"],["message","Complaints","/admin/complaints"],["book","Admission Register","/admin/register-import"],["book","Bulk Upload","/admin/bulk-upload"],["people","Manage Users","/admin/users"],["book","Policy Documents","/admin/policies"],["book","All Documents","/admin/documents"],["settings","School Settings","/admin/settings"]]},
+] as const;
+const portals=[["people","Staff Portal","/staff"],["book","Student Portal","/student"],["people","Parent Portal","/parent"],["bus","Driver Portal","/driver"]] as const;
 
-const portalLinks = [
-  { label: "Staff Portal", path: "/staff" },
-  { label: "Student Portal", path: "/student" },
-  { label: "Parent Portal", path: "/parent" },
-];
-
-export const AdminLayout = ({
-  children, title, showSearch = false, searchPlaceholder = "Search..."
-}: AdminLayoutProps) => {
-  useRealtimeNotifications();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { signOut, teacherData } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = async () => { await signOut(); navigate("/login"); };
-  const openPortal = (path: string) => { window.open(window.location.origin + path, "_blank"); };
-
-  const staffName = teacherData ? `${teacherData.first_name} ${teacherData.last_name}` : "Admin";
-  const staffInitials = teacherData ? `${teacherData.first_name[0]}${teacherData.last_name[0]}` : "AD";
-
-  const SidebarNav = ({ onItemClick }: { onItemClick?: () => void }) => (
-    <div className="space-y-5">
-      {adminNavSections.map((section) => (
-        <div key={section.label}>
-          <p className="text-[10px] font-bold text-sidebar-foreground/70 uppercase tracking-[0.15em] mb-1.5 px-4">{section.label}</p>
-          <div className="space-y-0.5">
-            {section.items.map((item) => {
-              const isActive = location.pathname === item.href;
-              const Icon = item.icon;
-              return (
-                <Link key={item.href} to={item.href} onClick={onItemClick}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-[13px]",
-                    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold" : "text-sidebar-foreground/90 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
-                  )}>
-                  <Icon className="w-4 h-4 shrink-0" /><span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-      <div>
-        <p className="text-[10px] font-bold text-sidebar-foreground/70 uppercase tracking-[0.15em] mb-1.5 px-4">Portals</p>
-        <div className="space-y-0.5">
-          {portalLinks.map((portal) => (
-            <button key={portal.path} onClick={() => { openPortal(portal.path); onItemClick?.(); }}
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-[13px] text-sidebar-foreground/90 hover:text-sidebar-foreground hover:bg-sidebar-accent/60 w-full text-left">
-              <ExternalLink className="w-4 h-4 shrink-0" /><span>{portal.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-background portal-page-bg">
-      <MobileHeader title={title || "Admin Portal"} onMenuClick={() => setSidebarOpen(true)} showSearch={showSearch} searchPlaceholder={searchPlaceholder} />
-      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-72 p-0 bg-sidebar border-r-0">
-          <SheetHeader className="p-5">
-            <div className="flex items-center gap-3">
-              <img src={npsLogo} alt="Imagemakers" className="h-7 w-auto" />
-              <SheetTitle className="text-sidebar-foreground text-base">Super Admin</SheetTitle>
-            </div>
-          </SheetHeader>
-          <div className="flex flex-col h-[calc(100%-4rem)]">
-            <div className="px-4 pb-3 border-b border-sidebar-border">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-9 w-9 border-2 border-sidebar-foreground/10">
-                  <AvatarFallback className="bg-sidebar-foreground/10 text-sidebar-foreground font-bold text-xs">{staffInitials}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sidebar-foreground truncate text-sm">{staffName}</p>
-                  <Badge className="text-[10px] bg-accent/20 text-accent border-0">Super Admin</Badge>
-                </div>
-              </div>
-            </div>
-            <nav className="flex-1 p-3 overflow-y-auto scrollbar-thin"><SidebarNav onItemClick={() => setSidebarOpen(false)} /></nav>
-            <div className="p-3 border-t border-sidebar-border">
-              <Button variant="ghost" size="sm" className="w-full justify-start text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent text-xs" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" /> Sign Out
-              </Button>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-      <div className="hidden md:flex h-screen w-full overflow-hidden">
-        <aside className="w-[270px] bg-sidebar/95 backdrop-blur-xl flex flex-col shrink-0 border-r border-sidebar-border shadow-2xl shadow-primary/5">
-          <div className="p-4 flex items-center gap-2.5 border-b border-sidebar-border">
-            <img src={npsLogo} alt="Imagemakers" className="h-7 w-auto" />
-            <div>
-              <span className="text-sm font-bold text-sidebar-foreground">Imagemakers Portal</span>
-              <p className="text-[10px] text-sidebar-foreground/70">Super Admin</p>
-            </div>
-          </div>
-          <div className="px-4 py-3 border-b border-sidebar-border">
-            <div className="flex items-center gap-2.5">
-              <Avatar className="h-8 w-8 border border-sidebar-foreground/10">
-                <AvatarFallback className="bg-sidebar-foreground/10 text-sidebar-foreground font-bold text-[11px]">{staffInitials}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sidebar-foreground truncate text-xs">{staffName}</p>
-                <Badge className="text-[9px] h-4 bg-accent/20 text-accent border-0 px-1.5">Super Admin</Badge>
-              </div>
-            </div>
-          </div>
-          <nav className="flex-1 p-2.5 overflow-y-auto scrollbar-thin"><SidebarNav /></nav>
-          <div className="p-3 border-t border-sidebar-border">
-            <Button variant="ghost" size="sm" className="w-full justify-start text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent text-xs" onClick={handleLogout}>
-              <LogOut className="w-4 h-4 mr-2" /> Sign Out
-            </Button>
-          </div>
-        </aside>
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <header className="h-16 bg-card/75 backdrop-blur-xl border-b border-border/70 flex items-center justify-between px-6 shrink-0">
-            <div className="flex items-center gap-3">{title && <h1 className="text-lg font-bold text-foreground">{title}</h1>}</div>
-            <div className="flex items-center gap-3">
-              {showSearch && (
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input placeholder={searchPlaceholder} className="pl-9 w-56 h-9 text-sm rounded-md" />
-                </div>
-              )}
-              <ThemeToggle />
-              <NotificationDropdown />
-            </div>
-          </header>
-          <div className="flex-1 overflow-y-auto p-5 lg:p-6">{children}</div>
-        </main>
-      </div>
-      <div className="md:hidden"><div className="p-4">{children}</div></div>
-    </div>
-  );
+export const AdminLayout=({children,title}:AdminLayoutProps)=>{
+ const [open,setOpen]=useState(false); const {signOut,teacherData}=useAuth(); useRealtimeNotifications(); const nav=useNavigate(); const loc=useLocation();
+ const name=teacherData?`${teacherData.first_name} ${teacherData.last_name}`:"Admin"; const initials=name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
+ const active=(href:string)=>loc.pathname===href||loc.pathname.startsWith(href+"/"); const logout=async()=>{await signOut();nav("/login");}; const openPortal=(p:string)=>window.open(window.location.origin+p,"_blank");
+ const Nav=({close}:{close?:()=>void})=><div className="space-y-6">{sections.map(s=><section key={s.label}><p className="px-2 pb-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-white/38">{s.label}</p><div className="space-y-1">{s.items.map(([kind,label,href])=><Link key={href+label} to={href} onClick={close} className={cn("group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[12px] font-semibold transition-all",active(href)?"bg-white text-[hsl(var(--navy))] shadow-lg":"text-white/70 hover:bg-white/10 hover:text-white")}><span className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-xl",active(href)?"bg-primary/10":"bg-white/8")}><PortalIconArt kind={kind as any} className="h-7 w-7"/></span><span className="flex-1 truncate">{label}</span>{active(href)&&<ChevronRight className="h-4 w-4"/>}</Link>)}</div></section>)}<section><p className="px-2 pb-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-white/38">Open portals</p><div className="grid grid-cols-2 gap-2">{portals.map(([kind,label,path])=><button key={path} onClick={()=>{openPortal(path);close?.()}} className="group rounded-2xl border border-white/10 bg-white/7 p-2 text-left transition hover:-translate-y-0.5 hover:bg-white/12"><PortalIconArt kind={kind as any} className="h-10 w-10"/><span className="mt-1 block text-[10px] font-bold text-white/85">{label}</span><ExternalLink className="mt-1 h-3 w-3 text-white/35"/></button>)}</div></section></div>;
+ return <div className="min-h-screen bg-background portal-page-bg"><MobileHeader title={title||"Admin Portal"} onMenuClick={()=>setOpen(true)}/><Sheet open={open} onOpenChange={setOpen}><SheetContent side="left" className="w-[90%] max-w-sm border-0 bg-[hsl(var(--navy))] p-0 text-white"><SheetHeader className="border-b border-white/10 p-5 text-left"><div className="flex items-center gap-3"><img src={npsLogo} className="h-9 w-auto" alt="Imagemakers"/><SheetTitle className="text-white">Command Centre</SheetTitle></div></SheetHeader><nav className="h-[calc(100%-7rem)] overflow-y-auto p-4"><Nav close={()=>setOpen(false)}/></nav><button onClick={logout} className="mx-4 flex w-[calc(100%-2rem)] items-center gap-3 border-t border-white/10 py-4 text-sm font-semibold text-white/70"><LogOut className="h-4 w-4"/>Sign out</button></SheetContent></Sheet><div className="hidden min-h-screen md:flex"><aside className="sticky top-0 flex h-screen w-[305px] shrink-0 flex-col overflow-hidden bg-[hsl(var(--navy))] p-4 text-white shadow-2xl"><div className="mb-5 flex items-center gap-3 rounded-3xl bg-white/8 p-4"><img src={npsLogo} className="h-10 w-auto" alt="Imagemakers"/><div><p className="portal-display text-base font-bold">Imagemakers</p><p className="text-[10px] text-white/50">School command centre</p></div></div><div className="mb-4 flex items-center gap-3 rounded-3xl border border-white/10 bg-white/6 p-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-white to-white/70 text-primary font-black">{initials}</div><div className="min-w-0"><p className="truncate text-sm font-bold">{name}</p><p className="text-[10px] text-white/50">Super Admin</p></div></div><nav className="min-h-0 flex-1 overflow-y-auto pr-1 scrollbar-thin"><Nav/></nav><button onClick={logout} className="mt-3 flex items-center gap-3 rounded-2xl bg-white/8 px-4 py-3 text-sm font-bold text-white/70 hover:bg-white/12 hover:text-white"><LogOut className="h-4 w-4"/>Sign out</button></aside><main className="min-w-0 flex-1 overflow-y-auto"><header className="sticky top-0 z-30 flex h-[82px] items-center justify-between border-b border-border/50 bg-card/75 px-6 backdrop-blur-2xl lg:px-9"><div><p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Imagemakers • 2026/27</p><h1 className="portal-display text-xl font-bold">{title||"Dashboard"}</h1></div><div className="flex items-center gap-2"><ThemeToggle/><NotificationDropdown/></div></header><div className="mx-auto w-full max-w-[1600px] p-6 lg:p-9">{children}</div></main></div><div className="px-3 pb-6 md:hidden">{children}</div></div>;
 };
