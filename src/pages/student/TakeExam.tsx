@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Clock, ChevronLeft, ChevronRight, Send, AlertTriangle } from "lucide-react";
-import { PortalIconArt } from "@/components/PortalIconArt";
+import { PortalIllustration } from "@/components/PortalIllustration";
 import { cn } from "@/lib/utils";
 
 const TakeExam = () => {
