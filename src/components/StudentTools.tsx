@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Calculator, X } from "lucide-react";
+import { Calculator, X, Sparkles, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,8 +25,12 @@ export const StudentTools = ({ studentId }: { studentId?: string | null }) => {
   };
 
   return <>
+    {(aiEnabled || calculatorEnabled) && <div className="fixed bottom-5 right-4 z-40 flex items-center gap-2 rounded-2xl border border-border/60 bg-card/90 p-2 shadow-2xl backdrop-blur-xl animate-fade-in">
+      {aiEnabled && <div className="flex items-center gap-2 rounded-xl bg-primary/10 px-3 py-2 text-xs font-bold text-primary"><Sparkles className="h-4 w-4" /> AI Tutor</div>}
+      {calculatorEnabled && <button onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105" aria-label="Calculator"><Calculator className="h-5 w-5" /></button>}
+    </div>}
     {aiEnabled && <AIChatWidget />}
-    {calculatorEnabled && <button onClick={() => setOpen(true)} className="fixed bottom-24 right-4 z-40 grid h-12 w-12 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-xl hover:scale-105 transition-transform" aria-label="Calculator"><Calculator className="h-5 w-5" /></button>}
+}
     {open && calculatorEnabled && <div className="fixed inset-0 z-[70] grid place-items-center bg-black/30 p-4" onClick={() => setOpen(false)}>
       <Card className="w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
         <CardHeader className="flex flex-row items-center justify-between"><CardTitle className="flex items-center gap-2"><Calculator className="h-5 w-5 text-primary" /> Calculator</CardTitle><Button variant="ghost" size="icon" onClick={() => setOpen(false)}><X className="h-4 w-4" /></Button></CardHeader>
