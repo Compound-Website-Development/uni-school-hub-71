@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { Link } from "react-router-dom";
+import { PortalIconArt } from "@/components/PortalIconArt";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -157,45 +158,21 @@ const AdminDashboard = () => {
           </div>
         </section>
 
-        {/* Portal Switcher */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/staff")}>
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-info/10">
-                <Briefcase className="w-6 h-6 text-info" />
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { kind:"people", title:"Staff Portal", note:"Daily teaching, attendance, gradebook and CBT", path:"/staff", tone:"bg-primary/10" },
+            { kind:"book", title:"Student Portal", note:"Learning, results, homework, CBT and study tools", path:"/student", tone:"bg-accent/15" },
+            { kind:"people", title:"Parent Portal", note:"Children, fees, reports, messages and bus access", path:"/parent", tone:"bg-success/10" },
+            { kind:"bus", title:"Driver Portal", note:"Route assignment and live trip location sharing", path:"/driver", tone:"bg-warning/15" },
+          ].map(portal => (
+            <button key={portal.path} onClick={() => openPortal(portal.path)} className="portal-feature-card group min-h-[180px] p-5 text-left">
+              <div className="relative z-10 flex h-full flex-col">
+                <div className={`portal-float-icon grid h-16 w-16 place-items-center rounded-[22px] ${portal.tone}`}><PortalIconArt kind={portal.kind as any} className="h-14 w-14"/></div>
+                <div className="mt-auto pt-5"><p className="portal-display text-lg font-extrabold">{portal.title}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{portal.note}</p><span className="mt-3 inline-flex items-center text-[10px] font-extrabold uppercase tracking-wider text-primary">Open portal <ArrowRight className="ml-1 h-3 w-3"/></span></div>
               </div>
-              <div className="flex-1">
-                <p className="font-semibold text-foreground">Staff Portal</p>
-                <p className="text-xs text-muted-foreground">Open staff dashboard in a new tab</p>
-              </div>
-              <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-            </CardContent>
-          </Card>
-          <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/student")}>
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-primary/10">
-                <GraduationCap className="w-6 h-6 text-primary" />
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-foreground">Student Portal</p>
-                <p className="text-xs text-muted-foreground">Open with your admin email — no second device needed</p>
-              </div>
-              <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-            </CardContent>
-          </Card>
-          <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/parent")}>
-            <CardContent className="p-4 flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-accent/15">
-                <Users className="w-6 h-6 text-accent-foreground" />
-              </div>
-              <div className="flex-1">
-                <p className="font-semibold text-foreground">Parent Portal</p>
-                <p className="text-xs text-muted-foreground">Preview the parent experience in a new tab</p>
-              </div>
-              <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-            </CardContent>
-          </Card>
-        </div>
+            </button>
+          ))}
+        </section>
 
         {/* Primary Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
