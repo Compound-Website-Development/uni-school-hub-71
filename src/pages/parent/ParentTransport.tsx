@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Navigation, ShieldCheck, BusFront, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PortalIllustration } from "@/components/PortalIllustration";
 
 const ParentTransport = () => {
   const [trips, setTrips] = useState<any[]>([]);
@@ -30,7 +29,7 @@ const ParentTransport = () => {
   return <ParentLayout title="School Bus">
     <div className="dashboard-surface dashboard-parent mx-auto max-w-6xl space-y-6">
       <section className="portal-hero">
-        <PortalIllustration kind="bus" size="lg" className="portal-hero-art opacity-70" />
+        <div className="portal-css-art portal-css-art-bus" aria-hidden="true"><span/><i/><b/></div>
         <div className="portal-hero-copy">
           <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Authorised family transport</p>
           <h1 className="portal-display mt-2 text-4xl font-extrabold">Know when the bus is moving.</h1>
