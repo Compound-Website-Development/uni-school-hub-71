@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import heroImage from "@/assets/student-home-hero.jpg";
 import { BookGlyph, GradesGlyph, HomeworkGlyph, ShieldGlyph, TrendGlyph } from "@/components/student/HomeGlyphs";
+import { PortalIconArt } from "@/components/PortalIconArt";
 
 interface Grade {
   id: string;
@@ -256,6 +257,31 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
             <p className="font-editorial pt-0.5 text-[16px] leading-relaxed text-foreground/80">{statusCopy}</p>
           </section>
 
+          <section className="grid gap-4 md:grid-cols-2">
+            <button onClick={() => window.dispatchEvent(new Event("imagemakers-open-ai"))} className="portal-feature-card group p-5 text-left">
+              <div className="relative z-10 flex items-start gap-4">
+                <div className="portal-float-icon grid h-16 w-16 shrink-0 place-items-center rounded-[22px] bg-primary/10"><PortalIconArt kind="ai" className="h-14 w-14"/></div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-primary">Study companion</p>
+                  <h2 className="portal-display mt-1 text-xl font-extrabold">Ask your AI Tutor</h2>
+                  <p className="mt-1 text-sm leading-5 text-muted-foreground">Get help understanding homework and lessons. Ask questions; don't just copy answers.</p>
+                  <span className="mt-3 inline-flex rounded-full bg-primary px-3 py-1.5 text-[11px] font-extrabold text-white">Open tutor →</span>
+                </div>
+              </div>
+            </button>
+            <button onClick={() => window.dispatchEvent(new Event("imagemakers-open-calculator"))} className="portal-feature-card group p-5 text-left">
+              <div className="relative z-10 flex items-start gap-4">
+                <div className="portal-float-icon grid h-16 w-16 shrink-0 place-items-center rounded-[22px] bg-accent/15"><PortalIconArt kind="cbt" className="h-14 w-14"/></div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-accent-foreground">Study tool</p>
+                  <h2 className="portal-display mt-1 text-xl font-extrabold">Calculator</h2>
+                  <p className="mt-1 text-sm leading-5 text-muted-foreground">A simple calculator for maths practice and schoolwork on an approved device.</p>
+                  <span className="mt-3 inline-flex rounded-full bg-accent px-3 py-1.5 text-[11px] font-extrabold text-accent-foreground">Open calculator →</span>
+                </div>
+              </div>
+            </button>
+          </section>
+
           <section>
             <div className="flex items-center justify-between"><h2 className="text-xs font-bold uppercase text-foreground">Recent results</h2><Link to="/student/grades" className="flex min-h-11 items-center gap-1 text-sm font-semibold text-primary">See all <ChevronRight className="h-4 w-4" /></Link></div>
             {recentGrades.length === 0 ? (
@@ -294,20 +320,15 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
           </section>
 
           <section>
-            <h2 className="mb-3 text-xs font-bold uppercase text-foreground">Quick access</h2>
-            <div className="grid grid-cols-5 gap-1 rounded-2xl bg-card px-1 py-4 shadow-elev-1">
+            <div className="mb-3 flex items-end justify-between"><div><p className="editorial-eyebrow">Your shortcuts</p><h2 className="portal-display text-xl font-extrabold">Keep moving</h2></div><Link to="/student/resources" className="text-xs font-bold text-primary">See all →</Link></div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
               {[
-                { icon: GradesGlyph, label: "Grades", href: "/student/grades" },
-                { icon: CalendarCheck, label: "Attendance", href: "/student/attendance" },
-                { icon: CreditCard, label: "Fees", href: "/student/fees" },
-                { icon: CalendarDays, label: "Schedule", href: "/student/schedule" },
-                { icon: FolderOpen, label: "Documents", href: "/student/reports" },
-              ].map(({ icon: Icon, label, href }) => (
-                <Link key={href} to={href} className="group flex min-w-0 flex-col items-center gap-2 px-0.5 py-1 text-center">
-                  <Icon className="student-blue h-6 w-6 transition-transform duration-200 group-active:scale-90" />
-                  <span className="w-full truncate text-[9px] font-medium text-foreground sm:text-[11px]">{label}</span>
-                </Link>
-              ))}
+                { kind:"book", label:"Grades", href:"/student/grades" }, { kind:"attendance", label:"Attendance", href:"/student/attendance" },
+                { kind:"finance", label:"Fees", href:"/student/fees" }, { kind:"calendar", label:"Schedule", href:"/student/schedule" }, { kind:"book", label:"Reports", href:"/student/reports" },
+              ].map(item=><Link key={item.href} to={item.href} className="portal-feature-card group flex min-h-[118px] flex-col justify-between p-4">
+                <PortalIconArt kind={item.kind as any} className="h-12 w-12 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-2"/>
+                <span className="text-xs font-extrabold">{item.label}<ChevronRight className="ml-1 inline h-3 w-3 text-primary"/></span>
+              </Link>)}
             </div>
           </section>
         </div>
