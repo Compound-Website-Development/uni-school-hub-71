@@ -95,6 +95,7 @@ import StaffWall from "./pages/staff/StaffWall";
 import ParentProfile from "./pages/parent/ParentProfile";
 import ParentWall from "./pages/parent/ParentWall";
 import NotFound from "./pages/NotFound";
+import DriverDashboard from "./pages/driver/DriverDashboard";
 
 const queryClient = new QueryClient();
 
@@ -122,6 +123,8 @@ const App = () => (
 
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             
+            {/* Driver Portal */}
+            <Route path="/driver" element={<ProtectedRoute allowedRoles={["driver"]}><DriverDashboard /></ProtectedRoute>} />
             {/* Student Portal */}
             <Route path="/student" element={<ProtectedRoute allowedRoles={["student"]}><StudentDashboard /></ProtectedRoute>} />
             <Route path="/student/grades" element={<ProtectedRoute allowedRoles={["student"]}><StudentGrades /></ProtectedRoute>} />
