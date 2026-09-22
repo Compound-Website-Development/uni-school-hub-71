@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -173,11 +173,11 @@
   
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Manrope', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Sora', 'Manrope', system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
     letter-spacing: 0;
   }
   
@@ -187,6 +187,21 @@
 }
 
 /* Custom Scrollbar */
+@layer components {
+  .portal-shell {
+    background: linear-gradient(135deg, hsl(var(--background)), hsl(var(--primary-soft) / .42));
+  }
+  .portal-illustration-card {
+    background: linear-gradient(135deg, hsl(var(--primary) / .14), hsl(var(--accent) / .2));
+    border: 1px solid hsl(var(--primary) / .14);
+    box-shadow: 0 24px 60px hsl(var(--navy) / .12);
+  }
+  .portal-illustration-card img { filter: drop-shadow(0 18px 20px hsl(var(--navy) / .16)); }
+  .portal-nav-item { position: relative; overflow: hidden; }
+  .portal-nav-item::after { content: ''; position: absolute; inset: auto -18px -28px auto; width: 72px; height: 72px; border-radius: 999px; background: hsl(var(--accent) / .12); transition: transform .3s ease; transform: scale(0); }
+  .portal-nav-item:hover::after, .portal-nav-item[data-active='true']::after { transform: scale(1); }
+}
+
 @layer utilities {
   .scrollbar-thin {
     scrollbar-width: thin;

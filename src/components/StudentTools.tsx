@@ -30,7 +30,6 @@ export const StudentTools = ({ studentId }: { studentId?: string | null }) => {
       {calculatorEnabled && <button onClick={() => setOpen(true)} className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105" aria-label="Calculator"><Calculator className="h-5 w-5" /></button>}
     </div>}
     {aiEnabled && <AIChatWidget />}
-}
     {open && calculatorEnabled && <div className="fixed inset-0 z-[70] grid place-items-center bg-black/30 p-4" onClick={() => setOpen(false)}>
       <Card className="w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
         <CardHeader className="flex flex-row items-center justify-between"><CardTitle className="flex items-center gap-2"><Calculator className="h-5 w-5 text-primary" /> Calculator</CardTitle><Button variant="ghost" size="icon" onClick={() => setOpen(false)}><X className="h-4 w-4" /></Button></CardHeader>

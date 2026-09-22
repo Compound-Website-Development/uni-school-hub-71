@@ -84,13 +84,13 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
     location.pathname === href || (href !== "/student" && location.pathname.startsWith(href + "/"));
 
   const NavList = ({ onItemClick, dark }: { onItemClick?: () => void; dark?: boolean }) => (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-7">
       {navGroups.map((group) => (
         <div key={group.heading}>
           <p className={cn("mb-1.5 px-1 text-[10px] font-bold uppercase tracking-[0.16em]", dark ? "text-foreground/40" : "text-muted-foreground")}>
             {group.heading}
           </p>
-          <div className="space-y-0.5">
+          <div className="flex flex-col gap-1">
             {group.items.map((item) => {
               const active = isActive(item.href);
               const Icon = item.icon;
@@ -99,11 +99,12 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
                   key={item.href + item.label}
                   to={item.href}
                   onClick={onItemClick}
+                  data-active={active}
                   className={cn(
-                    "press flex items-center gap-3 rounded-xl px-2.5 py-2.5 text-[13.5px] transition-colors",
+                    "portal-nav-item press flex items-center gap-3 rounded-2xl px-2.5 py-2.5 text-[13.5px] transition-all duration-300",
                     active
-                      ? "bg-primary/10 font-bold text-primary"
-                      : "font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                      ? "bg-primary font-bold text-primary-foreground shadow-lg shadow-primary/20"
+                      : "font-medium text-muted-foreground hover:-translate-y-0.5 hover:bg-card hover:text-foreground hover:shadow-sm",
                   )}
                 >
                   <Icon className="h-[17px] w-[17px] shrink-0" strokeWidth={active ? 2.3 : 1.9} />
@@ -118,7 +119,8 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
   );
 
   return (
-    <div className="min-h-screen bg-background portal-page-bg">
+    <div className="min-h-screen bg-background portal-page-bg portal-shell">
+      <StudentTools studentId={studentData?.id} />
       {/* Mobile header — app bar: back/menu, coloured title, bell */}
       <header className="md:hidden sticky top-0 z-40 border-b border-border/60 bg-card/90 backdrop-blur-xl safe-top">
         <div className="flex h-14 items-center gap-2 px-3">
@@ -193,8 +195,8 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
       {/* Mobile content */}
       <div className="md:hidden pb-28"><div className="px-4 pt-4">{children}</div></div>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-card/95 backdrop-blur-xl shadow-elev-3 safe-bottom md:hidden">
-        <div className="flex h-[64px] items-stretch px-1">
+      <nav className="fixed bottom-3 left-3 right-3 z-50 rounded-[26px] border border-primary/15 bg-card/95 p-1.5 shadow-2xl shadow-primary/15 backdrop-blur-xl safe-bottom md:hidden">
+        <div className="flex h-[68px] items-stretch px-1">
           {bottomNavItems.map((item) => {
             const active = isActive(item.href);
             const Icon = item.icon;
@@ -206,8 +208,8 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
               >
                 <span
                   className={cn(
-                    "grid h-8 w-14 place-items-center rounded-full transition-all duration-300",
-                    active ? "bg-primary/12 text-primary" : "text-muted-foreground",
+                    "grid h-9 w-14 place-items-center rounded-2xl transition-all duration-300",
+                    active ? "bg-primary text-primary-foreground shadow-md" : "text-muted-foreground",
                   )}
                 >
                   <Icon className="h-[21px] w-[21px]" strokeWidth={active ? 2.4 : 1.9} />

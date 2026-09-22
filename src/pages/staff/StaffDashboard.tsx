@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import SchoolInfoPanel from "@/components/SchoolInfoPanel";
 import StaffClockIn from "@/components/StaffClockIn";
+import portalIllustration from "@/assets/portal-illustration.png";
 
 interface DashboardStats {
   totalStudents: number;
@@ -153,7 +154,8 @@ const StaffDashboard = () => {
   return (
     <StaffLayout title="Dashboard">
       <div className="dashboard-surface dashboard-staff space-y-6">
-        <section className="portal-hero">
+        <section className="portal-hero overflow-hidden">
+          <img src={portalIllustration} alt="Teacher guiding students with books and a tablet" className="absolute bottom-0 right-0 h-44 w-1/2 object-contain object-right opacity-90 md:h-56" />
           <PortalHeroArt variant="learning" />
           <div className="portal-hero-copy">
             <p className="text-xs font-bold uppercase tracking-[.22em] text-primary">Teacher workspace</p>

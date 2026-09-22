@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { format, isFuture, isToday, addDays } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import portalIllustration from "@/assets/portal-illustration.png";
 
 const ParentDashboard = () => {
   const { user } = useAuth();
@@ -133,7 +134,8 @@ const ParentDashboard = () => {
   return (
     <ParentLayout title="Dashboard">
       <div className="dashboard-surface dashboard-parent space-y-6 animate-fade-in">
-        <section className="portal-hero">
+        <section className="portal-hero overflow-hidden">
+          <img src={portalIllustration} alt="Parent and child connected to school activities" className="absolute bottom-0 right-0 h-44 w-1/2 object-contain object-right opacity-90 md:h-56" />
           <PortalHeroArt variant="family" />
           <div className="portal-hero-copy">
             <p className="text-xs font-bold uppercase tracking-[.22em] text-primary">Family portal</p>

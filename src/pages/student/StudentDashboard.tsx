@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import heroImage from "@/assets/student-home-hero.jpg";
+import portalIllustration from "@/assets/portal-illustration.png";
 import { BookGlyph, GradesGlyph, HomeworkGlyph, ShieldGlyph, TrendGlyph } from "@/components/student/HomeGlyphs";
 
 interface Grade {
@@ -204,6 +205,18 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
         </section>
 
         <div className="space-y-8 px-5 pb-6 md:px-10">
+          <section className="portal-illustration-card relative overflow-hidden rounded-[28px] p-5 md:flex md:items-center md:justify-between md:p-7">
+            <div className="relative z-10 max-w-md">
+              <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Your learning cockpit</p>
+              <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">Learn, practise, and keep moving.</h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">Jump into your next lesson, ask the AI Tutor for a hint, or use the calculator without leaving your dashboard.</p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Link to="/student/learning" className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-lg shadow-primary/20">Open learning hub</Link>
+                <Link to="/student/exams" className="rounded-full border border-border bg-card/70 px-4 py-2 text-xs font-bold">Practice CBT</Link>
+              </div>
+            </div>
+            <img src={portalIllustration} alt="Students learning with books, a calculator and a school bus" className="relative -mb-8 mt-4 h-36 w-full object-contain object-right md:mt-0 md:h-44 md:w-1/2" />
+          </section>
           {failed && (
             <div className="flex items-center gap-3 border-y border-destructive/25 py-3 text-sm text-destructive">
               <p className="flex-1">Your latest school data could not be refreshed.</p>
