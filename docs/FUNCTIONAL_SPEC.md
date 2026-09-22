@@ -15,7 +15,7 @@ This file is the canonical functional record for the project. Every future featu
 ### Change log
 ### Current live-state verification — 22 September 2026
 
-The repository and connected Supabase project were re-checked before the September handoff work. Live counts currently include **132 students, 13 classes, 18 teacher records, 3 terms and 21 subjects**. Academic/finance operational rows are still largely unpopulated: **3 grades, 3 term_results, 0 class_subjects, 0 attendance, 0 invoices, 0 invoice_lines, 0 receipts, 0 discounts, 0 exams, 0 exam_questions, 0 exam_submissions, 0 policy_documents, 0 activity_logs and 0 staff_attendance**. These empty tables must not be filled with invented marks, attendance, payments, exam results or other fake school records.
+The repository and connected Supabase project were re-checked before the September handoff work. Live counts currently include **131 students, 13 classes, 18 teacher records, 3 terms and 21 subjects**. The previously identified sample pupil `Peter Parker` was removed from the live public student records before the September handoff; it had no grades, term results, attendance, invoices, receipts, payment proofs or parent links. Academic/finance operational rows are still largely unpopulated: **3 grades, 3 term_results, 0 class_subjects, 0 attendance, 0 invoices, 0 invoice_lines, 0 receipts, 0 discounts, 0 exams, 0 exam_questions, 0 exam_submissions, 0 policy_documents, 0 activity_logs and 0 staff_attendance**. These empty tables must not be filled with invented marks, attendance, payments, exam results or other fake school records.
 
 The staff class-teacher model is represented by `classes.class_teacher_id`; teachers should be scoped to their assigned class, while specialist-subject relationships remain optional through `class_subjects`. The current live `class_subjects` table has zero rows, so specialist mappings must be entered only from confirmed school information.
 
@@ -28,12 +28,21 @@ The transport schema/UI exists (`transport_routes` and an admin transport page),
 The canonical report-card implementation remains `ReportCardEditor` / `ReportCardWorkspace`, with `grades` and `term_results` as the academic data path. No real marks should be invented to make reports look populated.
 
 
+- **22 September 2026 — Sample-data cleanup and staff-scope correction:** removed the identified `Peter Parker` sample pupil from the live student register after verifying it had no academic, attendance, finance or parent-link records. The staff attendance workflow was tightened so a specialist-subject mapping cannot grant whole-class attendance access. The gradebook was also corrected so a class teacher retains normal-subject access even when specialist mappings exist for that class.
+- **22 September 2026 — Documentation automation:** added `scripts/update-functional-spec.mjs` and `.github/workflows/functional-spec-sync.yml`. Repository pushes to `main`, manual runs, and a weekly Lagos-time scheduled run now maintain an automatic Git-history snapshot in this file. The automation records file additions/modifications/deletions without inventing semantic feature claims.
 - **31 August 2026 — Pupil login provisioning:** closed the gap where no pupil could sign in (0 of 132 student records were linked to an auth user and only 1 held an email address). Added the `provision-student-accounts` edge function (admin-only, service-role) which, for active pupils without a linked account, creates a confirmed auth user with a deterministic login address derived from the admission number (`pupil.<admissionno>@imagemakers.local`), sets `app_metadata.role = 'student'`, writes back `students.user_id`, and upserts the `student` role. Added a **Create pupil logins** action on `/admin/students` that respects the current class filter and returns a one-time credential sheet with copy and CSV download. Pupil accounts cannot use email password reset — an admin re-issues credentials instead. No schema changes.
 - **30 August 2026 — Pre-demo audit:** added Section 16 (Demo Readiness Audit) with the per-dashboard feature list, principal-facing platform explanation, verified RLS isolation results, and the outstanding-items list. Fixed an `unknown`-typed error handler in the `seed-admin` edge function. No route, data-model, or permission changes.
 - **23 August 2026 — Student Dashboard visual rebuild:** `/student` was rebuilt as a mobile-first blue-and-white daily companion using the existing Supabase data flows. It now presents a photographic greeting hero, today's lesson, attendance/fees/homework status, interpreted weekly status, recent results, school-life timeline, and compact quick access. Styling is scoped to `StudentDashboard`; the shared student shell and all admin, staff, and parent interfaces retain the established project design system. Empty development accounts use isolated presentation fallbacks while live records remain authoritative when present. A custom SVG glyph set was added for dashboard-only visual details.
 - **23 August 2026 — Audit correction:** the live `announcements` body field is `body`, not `content`; the Student Dashboard query was corrected accordingly.
 
 ---
+
+<!-- AUTO-FUNCTIONAL-SPEC-START -->
+### Automated repository change snapshot
+
+- Initial snapshot will be populated by the GitHub Actions workflow on the next run.
+- This block is generated from Git history; meaningful behavioural and data-model changes still update the affected specification sections.
+<!-- AUTO-FUNCTIONAL-SPEC-END -->
 
 # TABLE OF CONTENTS
 
