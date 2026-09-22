@@ -136,7 +136,7 @@ export const AIChatWidget = () => {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-28 md:bottom-8 right-4 md:right-8 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-105 active:scale-95"
+          className="fixed bottom-28 md:bottom-8 right-4 md:right-8 z-50 w-14 h-14 rounded-full bg-[#4f8063] text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-105 active:scale-95"
           aria-label="Open AI Tutor"
         >
           <MessageCircle className="w-6 h-6" />
@@ -148,7 +148,7 @@ export const AIChatWidget = () => {
       {open && (
         <div className="fixed bottom-28 md:bottom-8 right-4 md:right-8 z-50 w-[340px] md:w-[380px] h-[500px] bg-card rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-fade-up">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground rounded-t-2xl">
+          <div className="flex items-center justify-between px-4 py-3 bg-[#2f4737] text-white rounded-t-2xl">
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
               <div>
