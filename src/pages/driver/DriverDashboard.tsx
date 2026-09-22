@@ -65,7 +65,7 @@ const DriverDashboard = () => {
         <section className="portal-feature-card p-6 md:p-8">
           <div className="flex items-start justify-between gap-4">
             <div><p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-primary">Route control</p><h2 className="portal-display mt-1 text-2xl font-extrabold">Today's trip</h2></div>
-            <div className={trip?"grid h-14 w-14 place-items-center rounded-2xl bg-success/10":"grid h-14 w-14 place-items-center rounded-2xl bg-primary/10"}><PortalIllustration kind="bus" size="lg" className="h-12 w-12" /></div>
+            <div className={trip?"grid h-14 w-14 place-items-center rounded-2xl bg-success/10":"grid h-14 w-14 place-items-center rounded-2xl bg-primary/10"}><div className="portal-css-art portal-css-art-bus" aria-hidden="true"><span/><i/><b/></div></div>
           </div>
           <div className="mt-6 space-y-4">
             <select value={routeId} onChange={e=>setRouteId(e.target.value)} disabled={!!trip} className="h-14 w-full rounded-2xl border border-border/70 bg-background px-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-primary/30">
