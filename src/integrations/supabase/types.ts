@@ -2736,7 +2736,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "student" | "teacher" | "admin" | "parent"
+      app_role: "student" | "teacher" | "admin" | "parent" | "driver"
     }
     CompositeTypes: {
       [_ in never]: never
