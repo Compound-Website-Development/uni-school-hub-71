@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Users, Phone, Save } from "lucide-react";
+import { User, Users, Phone, Save, Sparkles, Calculator } from "lucide-react";
 import { toast } from "sonner";
 
 const ParentProfile = () => {
@@ -14,7 +14,7 @@ const ParentProfile = () => {
   const [profile, setProfile] = useState<any>({ first_name: "", last_name: "", phone: "", bio: "" });
   const [children, setChildren] = useState<any[]>([]);
   const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState(false);\n  const [featureSettings, setFeatureSettings] = useState<Record<string, any>>({});
 
   useEffect(() => {
     if (!user) return;
@@ -25,7 +25,7 @@ const ParentProfile = () => {
         if (data?.length) {
           const ids = data.map(l => l.student_id);
           const { data: kids } = await supabase.from("students").select("id, first_name, last_name, student_id, class_id").in("id", ids);
-          setChildren(kids || []);
+          setChildren(kids || []);\n          const { data: settings } = await supabase.from("student_feature_settings").select("student_id, ai_tutor_enabled, calculator_enabled").in("student_id", ids);\n          const mapped: Record<string, any> = {};\n          (settings || []).forEach((s: any) => { mapped[s.student_id] = s; });\n          setFeatureSettings(mapped);
         }
       });
   }, [user]);
@@ -81,6 +81,26 @@ const ParentProfile = () => {
                 </div>
               </div>
             ))}
+          </InfoSection>
+
+          <InfoSection title="Learning controls" icon={Sparkles}>
+            <p className="mb-3 text-xs text-muted-foreground">Control the AI tutor and calculator for each linked child.</p>
+            {children.map(c => {
+              const s = featureSettings[c.id] || { ai_tutor_enabled: true, calculator_enabled: true };
+              const toggle = async (field: "ai_tutor_enabled" | "calculator_enabled") => {
+                const next = !s[field];
+                const { error } = await supabase.from("student_feature_settings").update({ [field]: next, updated_by: user?.id }).eq("student_id", c.id);
+                if (error) toast.error("Could not update setting");
+                else setFeatureSettings(prev => ({ ...prev, [c.id]: { ...s, [field]: next } }));
+              };
+              return <div key={c.id} className="border-b border-border/30 py-3 last:border-0">
+                <p className="mb-2 text-sm font-semibold">{c.first_name} {c.last_name}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button size="sm" variant={s.ai_tutor_enabled ? "default" : "outline"} onClick={() => toggle("ai_tutor_enabled")}><Sparkles className="mr-2 h-4 w-4" />AI {s.ai_tutor_enabled ? "On" : "Off"}</Button>
+                  <Button size="sm" variant={s.calculator_enabled ? "default" : "outline"} onClick={() => toggle("calculator_enabled")}><Calculator className="mr-2 h-4 w-4" />Calculator {s.calculator_enabled ? "On" : "Off"}</Button>
+                </div>
+              </div>;
+            })}
           </InfoSection>
 
           <div className="lg:col-span-2 flex justify-end gap-2">
