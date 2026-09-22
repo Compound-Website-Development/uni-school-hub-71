@@ -93,7 +93,7 @@ const StudentTranscript = () => {
   if (isLoading) {
     return (
       <StudentLayout title="Transcript">
-        <div className="space-y-6">
+        <div className="student-transcript-page space-y-6">
           <Skeleton className="h-32 w-full rounded-2xl" />
           <Skeleton className="h-24 w-full rounded-2xl" />
           <Skeleton className="h-64 w-full rounded-2xl" />
