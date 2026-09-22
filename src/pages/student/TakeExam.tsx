@@ -126,7 +126,7 @@ const TakeExam = () => {
   const options = Array.isArray(question?.options) ? question.options : [];
 
   return (
-    <div className="min-h-screen portal-page-bg">
+    <div className="student-exam-runner min-h-screen portal-page-bg">
       {/* Top Bar */}
       <header className="sticky top-0 z-50 border-b border-border/50 bg-card/85 px-4 py-3 backdrop-blur-2xl">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
