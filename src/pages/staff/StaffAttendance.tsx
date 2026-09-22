@@ -268,7 +268,7 @@ const StaffAttendance = () => {
 
   return (
     <StaffLayout title="Attendance">
-      <div className="space-y-6">
+      <div className="staff-tool-page staff-attendance-page space-y-6">
         {/* Today's Schedule Quick Select */}
         {todaySchedule.length > 0 && (
           <Card>
