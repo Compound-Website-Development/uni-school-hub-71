@@ -12,7 +12,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Monitor, Plus, Clock, Users, Trash2, Eye } from "lucide-react";
-import { PortalIllustration } from "@/components/PortalIllustration";
 import { format } from "date-fns";
 
 const StaffCBT = () => {
@@ -109,7 +108,7 @@ const StaffCBT = () => {
     <StaffLayout title="CBT Management">
       <div className="dashboard-surface dashboard-staff space-y-6 animate-fade-in">
         <section className="portal-hero">
-          <PortalIllustration kind="cbt" size="lg" className="h-full w-[300px] opacity-70" />
+          <div className="staff-art staff-art-cbt hidden md:block" aria-hidden="true"><span/><i/><b/></div>
           <div className="portal-hero-copy">
             <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Assessment studio</p>
             <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-5xl">Build CBTs that students can actually take.</h1>
