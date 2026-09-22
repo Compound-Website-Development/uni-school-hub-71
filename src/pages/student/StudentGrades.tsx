@@ -99,7 +99,7 @@ const StudentGrades = () => {
 
   return (
     <StudentLayout title="My Results">
-      <div className="mx-auto w-full max-w-3xl space-y-7 pb-4">
+      <div className="student-results-page mx-auto w-full max-w-4xl space-y-7 pb-4">
         <PageTitle
           eyebrow="Academic record"
           title="My Results"
