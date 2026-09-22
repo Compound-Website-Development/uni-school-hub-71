@@ -12,13 +12,13 @@ const ParentTransport = () => {
 
   const load = async () => {
     setLoading(true);
-    const { data: links } = await supabase.from("transport_student_links").select("route_id, student_id").eq("active", true);
+    const { data: links } = await (supabase as any).from("transport_student_links").select("route_id, student_id").eq("active", true);
     const routeIds = [...new Set((links || []).map((x: any) => x.route_id))];
     if (!routeIds.length) { setTrips([]); setLoading(false); return; }
-    const { data: activeTrips } = await supabase.from("transport_trips").select("id,route_id,started_at,status,transport_routes(name,vehicle_number,driver_name)").in("route_id", routeIds).eq("status", "active");
+    const { data: activeTrips } = await (supabase as any).from("transport_trips").select("id,route_id,started_at,status,transport_routes(name,vehicle_number,driver_name)").in("route_id", routeIds).eq("status", "active");
     const rows:any[] = [];
     for (const trip of activeTrips || []) {
-      const { data: point } = await supabase.from("transport_location_points").select("latitude,longitude,accuracy_m,recorded_at").eq("trip_id", trip.id).order("recorded_at", { ascending: false }).limit(1).maybeSingle();
+      const { data: point } = await (supabase as any).from("transport_location_points").select("latitude,longitude,accuracy_m,recorded_at").eq("trip_id", trip.id).order("recorded_at", { ascending: false }).limit(1).maybeSingle();
       rows.push({ ...trip, point });
     }
     setTrips(rows); setLoading(false);
