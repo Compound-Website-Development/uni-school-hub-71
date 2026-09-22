@@ -58,7 +58,7 @@ const StudentHomework = () => {
 
   return (
     <StudentLayout title="Homework">
-      <div className="mx-auto w-full max-w-3xl space-y-6 pb-4">
+      <div className="student-homework-page mx-auto w-full max-w-4xl space-y-6 pb-4">
         <PageTitle
           eyebrow="Assignments"
           title="Homework"
