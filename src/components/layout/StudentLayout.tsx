@@ -118,7 +118,7 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background portal-page-bg">
       {/* Mobile header — app bar: back/menu, coloured title, bell */}
       <header className="md:hidden sticky top-0 z-40 border-b border-border/60 bg-card/90 backdrop-blur-xl safe-top">
         <div className="flex h-14 items-center gap-2 px-3">
