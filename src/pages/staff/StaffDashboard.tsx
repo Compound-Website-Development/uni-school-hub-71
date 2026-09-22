@@ -108,11 +108,8 @@ const StaffDashboard = () => {
             }))
           );
         } else {
-          setUpcomingClasses([
-            { time: "09:00", className: "Grade 10A", subject: "Mathematics", students: 32 },
-            { time: "11:00", className: "Grade 11B", subject: "Mathematics", students: 28 },
-            { time: "14:00", className: "Grade 12A", subject: "Additional Math", students: 24 },
-          ]);
+          // No schedule data is authoritative yet. Keep the dashboard empty rather than inventing classes.
+          setUpcomingClasses([]);
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
