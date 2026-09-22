@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Monitor, Clock, Play, CheckCircle, BookOpen } from "lucide-react";
-import { PortalIconArt } from "@/components/PortalIconArt";
+import { PortalIllustration } from "@/components/PortalIllustration";
 import { format } from "date-fns";
 
 const StudentExams = () => {
@@ -37,7 +37,7 @@ const StudentExams = () => {
     <StudentLayout title="Examinations">
       <div className="dashboard-surface dashboard-student space-y-6 animate-fade-in">
         <section className="portal-hero">
-          <PortalIconArt kind="cbt" className="portal-hero-art h-full w-[300px] opacity-70"/>
+          <PortalIllustration kind="cbt" size="lg" className="h-full w-[300px] opacity-70" />
           <div className="portal-hero-copy">
             <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Computer-based testing</p>
             <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-5xl">Your exam room, online.</h1>
