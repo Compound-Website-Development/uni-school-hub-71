@@ -35,7 +35,7 @@ const StudentExams = () => {
 
   return (
     <StudentLayout title="Examinations">
-      <div className="dashboard-surface dashboard-student space-y-6 animate-fade-in">
+      <div className="student-exams-page dashboard-surface space-y-6 animate-fade-in">
         <section className="portal-hero">
           <PortalIllustration kind="cbt" size="lg" className="h-full w-[300px] opacity-70" />
           <div className="portal-hero-copy">
