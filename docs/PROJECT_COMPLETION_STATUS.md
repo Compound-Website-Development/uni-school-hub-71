@@ -60,3 +60,87 @@ Priority:
 12. Update docs/FUNCTIONAL_SPEC.md after every meaningful feature/data-model change.
 
 Never fabricate school records. If required school information is missing, leave the feature correctly empty and record exactly what is needed in the data-collection document.
+
+## 22 September 2026 — Reality check and dashboard rebuild pass
+
+This pass was triggered because the visible application did not expose several recently added features and the portal visual design still looked substantially like the earlier UI.
+
+### Changed in code
+- Added a dedicated **CBT Exams** entry to the Admin navigation at `/admin/cbt`, reusing the existing CBT management implementation.
+- Added a dedicated **Driver & Bus Tracking** entry to the Admin navigation.
+- Reworked the Admin Transport page so an administrator can create routes, authorise an existing user as a driver, assign a route, and explicitly link a parent + pupil + route for bus tracking.
+- Kept driver location visibility route-scoped; parents do not receive bus tracking automatically.
+- Added a shared `PortalHeroArt` SVG illustration component and applied it across the Admin, Staff, Parent and Student dashboard surfaces.
+- Added a new portal visual layer: DM Sans + Space Grotesk typography, animated entrance states, floating SVG artwork, richer gradients, glass/backdrop surfaces, hover elevation and patterned backgrounds.
+- Upgraded the Admin, Staff, Parent and Student portal shells so the visual layer is no longer limited to the old card-grid styling.
+- Made the Student AI Tutor and Calculator controls visibly discoverable instead of relying only on floating controls.
+- Preserved the existing parent-controlled `student_feature_settings` mechanism for AI tutor and calculator.
+- Exposed the existing student CBT route (`/student/exams`) and exam runner (`/student/exams/:id`) through the student portal; no fake exams were seeded.
+- Existing AI assistant remains a live authenticated Supabase Edge Function. Existing student tutor and report-comment AI flows remain data-gated.
+
+### Verified current database reality
+- 131 students
+- 13 classes
+- 18 teacher records
+- 3 terms
+- 21 subjects
+- 0 attendance records
+- 0 invoices
+- 0 receipts
+- 0 exams
+- 0 exam questions
+- 0 exam submissions
+- 0 transport routes
+- 0 driver profiles
+- 0 active trips
+- 0 bus parent links
+- 131 student feature-setting rows
+
+### Still NOT complete
+The system must not be described as fully production-ready yet. The following require another engineering/data pass:
+1. Vercel deployment verification — the available Vercel connection currently exposes no teams, so production deployment cannot be verified from the connector.
+2. Full four-dashboard regression test against a successful deployed build.
+3. Real school student register/class/parent reconciliation.
+4. Real pupil photographs and ID-card verification.
+5. Exact 2026/27 term dates, subjects and specialist allocations.
+6. Real attendance entry and parent attendance alerts.
+7. Real invoices, discounts/scholarships, payments and receipts.
+8. School-owned Paystack configuration and verified payment webhook flow.
+9. Real CBT exam/question content from the school.
+10. Transport route/driver/vehicle data and authorised parent-child bus links.
+11. Full SMS gateway/DND routing integration; current message-template infrastructure is not the same thing as a live SMS provider.
+12. Offline-first synchronisation for attendance/results has not been implemented as a full local-first sync engine.
+13. Klacify-style audio classroom monitoring/recording and idle-class detection have NOT been implemented. They should not be represented as already built.
+14. NERDC curriculum mapping is not yet a verified live curriculum dataset.
+15. Full finance expense/payroll/accountant workflows are not complete.
+16. Some Supabase advisor warnings remain and need deliberate security/RLS review rather than blanket changes.
+17. AI lesson-note and AI CBT-question generation are not yet wired into a dedicated teacher workflow; the existing AI tutor/report-comment flows are live.
+
+### Important clarification
+The original contract and school messages establish the four core portals, QR attendance, records, fees, announcements, reports, bulk upload, ID cards, library/visitor management, certificates, complaints, inventory, settings, academic year/terms/grading, gradebook, attendance, assignments, CBT, lesson plans, messaging and leave. The current repository contains routes/modules for many of these, but a route existing is not proof that the workflow is fully operational with real school data.
+
+### Continuation prompt
+```text
+Continue the Imagemakers School Management System from the current main branch. Do not redesign from scratch again and do not seed demo school data.
+
+First verify the latest main build and deployed Vercel build. Then perform a real end-to-end regression of Admin → Staff → Student → Parent → Driver.
+
+Finish the remaining operational layer:
+- verify every dashboard route and role permission;
+- reconcile live students/classes/parents once the school's register arrives;
+- connect real attendance to staff entry, student history, parent view and admin reporting;
+- finish invoices, receipts, discounts and manual payment reconciliation;
+- keep Paystack disabled until school-owned credentials are supplied, then implement verified webhook confirmation;
+- finish canonical grade → term result → report-card publication pipeline;
+- make Staff CBT create/publish exams and Student CBT take/resume/submit them reliably;
+- add a dedicated authenticated Staff AI workspace for lesson-note drafts and CBT question drafts using the existing AI edge function, without inventing curriculum data;
+- keep the student AI tutor and calculator controlled per child by the parent;
+- finish authorised transport setup and live driver trip tracking;
+- add the missing SMS provider integration only when the school chooses/provides the provider;
+- review Supabase RLS/security advisors deliberately;
+- do not claim offline-first unless a real local queue + sync mechanism exists;
+- do not implement or claim audio recording/classroom surveillance unless explicitly approved and designed with the school's privacy requirements;
+- run a final production regression with real records and leave empty states honest where school data is still missing.
+
+When complete, update docs/PROJECT_COMPLETION_STATUS.md and docs/FUNCTIONAL_SPEC.md with what was actually verified.
+```
