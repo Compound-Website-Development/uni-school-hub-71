@@ -1,0 +1,41 @@
+name: Keep functional spec in sync
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 2 * * 1"
+      timezone: "Africa/Lagos"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Update FUNCTIONAL_SPEC.md
+    # Avoid an endless push -> sync -> push loop from the bot's own commit.
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, 'functional-spec:sync')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Update repository change snapshot
+        run: node scripts/update-functional-spec.mjs
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+
+      - name: Commit documentation changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- docs/FUNCTIONAL_SPEC.md; then
+            echo "FUNCTIONAL_SPEC.md is already current."
+            exit 0
+          fi
+          git add docs/FUNCTIONAL_SPEC.md
+          git commit -m "docs: sync functional spec [functional-spec:sync]"
+          git push
