@@ -968,3 +968,19 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .portal-css-art-bus span{width:26px;height:20px;left:42px;top:48px;background:#fff;border-radius:5px}
 .portal-css-art-bus i{width:26px;height:20px;left:74px;top:48px;background:#d9e9eb;border-radius:5px}
 .portal-css-art-bus b{width:13px;height:13px;border-radius:50%;left:47px;bottom:27px;background:#29352d;box-shadow:53px 0 #29352d}
+
+
+.staff-tool-page{max-width:1480px;margin:0 auto}
+.staff-tool-page> .card-hover-subtle,.staff-tool-page> .shadow-card,.staff-tool-page> .rounded-xl,
+.staff-tool-page>div> .card-hover-subtle,.staff-tool-page>div> .shadow-card{border:1px solid #e1e6e0;border-radius:24px;background:rgba(255,255,255,.92);box-shadow:0 18px 48px -40px rgba(40,57,47,.45)}
+.staff-tool-page .card-header,.staff-tool-page [data-slot="card-header"]{padding-bottom:14px}
+.staff-tool-page table thead tr{background:#f1f5f1 !important}
+.staff-tool-page table tbody tr:nth-child(even){background:#fcfcfa}
+.staff-tool-page table tbody tr:hover{background:#eef5ef !important}
+.staff-attendance-page>div:first-child,.staff-gradebook-page>div:first-child,.staff-students-page>div:first-child{border-radius:28px}
+.staff-attendance-page .text-primary,.staff-gradebook-page .text-primary,.staff-students-page .text-primary{color:#4f8063 !important}
+.staff-attendance-page .bg-primary,.staff-gradebook-page .bg-primary,.staff-students-page .bg-primary{background:#4f8063 !important}
+.staff-attendance-page .border-primary,.staff-gradebook-page .border-primary,.staff-students-page .border-primary{border-color:#4f8063 !important}
+.staff-gradebook-page input:focus,.staff-gradebook-page [role="combobox"]:focus{box-shadow:0 0 0 3px rgba(79,128,99,.12)}
+.staff-attendance-page button,.staff-gradebook-page button,.staff-students-page button{transition:transform .16s ease,box-shadow .16s ease}
+.staff-attendance-page button:hover,.staff-gradebook-page button:hover,.staff-students-page button:hover{transform:translateY(-1px)}
