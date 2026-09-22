@@ -16,6 +16,7 @@ import {
   CheckCircle, TrendingUp
 } from "lucide-react";
 import SchoolInfoPanel from "@/components/SchoolInfoPanel";
+import { PortalIconArt } from "@/components/PortalIconArt";
 import StaffClockIn from "@/components/StaffClockIn";
 
 interface DashboardStats {
@@ -154,14 +155,15 @@ const StaffDashboard = () => {
     <StaffLayout title="Dashboard">
       <div className="dashboard-surface dashboard-staff space-y-6">
         <section className="portal-hero">
-          <PortalHeroArt variant="learning" />
+          <PortalIconArt kind="book" className="portal-hero-art h-full w-[340px] opacity-70" />
           <div className="portal-hero-copy">
-            <p className="text-xs font-bold uppercase tracking-[.22em] text-primary">Teacher workspace</p>
-            <h2 className="portal-display mt-2 text-3xl font-bold tracking-tight md:text-4xl">Good day, {userName.split(" ")[0]}.</h2>
-            <p className="mt-2 text-sm text-muted-foreground"><span className="font-semibold text-foreground">{currentDate}</span> · {upcomingClasses.length} classes scheduled from live timetable data.</p>
+            <p className="text-[10px] font-extrabold uppercase tracking-[.24em] text-primary">Classroom command deck</p>
+            <h2 className="portal-display mt-2 text-4xl font-extrabold tracking-tight md:text-6xl">Teach the class.<br/><span className="text-gradient">The system handles the rest.</span></h2>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">{currentDate} · {upcomingClasses.length ? `${upcomingClasses.length} live timetable item${upcomingClasses.length===1?"":"s"}` : "No timetable entries have been published yet"}.</p>
             <div className="mt-5 flex flex-wrap gap-2">
-              <Link to="/staff/attendance" className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">Take attendance</Link>
-              <Link to="/staff/cbt" className="rounded-full border border-border bg-card/80 px-4 py-2 text-xs font-bold">Open CBT studio</Link>
+              <Link to="/staff/attendance" className="rounded-full bg-primary px-4 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-primary/20">Take attendance</Link>
+              <Link to="/staff/gradebook" className="rounded-full border border-border bg-card/80 px-4 py-2.5 text-xs font-extrabold">Open gradebook</Link>
+              <Link to="/staff/cbt" className="rounded-full border border-border bg-card/80 px-4 py-2.5 text-xs font-extrabold">CBT studio</Link>
             </div>
           </div>
         </section>
@@ -219,23 +221,19 @@ const StaffDashboard = () => {
         )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {quickActions.map((action, idx) => {
-            const Icon = action.icon;
-            return (
-              <Link key={idx} to={action.href}>
-                <Card className="p-4 card-hover-subtle cursor-pointer group rounded-xl border-border/50 shadow-card">
-                  <div className="flex flex-col items-center gap-3 text-center">
-                    <div className={`p-3 rounded-lg ${action.color} group-hover:scale-110 transition-transform`}>
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span className="text-sm font-medium text-foreground">{action.label}</span>
-                  </div>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
+        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            {kind:"attendance", label:"Attendance", href:"/staff/attendance", note:"Mark your assigned class"},
+            {kind:"book", label:"Gradebook", href:"/staff/gradebook", note:"Enter CA + exam scores"},
+            {kind:"cbt", label:"CBT Studio", href:"/staff/cbt", note:"Build objective exams"},
+            {kind:"message", label:"Messages", href:"/staff/messages", note:"Talk to school admin"},
+          ].map(item=><Link key={item.href} to={item.href} className="portal-feature-card group p-5">
+            <PortalIconArt kind={item.kind as any} className="h-14 w-14 portal-float-icon"/>
+            <p className="portal-display mt-5 text-lg font-extrabold">{item.label}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{item.note}</p>
+            <span className="mt-4 text-[10px] font-extrabold uppercase tracking-wider text-primary">Open workspace →</span>
+          </Link>)}
+        </section>
 
         {/* Main Dashboard Grid */}
         <div className="grid lg:grid-cols-3 gap-6">
