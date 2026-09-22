@@ -1,6 +1,5 @@
-import { useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import StudentDashboard from "./student/StudentDashboard";
+import PublicStudentProfile from "./PublicStudentProfile";
 
 /**
  * Entry point for scanned ID-card QR codes (`/s/:token`).
@@ -11,13 +10,9 @@ import StudentDashboard from "./student/StudentDashboard";
 const StudentPortalEntry = () => {
   const { token } = useParams();
 
-  useEffect(() => {
-    if (token) sessionStorage.setItem("scanned_student_token", token);
-  }, [token]);
-
   if (!token) return <Navigate to="/login" replace />;
 
-  return <StudentDashboard scannedToken={token} />;
+  return <PublicStudentProfile />;
 };
 
 export default StudentPortalEntry;
