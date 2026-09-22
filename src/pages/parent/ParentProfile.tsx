@@ -14,7 +14,8 @@ const ParentProfile = () => {
   const [profile, setProfile] = useState<any>({ first_name: "", last_name: "", phone: "", bio: "" });
   const [children, setChildren] = useState<any[]>([]);
   const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);\n  const [featureSettings, setFeatureSettings] = useState<Record<string, any>>({});
+  const [saving, setSaving] = useState(false);
+  const [featureSettings, setFeatureSettings] = useState<Record<string, any>>({});
 
   useEffect(() => {
     if (!user) return;
@@ -25,7 +26,11 @@ const ParentProfile = () => {
         if (data?.length) {
           const ids = data.map(l => l.student_id);
           const { data: kids } = await supabase.from("students").select("id, first_name, last_name, student_id, class_id").in("id", ids);
-          setChildren(kids || []);\n          const { data: settings } = await (supabase as any).from("student_feature_settings").select("student_id, ai_tutor_enabled, calculator_enabled").in("student_id", ids);\n          const mapped: Record<string, any> = {};\n          (settings || []).forEach((s: any) => { mapped[s.student_id] = s; });\n          setFeatureSettings(mapped);
+          setChildren(kids || []);
+          const { data: settings } = await (supabase as any).from("student_feature_settings").select("student_id, ai_tutor_enabled, calculator_enabled").in("student_id", ids);
+          const mapped: Record<string, any> = {};
+          (settings || []).forEach((s: any) => { mapped[s.student_id] = s; });
+          setFeatureSettings(mapped);
         }
       });
   }, [user]);
