@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Navigation, ShieldCheck, BusFront, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PortalIconArt } from "@/components/PortalIconArt";
+import { PortalIllustration } from "@/components/PortalIllustration";
 
 const ParentTransport = () => {
   const [trips, setTrips] = useState<any[]>([]);
