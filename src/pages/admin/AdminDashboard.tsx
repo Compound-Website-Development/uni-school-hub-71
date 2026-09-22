@@ -1,3 +1,4 @@
+import { PortalHeroArt } from "@/components/PortalHeroArt";
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -143,11 +144,18 @@ const AdminDashboard = () => {
   return (
     <AdminLayout title="Dashboard">
       <div className="dashboard-surface dashboard-admin space-y-6 animate-fade-in">
-        {/* Welcome */}
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Welcome back, {userName} 👋</h2>
-          <p className="text-muted-foreground text-sm mt-1">Here's what's happening across your school today.</p>
-        </div>
+        <section className="portal-hero">
+          <PortalHeroArt variant="operations" />
+          <div className="portal-hero-copy">
+            <p className="text-xs font-bold uppercase tracking-[.22em] text-primary">Imagemakers command centre</p>
+            <h2 className="portal-display mt-2 text-3xl font-bold tracking-tight md:text-4xl">Welcome back, {userName}.</h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">One live view of pupils, staff, attendance, finance, assessments, communication and transport. Empty records stay empty until the school supplies real data.</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link to="/admin/cbt" className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-lg shadow-primary/20 transition hover:-translate-y-0.5">Open CBT control</Link>
+              <Link to="/admin/transport" className="rounded-full border border-border bg-card/80 px-4 py-2 text-xs font-bold transition hover:-translate-y-0.5">Manage school bus</Link>
+            </div>
+          </div>
+        </section>
 
         {/* Portal Switcher */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
