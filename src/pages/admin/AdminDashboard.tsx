@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Users, GraduationCap, Briefcase, CreditCard, Megaphone,
   UserPlus, TrendingDown, BarChart2, Activity,
-  CheckCircle, ArrowRight, ExternalLink, Download
+  CheckCircle, ArrowRight, ExternalLink, Download, Bus
 } from "lucide-react";
 
 interface DashboardStats {
@@ -158,8 +158,9 @@ const AdminDashboard = () => {
         </section>
 
         {/* Portal Switcher */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/staff")}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <Card className="group cursor-pointer rounded-3xl border-border/50 card-hover-subtle" onClick={() => openPortal("/staff")}>
+
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-info/10">
                 <Briefcase className="w-6 h-6 text-info" />
@@ -183,7 +184,7 @@ const AdminDashboard = () => {
               <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
             </CardContent>
           </Card>
-          <Card className="border-border/50 card-hover-subtle cursor-pointer group" onClick={() => openPortal("/parent")}>
+          <Card className="border-border/50 card-hover-subtle cursor-pointer group rounded-3xl" onClick={() => openPortal("/parent")}>
             <CardContent className="p-4 flex items-center gap-4">
               <div className="p-3 rounded-xl bg-accent/15">
                 <Users className="w-6 h-6 text-accent-foreground" />
@@ -193,6 +194,13 @@ const AdminDashboard = () => {
                 <p className="text-xs text-muted-foreground">Preview the parent experience in a new tab</p>
               </div>
               <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+            </CardContent>
+          </Card>
+          <Card className="group cursor-pointer rounded-3xl border-border/50 card-hover-subtle" onClick={() => openPortal("/driver")}>
+            <CardContent className="flex items-center gap-4 p-4">
+              <div className="rounded-xl bg-warning/15 p-3"><Bus className="size-6 text-warning" /></div>
+              <div className="flex-1"><p className="font-semibold text-foreground">Driver Portal</p><p className="text-xs text-muted-foreground">Open the live trip console</p></div>
+              <ExternalLink className="size-5 text-muted-foreground transition-colors group-hover:text-foreground" />
             </CardContent>
           </Card>
         </div>

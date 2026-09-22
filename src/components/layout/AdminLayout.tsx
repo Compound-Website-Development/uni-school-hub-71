@@ -67,14 +67,15 @@ const adminNavSections = [
     label: "Academics & Transport",
     items: [
       { icon: Monitor, label: "CBT Exams", href: "/admin/cbt" },
-      { icon: Bus, label: "Driver & Bus Tracking", href: "/admin/transport" },
+      { icon: Bus, label: "Transport Editor", href: "/admin/transport" },
+      { icon: Activity, label: "Driver Portal", href: "/driver" },
+      { icon: Bus, label: "Parent Transport", href: "/parent/transport" },
     ],
   },
   {
     label: "Facilities",
     items: [
       { icon: BookOpen, label: "Library", href: "/admin/library" },
-      { icon: Bus, label: "Transport", href: "/admin/transport" },
       { icon: UserCheck, label: "Visitors", href: "/admin/visitors" },
       { icon: Package, label: "Inventory", href: "/admin/inventory" },
       { icon: RefreshCw, label: "Substitutions", href: "/admin/substitutions" },
@@ -123,21 +124,24 @@ export const AdminLayout = ({
   const staffInitials = teacherData ? `${teacherData.first_name[0]}${teacherData.last_name[0]}` : "AD";
 
   const SidebarNav = ({ onItemClick }: { onItemClick?: () => void }) => (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-6">
       {adminNavSections.map((section) => (
         <div key={section.label}>
-          <p className="text-[10px] font-bold text-sidebar-foreground/70 uppercase tracking-[0.15em] mb-1.5 px-4">{section.label}</p>
-          <div className="space-y-0.5">
+          <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-sidebar-foreground/55">{section.label}</p>
+          <div className="flex flex-col gap-1">
             {section.items.map((item) => {
               const isActive = location.pathname === item.href;
               const Icon = item.icon;
               return (
-                <Link key={item.href} to={item.href} onClick={onItemClick}
+                <Link key={`${section.label}-${item.href}`} to={item.href} onClick={onItemClick}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-[13px]",
-                    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold" : "text-sidebar-foreground/90 hover:text-sidebar-foreground hover:bg-sidebar-accent/60"
+                    "group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] transition-all duration-200",
+                    isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm" : "text-sidebar-foreground/85 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
                   )}>
-                  <Icon className="w-4 h-4 shrink-0" /><span>{item.label}</span>
+                  <span className={cn("grid size-8 shrink-0 place-items-center rounded-xl transition-colors", isActive ? "bg-sidebar-foreground/15" : "bg-sidebar-foreground/8 group-hover:bg-sidebar-foreground/12")}>
+                    <Icon className="size-4" />
+                  </span>
+                  <span className="truncate">{item.label}</span>
                 </Link>
               );
             })}
@@ -191,8 +195,8 @@ export const AdminLayout = ({
         </SheetContent>
       </Sheet>
       <div className="hidden md:flex h-screen w-full overflow-hidden">
-        <aside className="w-[270px] bg-sidebar/95 backdrop-blur-xl flex flex-col shrink-0 border-r border-sidebar-border shadow-2xl shadow-primary/5">
-          <div className="p-4 flex items-center gap-2.5 border-b border-sidebar-border">
+        <aside className="m-3 flex w-[276px] shrink-0 flex-col overflow-hidden rounded-[28px] border border-sidebar-border/70 bg-sidebar/95 shadow-2xl shadow-primary/10 backdrop-blur-xl">
+          <div className="flex items-center gap-2.5 border-b border-sidebar-border/70 p-5">
             <img src={npsLogo} alt="Imagemakers" className="h-7 w-auto" />
             <div>
               <span className="text-sm font-bold text-sidebar-foreground">Imagemakers Portal</span>
@@ -217,8 +221,8 @@ export const AdminLayout = ({
             </Button>
           </div>
         </aside>
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <header className="h-16 bg-card/75 backdrop-blur-xl border-b border-border/70 flex items-center justify-between px-6 shrink-0">
+        <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
+          <header className="mx-3 mt-3 flex h-[68px] shrink-0 items-center justify-between rounded-[24px] border border-border/70 bg-card/80 px-6 shadow-sm backdrop-blur-xl">
             <div className="flex items-center gap-3">{title && <h1 className="text-lg font-bold text-foreground">{title}</h1>}</div>
             <div className="flex items-center gap-3">
               {showSearch && (
