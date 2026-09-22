@@ -56,18 +56,24 @@ const AdminTransport = () => {
 
   const assignDriver = async () => {
     if (!driverForm.user_id || !driverForm.route_id) return toast({ title: "Select a user and route", variant: "destructive" });
-    const person = parents.find(() => false); // no-op keeps this action independent from parent data
     const { data: profile } = await (supabase as any).from("profiles").select("first_name,last_name,phone").eq("user_id", driverForm.user_id).maybeSingle();
     if (!profile) return toast({ title: "Profile not found", variant: "destructive" });
-    const { error: roleError } = await (supabase as any).from("user_roles").upsert({ user_id: driverForm.user_id, role: "driver" }, { onConflict: "user_id,role" });
-    if (roleError) return toast({ title: "Could not grant driver role", description: roleError.message, variant: "destructive" });
-    const { error } = await (supabase as any).from("transport_driver_profiles").upsert({
+    const { data: existingRole } = await (supabase as any).from("user_roles").select("id").eq("user_id", driverForm.user_id).eq("role", "driver").maybeSingle();
+    if (!existingRole) {
+      const { error: roleError } = await (supabase as any).from("user_roles").insert({ user_id: driverForm.user_id, role: "driver" });
+      if (roleError) return toast({ title: "Could not grant driver role", description: roleError.message, variant: "destructive" });
+    }
+    const { data: existingDriver } = await (supabase as any).from("transport_driver_profiles").select("id").eq("user_id", driverForm.user_id).maybeSingle();
+    const driverPayload = {
       user_id: driverForm.user_id,
       driver_name: [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Driver",
       phone: profile.phone || null,
       route_id: driverForm.route_id,
       active: true,
-    }, { onConflict: "user_id" });
+    };
+    const { error } = existingDriver
+      ? await (supabase as any).from("transport_driver_profiles").update(driverPayload).eq("id", existingDriver.id)
+      : await (supabase as any).from("transport_driver_profiles").insert(driverPayload);
     if (error) return toast({ title: "Could not assign driver", description: error.message, variant: "destructive" });
     toast({ title: "Driver assigned", description: "The user can now sign in to /driver." });
     setDriverForm({ user_id: "", route_id: "" });
@@ -76,12 +82,13 @@ const AdminTransport = () => {
 
   const linkChild = async () => {
     if (!linkForm.parent_user_id || !linkForm.student_id || !linkForm.route_id) return toast({ title: "Select parent, pupil and route", variant: "destructive" });
-    const { error } = await (supabase as any).from("transport_student_links").upsert({
+    await (supabase as any).from("transport_student_links").delete().eq("parent_user_id", linkForm.parent_user_id).eq("student_id", linkForm.student_id);
+    const { error } = await (supabase as any).from("transport_student_links").insert({
       parent_user_id: linkForm.parent_user_id,
       student_id: linkForm.student_id,
       route_id: linkForm.route_id,
       active: true,
-    }, { onConflict: "parent_user_id,student_id" });
+    });
     if (error) return toast({ title: "Could not link pupil", description: error.message, variant: "destructive" });
     toast({ title: "Bus access granted", description: "Only this linked parent can see the route while a trip is active." });
     setLinkForm({ parent_user_id: "", student_id: "", route_id: "" });
