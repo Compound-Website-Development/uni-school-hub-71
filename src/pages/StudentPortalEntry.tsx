@@ -1,4 +1,7 @@
 import { Navigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import StudentDashboard from "./student/StudentDashboard";
 
 /**
@@ -9,7 +12,43 @@ import StudentDashboard from "./student/StudentDashboard";
 const StudentPortalEntry = () => {
   const { token } = useParams();
 
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    if (!token) return;
+
+    let cancelled = false;
+    const authenticate = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        if (!cancelled) setStatus("ready");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("qr-student-login", {
+        body: { token },
+      });
+      if (error || !data?.token_hash) {
+        if (!cancelled) setStatus("error");
+        return;
+      }
+
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        token_hash: data.token_hash,
+        type: "magiclink",
+      });
+      if (!cancelled) setStatus(verifyError ? "error" : "ready");
+    };
+
+    authenticate();
+    return () => { cancelled = true; };
+  }, [token]);
+
   if (!token) return <Navigate to="/login" replace />;
+  if (status === "loading") {
+    return <div className="flex min-h-screen items-center justify-center bg-background"><Loader2 className="h-7 w-7 animate-spin text-primary" /></div>;
+  }
+  if (status === "error") return <Navigate to="/login" replace />;
 
   return <StudentDashboard scannedToken={token} />;
 };

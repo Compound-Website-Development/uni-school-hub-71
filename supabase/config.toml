@@ -1,1 +1,4 @@
 project_id = "weqzvfpzuybyuvruumae"
+
+[functions.qr-student-login]
+verify_jwt = false

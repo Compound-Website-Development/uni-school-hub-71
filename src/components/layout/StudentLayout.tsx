@@ -83,10 +83,7 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
   const isActive = (href: string) =>
     location.pathname === href || (href !== "/student" && location.pathname.startsWith(href + "/"));
 
-  const NavList = ({ onItemClick, dark }: { onItemClick?: () => void; dark?: boolean }) => {
-    if (publicView) return null;
-
-    return (
+  const NavList = ({ onItemClick, dark }: { onItemClick?: () => void; dark?: boolean }) => (
     <div className="space-y-5">
       {navGroups.map((group) => (
         <div key={group.heading}>
@@ -118,8 +115,7 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
         </div>
       ))}
     </div>
-    );
-  };
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -197,8 +193,7 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
       {/* Mobile content */}
       <div className="md:hidden pb-28"><div className="px-4 pt-4">{children}</div></div>
 
-      {/* Authenticated tab bar — public QR views must not expose protected routes. */}
-      {!publicView && <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-card/95 backdrop-blur-xl shadow-elev-3 safe-bottom md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-card/95 backdrop-blur-xl shadow-elev-3 safe-bottom md:hidden">
         <div className="flex h-[64px] items-stretch px-1">
           {bottomNavItems.map((item) => {
             const active = isActive(item.href);
@@ -229,7 +224,7 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
             );
           })}
         </div>
-      </nav>}
+      </nav>
     </div>
   );
 };
