@@ -203,15 +203,15 @@ const App = () => (
             <Route path="/verify" element={<VerifyCertificate />} />
 
             {/* Parent Portal */}
-            <Route path="/parent" element={<ProtectedRoute allowedRoles={["parent"]}><ParentDashboard /></ProtectedRoute>} />
-            <Route path="/parent/grades" element={<ProtectedRoute allowedRoles={["parent"]}><ParentGrades /></ProtectedRoute>} />
-            <Route path="/parent/attendance" element={<ProtectedRoute allowedRoles={["parent"]}><ParentAttendance /></ProtectedRoute>} />
-            <Route path="/parent/fees" element={<ProtectedRoute allowedRoles={["parent"]}><ParentFees /></ProtectedRoute>} />
-            <Route path="/parent/messages" element={<ProtectedRoute allowedRoles={["parent"]}><ParentMessages /></ProtectedRoute>} />
-            <Route path="/parent/forum" element={<ProtectedRoute allowedRoles={["parent"]}><ParentForum /></ProtectedRoute>} />
-            <Route path="/parent/profile" element={<ProtectedRoute allowedRoles={["parent"]}><ParentProfile /></ProtectedRoute>} />
-            <Route path="/parent/transport" element={<ProtectedRoute allowedRoles={["parent"]}><ParentTransport /></ProtectedRoute>} />
-            <Route path="/parent/wall" element={<ProtectedRoute allowedRoles={["parent"]}><ParentWall /></ProtectedRoute>} />
+            <Route path="/parent" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentDashboard /></ProtectedRoute>} />
+            <Route path="/parent/grades" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentGrades /></ProtectedRoute>} />
+            <Route path="/parent/attendance" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentAttendance /></ProtectedRoute>} />
+            <Route path="/parent/fees" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentFees /></ProtectedRoute>} />
+            <Route path="/parent/messages" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentMessages /></ProtectedRoute>} />
+            <Route path="/parent/forum" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentForum /></ProtectedRoute>} />
+            <Route path="/parent/profile" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentProfile /></ProtectedRoute>} />
+            <Route path="/parent/transport" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentTransport /></ProtectedRoute>} />
+            <Route path="/parent/wall" element={<ProtectedRoute allowedRoles={["parent","admin"]}><ParentWall /></ProtectedRoute>} />
 
             {/* Student/Staff profile + walls */}
             <Route path="/student/profile" element={<ProtectedRoute allowedRoles={["student"]}><StudentProfile /></ProtectedRoute>} />
