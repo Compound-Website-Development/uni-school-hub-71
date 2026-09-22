@@ -102,6 +102,6 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
         {bottom.map(item=>{const active=isActive(item.href);return <Link key={item.href} to={item.href} className={cn("relative flex min-h-[62px] flex-col items-center justify-center gap-1 rounded-2xl transition-all duration-300",active?"bg-primary text-white -translate-y-1 shadow-lg shadow-primary/25":"text-muted-foreground hover:bg-muted/50")}><PortalIconArt kind={item.kind} className="h-7 w-7"/><span className="text-[9px] font-extrabold">{item.label}</span>{active&&<span className="absolute -bottom-1 h-1 w-8 rounded-full bg-accent"/>}</Link>})}
       </div>
     </nav>
-    <StudentTools studentId={studentData?.id}/>
+    {!publicView && studentData?.id && <StudentTools studentId={studentData.id}/>}
   </div>;
 };
