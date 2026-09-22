@@ -135,7 +135,7 @@ const ParentDashboard = () => {
     <ParentLayout title="Dashboard">
       <div className="dashboard-surface dashboard-parent space-y-6 animate-fade-in">
         <section className="portal-hero">
-          <PortalIconArt kind="people" className="portal-hero-art h-full w-[360px] opacity-70" />
+          <PortalIllustration kind="community" size="lg" className="portal-hero-art opacity-70" />
           <div className="portal-hero-copy">
             <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Imagemakers family space</p>
             <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-6xl">Your child&apos;s school life,<br/><span className="text-gradient">without the guesswork.</span></h1>
@@ -173,7 +173,7 @@ const ParentDashboard = () => {
               return (
                 <Card key={child.id} className="border-border/50 overflow-hidden">
                   <CardHeader className="relative overflow-hidden bg-gradient-to-br from-primary/8 via-card to-accent/8 pb-3">
-                    <PortalIconArt kind="profile" className="absolute -right-2 -top-3 h-24 w-24 opacity-35" />
+                    <PortalIllustration kind="profile" size="md" className="absolute -right-2 -top-3 opacity-35" />
                     <CardTitle className="relative flex items-center gap-3 text-base">
                       <span className="grid h-12 w-12 place-items-center rounded-2xl bg-card shadow-sm"><PortalIllustration kind="profile" size="lg" className="h-10 w-10" /></span>
                       <span><span className="block portal-display text-lg font-extrabold">{child.first_name} {child.last_name}</span><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Linked child</span></span>
