@@ -37,17 +37,17 @@ The canonical report-card implementation remains `ReportCardEditor` / `ReportCar
 - **23 August 2026 — Audit correction:** the live `announcements` body field is `body`, not `content`; the Student Dashboard query was corrected accordingly.
 
 ---
-\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
+\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
 ### Automated repository change snapshot
 
-- Last synchronisation: 2026-09-22T20:18:34.727Z
-- Commit: `009d4d8249d77bcc3e7a6d062119d26646d0bea8`
+- Last synchronisation: 2026-09-22T20:18:59.130Z
+- Commit: `a38a284ad5f11b1bab9fc55322805330dc511729`
 - Trigger: push
 
-- `M` `src/pages/driver/DriverDashboard.tsx`
+- `M` `src/pages/staff/StaffDashboard.tsx`
 
 > This block is maintained automatically from Git history. It records added, modified and deleted files so documentation does not silently drift. It does not invent feature descriptions: meaningful behavioural, data-model, permission and visual changes should still update the affected specification sections in the same change.
-<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
 # TABLE OF CONTENTS
 
 1. Project Overview
