@@ -142,7 +142,7 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout title="Dashboard">
-      <div className="space-y-6 animate-fade-in">
+      <div className="dashboard-surface dashboard-admin space-y-6 animate-fade-in">
         {/* Welcome */}
         <div>
           <h2 className="text-2xl font-bold text-foreground">Welcome back, {userName} 👋</h2>
