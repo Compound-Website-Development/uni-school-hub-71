@@ -64,6 +64,13 @@ const adminNavSections = [
     ],
   },
   {
+    label: "Academics & Transport",
+    items: [
+      { icon: Monitor, label: "CBT Exams", href: "/admin/cbt" },
+      { icon: Bus, label: "Driver & Bus Tracking", href: "/admin/transport" },
+    ],
+  },
+  {
     label: "Facilities",
     items: [
       { icon: BookOpen, label: "Library", href: "/admin/library" },
@@ -152,7 +159,7 @@ export const AdminLayout = ({
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background portal-page-bg">
       <MobileHeader title={title || "Admin Portal"} onMenuClick={() => setSidebarOpen(true)} showSearch={showSearch} searchPlaceholder={searchPlaceholder} />
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="w-72 p-0 bg-sidebar border-r-0">
@@ -184,7 +191,7 @@ export const AdminLayout = ({
         </SheetContent>
       </Sheet>
       <div className="hidden md:flex h-screen w-full overflow-hidden">
-        <aside className="w-[250px] bg-sidebar flex flex-col shrink-0 border-r border-sidebar-border">
+        <aside className="w-[270px] bg-sidebar/95 backdrop-blur-xl flex flex-col shrink-0 border-r border-sidebar-border shadow-2xl shadow-primary/5">
           <div className="p-4 flex items-center gap-2.5 border-b border-sidebar-border">
             <img src={npsLogo} alt="Imagemakers" className="h-7 w-auto" />
             <div>
@@ -211,7 +218,7 @@ export const AdminLayout = ({
           </div>
         </aside>
         <main className="flex-1 flex flex-col overflow-hidden">
-          <header className="h-14 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
+          <header className="h-16 bg-card/75 backdrop-blur-xl border-b border-border/70 flex items-center justify-between px-6 shrink-0">
             <div className="flex items-center gap-3">{title && <h1 className="text-lg font-bold text-foreground">{title}</h1>}</div>
             <div className="flex items-center gap-3">
               {showSearch && (
