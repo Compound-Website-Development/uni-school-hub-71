@@ -43,10 +43,7 @@ const StaffMessages = () => {
   const handleSend = async () => {
     if (!newBody.trim() || !user) return;
     setSending(true);
-    const { error } = await supabase.from("messages").insert({
-      sender_id: user.id, receiver_id: user.id,
-      subject: newSubject || "No Subject", body: newBody,
-    });
+    const { error } = await supabase.rpc("send_message_to_admin", { _subject: newSubject || "No Subject", _body: newBody });
     setSending(false);
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     toast({ title: "Message sent" });
