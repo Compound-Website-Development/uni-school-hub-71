@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -646,3 +646,184 @@ body { font-family: var(--portal-font); }
 .portal-float-icon { animation:portal-float 5s ease-in-out infinite; }
 @keyframes portal-orbit { 0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-20px,-18px,0)} }
 @media(max-width:900px){.portal-command-grid{grid-template-columns:1fr}.portal-hero-copy{max-width:100%}.portal-hero-art{opacity:.45}}
+
+
+/* 2026 visual correction pass
+   Non-admin portals use raster/CSS illustrations and a calmer editorial palette.
+   Admin keeps its existing illustration system. */
+.portal-page-bg {
+  background:
+    radial-gradient(circle at 92% 0%, hsl(32 78% 58% / .10), transparent 26%),
+    radial-gradient(circle at 0% 72%, hsl(155 32% 48% / .08), transparent 24%),
+    linear-gradient(135deg, hsl(42 30% 98%) 0%, hsl(210 24% 98%) 55%, hsl(36 35% 97%) 100%);
+}
+.portal-page-bg::before { display:none !important; }
+.portal-page-bg::after { background:radial-gradient(circle,hsl(32 78% 58%/.08),transparent 68%); }
+.portal-display { font-family:'Manrope','Plus Jakarta Sans',sans-serif; letter-spacing:-.03em; }
+body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
+
+/* CSS illustration system — intentionally no SVGs. */
+.portal-illustration { position:relative; display:inline-block; width:76px; height:76px; flex:none; }
+.portal-illustration-sm { width:46px; height:46px; }
+.portal-illustration-md { width:76px; height:76px; }
+.portal-illustration-lg { width:150px; height:150px; }
+.portal-illustration-paper {
+  position:absolute; inset:15% 10% 8% 14%; border-radius:24% 18% 24% 18%;
+  background:linear-gradient(145deg,#fff 0%,var(--illus-wash) 100%);
+  border:1px solid color-mix(in srgb,var(--illus-accent) 20%,white);
+  box-shadow:0 14px 24px color-mix(in srgb,var(--illus-accent) 16%,transparent);
+  transform:rotate(-5deg);
+}
+.portal-illustration-mark {
+  position:absolute; left:22%; top:20%; width:40%; height:40%; display:grid; place-items:center;
+  border-radius:28%; background:var(--illus-accent); color:#fff; font-size:20px; font-weight:800;
+  box-shadow:0 8px 14px color-mix(in srgb,var(--illus-accent) 24%,transparent);
+}
+.portal-illustration-line { position:absolute; left:22%; height:5px; border-radius:99px; background:var(--illus-ink); opacity:.18; }
+.portal-illustration .line-a { right:16%; bottom:26%; }
+.portal-illustration .line-b { right:28%; bottom:16%; }
+.portal-illustration-dot { position:absolute; width:9px; height:9px; border-radius:50%; background:var(--illus-accent); }
+.portal-illustration .dot-a { right:10%; top:8%; }
+.portal-illustration .dot-b { left:3%; bottom:14%; width:6px; height:6px; opacity:.65; }
+.portal-illustration-sun {
+  position:absolute; right:0; top:0; width:27%; aspect-ratio:1; border-radius:50%;
+  background:var(--illus-accent); opacity:.18; filter:blur(.2px);
+}
+.portal-illustration-lg .portal-illustration-mark { font-size:36px; }
+.portal-illustration-lg .portal-illustration-line { height:8px; }
+.portal-illustration-lg .portal-illustration-dot { width:15px; height:15px; }
+
+.student-portal-shell, .staff-portal-shell, .parent-portal-shell {
+  color: hsl(var(--foreground));
+}
+.student-portal-shell .portal-feature-card,
+.staff-portal-shell .portal-feature-card,
+.parent-portal-shell .portal-feature-card {
+  background:rgba(255,255,255,.82);
+  border:1px solid hsl(210 20% 86%/.75);
+  box-shadow:0 18px 50px -38px hsl(205 30% 30%/.35);
+}
+.student-portal-shell .portal-feature-card:hover,
+.staff-portal-shell .portal-feature-card:hover,
+.parent-portal-shell .portal-feature-card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 24px 55px -35px hsl(205 30% 30%/.4);
+}
+.student-portal-shell h1,.student-portal-shell h2,.student-portal-shell h3,
+.staff-portal-shell h1,.staff-portal-shell h2,.staff-portal-shell h3,
+.parent-portal-shell h1,.parent-portal-shell h2,.parent-portal-shell h3 {
+  font-family:'Manrope','Plus Jakarta Sans',sans-serif;
+}
+.student-portal-shell .portal-button,
+.staff-portal-shell .portal-button,
+.parent-portal-shell .portal-button {
+  border-radius:16px;
+  font-weight:700;
+}
+.staff-portal-shell .portal-surface,
+.parent-portal-shell .portal-surface,
+.student-portal-shell .portal-surface {
+  background:rgba(255,255,255,.72);
+  border:1px solid hsl(210 20% 86%/.7);
+  border-radius:24px;
+  box-shadow:0 16px 42px -34px hsl(205 30% 30%/.3);
+}
+
+/* Student mobile-first navigation: no permanent sidebar and no bottom nav. */
+.student-topnav {
+  position:sticky; top:0; z-index:50; border-bottom:1px solid hsl(210 20% 86%/.8);
+  background:rgba(255,255,255,.84); backdrop-filter:blur(18px);
+}
+.student-topnav-links { scrollbar-width:none; }
+.student-topnav-links::-webkit-scrollbar { display:none; }
+.student-topnav-link {
+  white-space:nowrap; border-radius:999px; padding:9px 13px; color:hsl(210 10% 38%);
+  font-size:12px; font-weight:700; transition:.2s ease;
+}
+.student-topnav-link:hover { background:hsl(210 20% 95%); color:hsl(205 28% 20%); }
+.student-topnav-link.active { background:hsl(151 31% 42%); color:#fff; box-shadow:0 8px 18px hsl(151 31% 42%/.18); }
+.student-mobile-drawer {
+  background:#fbfaf7 !important; color:hsl(205 25% 20%) !important;
+}
+.student-mobile-drawer .student-topnav-link { display:flex; align-items:center; }
+.student-home .student-blue { color:hsl(151 31% 42%); }
+.student-home .student-blue-bg { background:hsl(151 31% 42%); }
+.student-home .student-blue-soft { background:hsl(151 31% 94%); color:hsl(151 31% 35%); }
+.student-home .student-today-surface { background:linear-gradient(135deg,#fff,hsl(151 31% 97%)); border-color:hsl(151 31% 82%); box-shadow:0 22px 50px -38px hsl(151 31% 42%/.45); }
+.student-home .student-status-surface { background:linear-gradient(100deg,hsl(151 31% 97%),#fff); }
+.student-home .student-hero-fade { background:linear-gradient(90deg,hsl(var(--background)) 4%,hsl(var(--background)/.94) 45%,hsl(var(--background)/.10) 80%); }
+.student-home .portal-feature-card:nth-child(2) { background:linear-gradient(135deg,#fff,hsl(32 78% 97%)); }
+.student-home .portal-feature-card:nth-child(2) .portal-float-icon { background:hsl(32 78% 92%); }
+
+/* Student content pages: convert the old sparse/editorial treatment into actual app surfaces. */
+.student-portal-shell .editorial-link {
+  color:hsl(151 31% 38%); text-decoration:none; text-transform:none; letter-spacing:0;
+}
+.student-portal-shell .app-card,
+.student-portal-shell .student-page-card {
+  border-radius:24px; border:1px solid hsl(210 20% 86%/.8); background:rgba(255,255,255,.86);
+  box-shadow:0 16px 44px -36px hsl(205 30% 30%/.32);
+}
+.student-portal-shell table { border-collapse:separate; border-spacing:0; overflow:hidden; border:1px solid hsl(210 20% 88%); border-radius:20px; background:rgba(255,255,255,.8); }
+.student-portal-shell table thead { background:hsl(151 31% 96%); }
+.student-portal-shell table th { color:hsl(205 18% 35%); }
+.student-portal-shell table td { border-color:hsl(210 20% 91%); }
+.student-portal-shell input,.student-portal-shell textarea,.student-portal-shell [role="combobox"] { border-radius:14px; }
+.student-portal-shell button { font-family:'Manrope','Outfit',sans-serif; }
+.student-portal-shell .portal-display { font-weight:800; }
+
+/* Staff/parent sidebars stay functional but move away from the blue/gold treatment. */
+.staff-portal-shell .portal-sidebar, .parent-portal-shell .portal-sidebar {
+  background:#f7f4ed !important; color:hsl(205 22% 22%) !important; border-right:1px solid hsl(35 18% 84%);
+  box-shadow:8px 0 30px -25px hsl(205 25% 25%/.25);
+}
+.staff-portal-shell .portal-sidebar .portal-nav-item, .parent-portal-shell .portal-sidebar .portal-nav-item {
+  color:hsl(205 12% 42%) !important;
+}
+.staff-portal-shell .portal-sidebar .portal-nav-item.active, .parent-portal-shell .portal-sidebar .portal-nav-item.active {
+  background:#e6efe8 !important; color:hsl(151 31% 31%) !important; box-shadow:none !important;
+}
+.staff-portal-shell .portal-sidebar .portal-nav-icon, .parent-portal-shell .portal-sidebar .portal-nav-icon {
+  background:#fff !important; color:hsl(151 31% 38%) !important; border:1px solid hsl(35 18% 86%);
+}
+.staff-portal-shell .portal-sidebar .portal-nav-item:nth-child(2n) .portal-nav-icon { color:hsl(32 63% 45%) !important; }
+.staff-portal-shell .portal-sidebar .portal-nav-item:nth-child(3n) .portal-nav-icon { color:hsl(205 45% 46%) !important; }
+.staff-portal-shell .portal-sidebar .portal-nav-item:hover, .parent-portal-shell .portal-sidebar .portal-nav-item:hover {
+  background:#efede7 !important; color:hsl(205 22% 24%) !important;
+}
+.staff-portal-shell .portal-sidebar .sidebar-muted, .parent-portal-shell .portal-sidebar .sidebar-muted { color:hsl(205 10% 52%) !important; }
+.staff-portal-shell .portal-sidebar .portal-logo-card, .parent-portal-shell .portal-sidebar .portal-logo-card {
+  background:#fff !important; border:1px solid hsl(35 18% 86%);
+}
+.staff-portal-shell .portal-sidebar .portal-avatar {
+  background:#e7efe9 !important; color:hsl(151 31% 32%) !important;
+}
+
+/* Staff pages: stronger hierarchy, cards, filters and tables without touching functionality. */
+.staff-portal-shell .portal-page-content > * { animation:portal-rise .35s ease both; }
+.staff-portal-shell .portal-page-content .card-hover-subtle,
+.staff-portal-shell .portal-page-content .shadow-card,
+.staff-portal-shell .portal-page-content .rounded-xl {
+  border-radius:22px;
+}
+.staff-portal-shell .portal-page-content [class*="bg-muted/30"] { background:hsl(40 25% 96%/.9); }
+.staff-portal-shell .portal-page-content table { border-collapse:separate; border-spacing:0; border-radius:20px; overflow:hidden; border:1px solid hsl(210 20% 87%); }
+.staff-portal-shell .portal-page-content table thead { background:hsl(151 31% 95%); }
+.staff-portal-shell .portal-page-content button:not([data-radix-collection-item]) { border-radius:14px; }
+.staff-portal-shell .portal-page-content input,
+.staff-portal-shell .portal-page-content textarea,
+.staff-portal-shell .portal-page-content [role="combobox"] { border-radius:14px; }
+.staff-portal-shell .portal-page-content h1,.staff-portal-shell .portal-page-content h2,.staff-portal-shell .portal-page-content h3 { font-family:'Manrope','Plus Jakarta Sans',sans-serif; }
+.staff-portal-shell .portal-page-content .bg-primary { background:#4f8063 !important; }
+.staff-portal-shell .portal-page-content .text-primary { color:#4f8063 !important; }
+.staff-portal-shell .portal-page-content .bg-accent { background:#d28b4d !important; }
+.staff-portal-shell .portal-page-content .text-accent { color:#b56f35 !important; }
+
+/* Community wall — distinct from a messaging/forum page. */
+.community-wall-shell { max-width:880px; margin:0 auto; }
+.community-wall-shell .community-composer { background:linear-gradient(135deg,#fff,hsl(151 31% 97%)); border:1px solid hsl(151 31% 86%); }
+.community-wall-shell .community-post { background:#fff; border:1px solid hsl(210 20% 88%); box-shadow:0 18px 44px -38px hsl(205 30% 25%/.35); }
+.community-wall-shell .community-post:nth-child(3n) { background:linear-gradient(135deg,#fff,hsl(32 78% 97%)); }
+.community-wall-shell .community-avatar { background:#e7efe9 !important; color:#4f8063 !important; border:0 !important; }
+.community-wall-shell .community-action { border-radius:999px; }
+.community-wall-shell .community-action.like-active { color:#b75f62 !important; }
