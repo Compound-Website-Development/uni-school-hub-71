@@ -37,17 +37,17 @@ The canonical report-card implementation remains `ReportCardEditor` / `ReportCar
 - **23 August 2026 — Audit correction:** the live `announcements` body field is `body`, not `content`; the Student Dashboard query was corrected accordingly.
 
 ---
-\n\n\n\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
+\n\n\n\n\n\n\n\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
 ### Automated repository change snapshot
 
-- Last synchronisation: 2026-09-22T04:57:14.544Z
-- Commit: `c1a8c9ff186f0d517903a81d8b9e75ae9914cec6`
+- Last synchronisation: 2026-09-22T04:57:41.867Z
+- Commit: `2da41b0c3e9ff26bab5d377b3ead8084cbf88a26`
 - Trigger: push
 
-- `M` `src/pages/parent/ParentTransport.tsx`
+- `A` `docs/JOSEPH_WHATSAPP_HANDOFF_2026-09-22.txt`
 
 > This block is maintained automatically from Git history. It records added, modified and deleted files so documentation does not silently drift. It does not invent feature descriptions: meaningful behavioural, data-model, permission and visual changes should still update the affected specification sections in the same change.
-<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n\n\n\n
+<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n\n\n\n\n\n\n\n
 # TABLE OF CONTENTS
 
 1. Project Overview
