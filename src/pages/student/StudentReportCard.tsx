@@ -17,7 +17,7 @@ const StudentReportCard = () => {
 
   return (
     <StudentLayout title="Report Card">
-      <div className="space-y-5 animate-fade-in mx-auto w-full max-w-4xl">
+      <div className="student-report-page space-y-5 animate-fade-in mx-auto w-full max-w-4xl">
         <Link to="/student/grades" className="flex items-center gap-2 text-sm text-primary font-semibold press print:hidden">
           <ArrowLeft className="w-4 h-4" /> My Results
         </Link>
