@@ -8,7 +8,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import heroImage from "@/assets/student-home-hero.jpg";
-import { PortalIllustration } from "@/components/PortalIllustration";
 
 interface Grade {
   id: string;
@@ -168,7 +167,7 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
             <div className="relative min-h-[220px] overflow-hidden md:min-h-0">
               <img src={heroImage} alt="School learning scene" className="absolute inset-0 h-full w-full object-cover"/>
               <div className="absolute inset-0 bg-gradient-to-r from-[#fbfaf6] via-[#fbfaf6]/20 to-transparent md:from-[#fbfaf6] md:via-transparent"/>
-              <div className="absolute right-5 top-5 rounded-2xl bg-white/85 p-2 shadow-lg backdrop-blur-sm"><PortalIllustration kind="learning" size="md"/></div>
+              <div className="absolute right-5 top-5 rounded-2xl bg-white/85 p-2 shadow-lg backdrop-blur-sm"><span className="study-art study-art-learning" aria-hidden="true"><span className="study-art-sun"/><span className="study-art-paper"/><span className="study-art-dot"/></span></div>
             </div>
           </div>
         </section>
@@ -177,7 +176,7 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
           <div className="portal-surface rounded-[26px] p-5 md:p-6">
             <div className="flex items-center justify-between gap-4">
               <div><p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#4f8063]">Next up</p><h2 className="portal-display mt-1 text-2xl font-extrabold text-[#26362b] md:text-3xl">Today&apos;s class</h2></div>
-              <PortalIllustration kind="schedule" size="sm"/>
+              <span className="study-art study-art-schedule" aria-hidden="true"><span className="study-art-ring"/><span className="study-art-line"/></span>
             </div>
             {loading ? <Skeleton className="mt-5 h-24 rounded-2xl"/> : nextClass ? (
               <div className="mt-5 rounded-2xl bg-[#f1f5f1] p-4 md:p-5">
@@ -205,7 +204,7 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
         <section className="grid gap-4 md:grid-cols-2">
           <button onClick={() => window.dispatchEvent(new Event("imagemakers-open-ai"))} className="portal-feature-card group p-5 text-left md:p-6">
             <div className="flex items-start gap-4">
-              <PortalIllustration kind="ai" size="lg"/>
+              <span className="study-art study-art-ai" aria-hidden="true"><span className="study-art-orbit"/><span className="study-art-core"/></span>
               <div className="min-w-0 flex-1 pt-1">
                 <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#806ca5]">Study companion</p>
                 <h2 className="portal-display mt-1 text-2xl font-extrabold text-[#2d2936]">Ask the AI Tutor</h2>
@@ -216,7 +215,7 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
           </button>
           <button onClick={() => window.dispatchEvent(new Event("imagemakers-open-calculator"))} className="portal-feature-card group p-5 text-left md:p-6">
             <div className="flex items-start gap-4">
-              <PortalIllustration kind="calculator" size="lg"/>
+              <span className="study-art study-art-calculator" aria-hidden="true"><span className="study-art-screen"/><span className="study-art-keys"/></span>
               <div className="min-w-0 flex-1 pt-1">
                 <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#4d7f88]">Study tool</p>
                 <h2 className="portal-display mt-1 text-2xl font-extrabold text-[#2d3436]">Calculator</h2>
