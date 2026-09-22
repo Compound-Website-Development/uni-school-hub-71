@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { PageTitle, UnderlineTabs, RuleList, EmptyState, StatusWord } from "@/components/student/editorial";
-import { Search } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const StudentHomework = () => {
@@ -64,6 +64,22 @@ const StudentHomework = () => {
           title="Homework"
           lede="Open an assignment to read the brief and submit your work."
         />
+
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event("imagemakers-open-ai"))}
+          className="homework-ai-prompt flex w-full items-center gap-3 p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md"
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white text-[#806ca5] shadow-sm">
+            <Sparkles className="h-5 w-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-xs font-extrabold uppercase tracking-[.14em] text-[#806ca5]">Need a hint?</span>
+            <span className="mt-1 block text-sm font-bold text-[#38433c]">Ask the AI Tutor to explain the topic or walk you through a similar example.</span>
+            <span className="mt-1 block text-xs text-muted-foreground">It helps you learn; it will not simply complete the homework for you.</span>
+          </span>
+          <span className="shrink-0 text-xs font-extrabold text-[#806ca5]">Open</span>
+        </button>
 
         <div className="relative">
           <Search className="pointer-events-none absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
