@@ -69,11 +69,14 @@ const StaffAttendance = () => {
       let allowedClassIds: string[] | null = null;
 
       if (userRole !== "admin" && teacherData?.id) {
-        const [{ data: assigned }, { data: mapped }] = await Promise.all([
-          supabase.from("classes").select("id").eq("class_teacher_id", teacherData.id),
-          supabase.from("class_subjects").select("class_id").eq("teacher_id", teacherData.id),
-        ]);
-        allowedClassIds = [...new Set([...(assigned || []).map((row) => row.id), ...(mapped || []).map((row) => row.class_id)])];
+        // Attendance is a class-register responsibility. A subject specialist
+        // must not gain whole-class attendance access merely because they are
+        // mapped to a subject in that class.
+        const { data: assigned } = await supabase
+          .from("classes")
+          .select("id")
+          .eq("class_teacher_id", teacherData.id);
+        allowedClassIds = (assigned || []).map((row) => row.id);
         classQuery = allowedClassIds.length ? classQuery.in("id", allowedClassIds) : classQuery.in("id", ["00000000-0000-0000-0000-000000000000"]);
       }
 
