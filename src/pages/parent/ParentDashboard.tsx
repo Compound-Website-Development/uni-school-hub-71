@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { format, isFuture, isToday, addDays } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { PortalIconArt } from "@/components/PortalIconArt";
 
 const ParentDashboard = () => {
   const { user } = useAuth();
@@ -134,12 +135,16 @@ const ParentDashboard = () => {
     <ParentLayout title="Dashboard">
       <div className="dashboard-surface dashboard-parent space-y-6 animate-fade-in">
         <section className="portal-hero">
-          <PortalHeroArt variant="family" />
+          <PortalIconArt kind="people" className="portal-hero-art h-full w-[360px] opacity-70" />
           <div className="portal-hero-copy">
-            <p className="text-xs font-bold uppercase tracking-[.22em] text-primary">Family portal</p>
-            <h1 className="portal-display mt-2 text-3xl font-bold tracking-tight md:text-4xl">Everything about your children, in one place.</h1>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Results, attendance, fees, announcements, assignments and authorised school-bus tracking stay connected to the same student record.</p>
-            <Link to="/parent/transport" className="mt-5 inline-flex rounded-full border border-border bg-card/80 px-4 py-2 text-xs font-bold">School bus tracking</Link>
+            <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Imagemakers family space</p>
+            <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-6xl">Your child&apos;s school life,<br/><span className="text-gradient">without the guesswork.</span></h1>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">One connected view of results, attendance, assignments, fees, messages and authorised transport. Empty school records stay empty until the school records real data.</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link to="/parent/grades" className="rounded-full bg-primary px-4 py-2.5 text-xs font-extrabold text-white">View grades</Link>
+              <Link to="/parent/fees" className="rounded-full border border-border bg-card/80 px-4 py-2.5 text-xs font-extrabold">Fee status</Link>
+              <Link to="/parent/transport" className="rounded-full border border-border bg-card/80 px-4 py-2.5 text-xs font-extrabold">School bus</Link>
+            </div>
           </div>
         </section>
 
@@ -167,12 +172,11 @@ const ParentDashboard = () => {
               const outstanding = balance ? Math.max(0, balance.billed - balance.paid) : 0;
               return (
                 <Card key={child.id} className="border-border/50 overflow-hidden">
-                  <CardHeader className="pb-2 bg-gradient-to-r from-primary/5 to-transparent">
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <GraduationCap className="w-4 h-4 text-primary" />
-                      </div>
-                      {child.first_name} {child.last_name}
+                  <CardHeader className="relative overflow-hidden bg-gradient-to-br from-primary/8 via-card to-accent/8 pb-3">
+                    <PortalIconArt kind="profile" className="absolute -right-2 -top-3 h-24 w-24 opacity-35" />
+                    <CardTitle className="relative flex items-center gap-3 text-base">
+                      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-card shadow-sm"><PortalIconArt kind="profile" className="h-10 w-10"/></span>
+                      <span><span className="block portal-display text-lg font-extrabold">{child.first_name} {child.last_name}</span><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Linked child</span></span>
                       <Badge variant="outline" className="ml-auto capitalize text-[10px]">{child.status || "active"}</Badge>
                     </CardTitle>
                   </CardHeader>
@@ -282,25 +286,18 @@ const ParentDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {[
-            { icon: BookOpen, label: "View Grades", href: "/parent/grades", color: "text-primary bg-primary/10" },
-            { icon: Calendar, label: "Attendance", href: "/parent/attendance", color: "text-info bg-info/10" },
-            { icon: CreditCard, label: "Fee Status", href: "/parent/fees", color: "text-success bg-success/10" },
-            { icon: MessageSquare, label: "Messages", href: "/parent/messages", color: "text-accent bg-accent/10" },
-          ].map((item, idx) => (
-            <button key={idx} onClick={() => navigate(item.href)} className="text-left">
-              <Card className="border-border/50 card-hover-subtle">
-                <CardContent className="p-4">
-                  <div className={`w-10 h-10 rounded-lg ${item.color} flex items-center justify-center mb-2`}>
-                    <item.icon className="w-5 h-5" />
-                  </div>
-                  <p className="text-sm font-medium text-foreground flex items-center gap-1">{item.label} <ChevronRight className="w-3 h-3 text-muted-foreground" /></p>
-                </CardContent>
-              </Card>
-            </button>
-          ))}
-        </div>
+            {kind:"book",label:"Grades",href:"/parent/grades",note:"See published results"},
+            {kind:"attendance",label:"Attendance",href:"/parent/attendance",note:"Track school attendance"},
+            {kind:"finance",label:"Fees & payments",href:"/parent/fees",note:"Review balances"},
+            {kind:"bus",label:"School bus",href:"/parent/transport",note:"Only if authorised"},
+          ].map(item=><button key={item.href} onClick={()=>navigate(item.href)} className="portal-feature-card group p-5 text-left">
+            <PortalIconArt kind={item.kind as any} className="h-14 w-14 portal-float-icon"/>
+            <p className="portal-display mt-5 text-lg font-extrabold">{item.label}</p><p className="mt-1 text-xs text-muted-foreground">{item.note}</p>
+            <span className="mt-4 text-[10px] font-extrabold uppercase tracking-wider text-primary">Open →</span>
+          </button>)}
+        </section>
 
         {/* Recent Announcements */}
         {recentAnnouncements.length > 0 && (
