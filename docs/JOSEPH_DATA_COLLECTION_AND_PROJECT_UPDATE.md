@@ -1,6 +1,8 @@
 # Imagemakers Nursery and Primary School — Project Update & Data Collection Request
 ## 22 September 2026
 
+> **Live verification:** The sample pupil `Peter Parker` was removed from the live student register before this handoff. The live register now contains **131 pupil records**, 13 classes, 18 teacher records, 3 academic terms and 21 subjects.
+
 This file is the handoff note for the next school-data collection stage. It is intentionally factual: it separates what is already in the live system from information the school still needs to provide.
 
 ## Current project position
@@ -8,7 +10,7 @@ This file is the handoff note for the next school-data collection stage. It is i
 The existing Imagemakers School Management System is connected to the live Supabase project and the GitHub repository.
 
 The live database currently contains:
-- 132 pupil records
+- 131 pupil records
 - 13 classes
 - 18 teacher records
 - 3 academic terms
@@ -204,11 +206,11 @@ Good afternoon Sir.
 
 I wanted to give you an update on the school management system now that the school has resumed.
 
-The main system is already built and connected to the school's records. The Admin, Staff, Student and Parent portals are in place, including the student records, class/teacher structure, attendance, results/report cards, finance, CBT, communications, documents and other school-management sections.
+The main system is already built and connected to the school's Supabase backend and GitHub project. The Admin, Staff, Student and Parent portals are in place, including the student records, class/teacher structure, attendance, results/report cards, finance, CBT, communications, documents and other school-management sections. The current finishing stage is focused on connecting and validating these workflows with the school's real 2026/2027 operational data.
 
 We are now at the stage where the remaining setup needs the school's current operational information so I can finish the system using the actual 2026/2027 records rather than sample data.
 
-Since the school has resumed, please can we begin collecting the current student information, especially:
+Since the school has resumed and we are now in the second week, please can we begin collecting the current student information, especially:
 
 - Updated student register with accurate classes
 - Parent/guardian names and contact details
