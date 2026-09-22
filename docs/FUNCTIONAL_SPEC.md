@@ -1587,3 +1587,16 @@ A narrower "safe launch" covering only Phases 1 and 2 plus QA — enough to run 
 ---
 
 *End of specification.*
+
+## 2026-09-22 engineering update
+
+- Added the driver application role.
+- Added transport tracking tables: transport_driver_profiles, transport_trips, transport_location_points, and transport_student_links.
+- Added RLS for driver-owned trip/location writes and parent route-scoped location reads.
+- Added /driver for device-geolocation trip tracking and /parent/transport for authorised parent live-location viewing.
+- Added student_feature_settings so a linked parent can enable/disable the AI tutor and calculator for each child.
+- Student tools now respect those settings.
+- ai-assistant is now deployed with JWT verification enabled and its tutor prompt is explicitly nursery/primary focused.
+- Removed synthetic staff schedule fallback records.
+- Added dashboard visual refresh classes for Admin, Staff and Parent while retaining the existing Student dashboard rebuild.
+- Added docs/PROJECT_COMPLETION_STATUS.md and docs/JOSEPH_WHATSAPP_HANDOFF_2026-09-22.txt.
