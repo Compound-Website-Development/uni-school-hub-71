@@ -144,3 +144,36 @@ Finish the remaining operational layer:
 
 When complete, update docs/PROJECT_COMPLETION_STATUS.md and docs/FUNCTIONAL_SPEC.md with what was actually verified.
 ```
+
+
+## 22 September 2026 — Expressive portal redesign pass
+
+The portal UI has now been materially rebuilt rather than only spacing/card-rounded adjustments.
+
+### Visible design changes
+- New portal typography: Outfit for body/UI and Plus Jakarta Sans for display headings.
+- New dark-navy school-branded navigation shells for Admin, Staff and Parent, plus a dedicated Student shell.
+- Custom SVG illustration/icon system in `src/components/PortalIconArt.tsx`.
+- Navigation items now use illustrated tiles instead of the previous plain Lucide icon list.
+- Admin portal switcher now visibly exposes **Staff, Student, Parent and Driver** portals.
+- Student mobile bottom navigation is redesigned with larger illustrated controls and CBT as a first-class destination.
+- Shared portal backgrounds now use layered school-colour gradients, soft ambient shapes, animated entrance states and floating illustration motion.
+- Dashboard cards use image/illustration-led compositions rather than icon-only boxes.
+- Staff dashboard now foregrounds Attendance, Gradebook, CBT Studio and Messages.
+- Parent dashboard now foregrounds Grades, Attendance, Fees and authorised School Bus access.
+- Driver dashboard now has a dedicated trip-control layout with live location status.
+- Parent school-bus tracking now uses the new illustrated transport visual language.
+- Student dashboard now has prominent **AI Tutor** and **Calculator** cards. These dispatch directly to the live tools; the parent-controlled feature flags remain authoritative.
+- Public QR student views do not receive the private AI/calculator tools.
+- Student CBT list and exam runner received the new visual treatment; CBT functionality was preserved.
+- Staff CBT management received a new assessment-studio visual treatment.
+- Driver trip completion now writes the database's `completed` status rather than the previous `ended` value.
+
+### Design direction used
+The uploaded reference images were used as UX direction: asymmetric cards, large editorial headings, rounded navigation, illustrated feature tiles, soft gradient surfaces, expressive mobile bottom navigation, and image-led hero areas. The school colours and logo remain the brand anchor rather than copying the reference palette.
+
+### Important realism rule
+Students are not assumed to carry phones at school. The Student Portal is therefore treated as a school/home web experience usable on an approved computer or tablet. Mobile responsiveness remains for access outside school, but the core school workflows do not depend on pupils having personal phones.
+
+### Verification limitation
+No GitHub CI workflow was attached to the latest UI commits, and the connected Vercel account currently exposes no team/project to this integration. Therefore a successful production build/deployment has not been claimed from the connector. The source changes were committed directly to `main`.
