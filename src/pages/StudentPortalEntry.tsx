@@ -33,11 +33,25 @@ const StudentPortalEntry = () => {
         return;
       }
 
-      const { error: verifyError } = await supabase.auth.verifyOtp({
+      // verifyOtp returns the authenticated session. Explicitly restore it before
+      // rendering the protected student portal so navigation cannot race AuthProvider.
+      const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
         token_hash: data.token_hash,
         type: "magiclink",
       });
-      if (!cancelled) setStatus(verifyError ? "error" : "ready");
+      if (verifyError || !verifyData.session) {
+        if (!cancelled) setStatus("error");
+        return;
+      }
+
+      // Persist the exact session returned by the QR exchange. This makes the
+      // protected /student/* routes immediately see the same authenticated pupil.
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: verifyData.session.access_token,
+        refresh_token: verifyData.session.refresh_token,
+      });
+
+      if (!cancelled) setStatus(sessionError ? "error" : "ready");
     };
 
     authenticate();
