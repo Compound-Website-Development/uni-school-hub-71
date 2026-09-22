@@ -16,7 +16,11 @@ const DriverDashboard = () => {
   const watchRef = useRef<number | null>(null);
 
   useEffect(() => {
-    (supabase as any).from("transport_driver_profiles").select("route_id,active").eq("user_id", user?.id).maybeSingle().then(async ({ data: profile }) => {\n      if (!profile?.active || !profile.route_id) { setRoutes([]); return; }\n      const { data } = await supabase.from("transport_routes").select("id,name,vehicle_number,driver_name").eq("id", profile.route_id);\n      setRoutes(data || []);\n    });
+    (supabase as any).from("transport_driver_profiles").select("route_id,active").eq("user_id", user?.id).maybeSingle().then(async ({ data: profile }) => {
+      if (!profile?.active || !profile.route_id) { setRoutes([]); return; }
+      const { data } = await supabase.from("transport_routes").select("id,name,vehicle_number,driver_name").eq("id", profile.route_id);
+      setRoutes(data || []);
+    });
     return () => { if (watchRef.current !== null) navigator.geolocation.clearWatch(watchRef.current); };
   }, []);
 
