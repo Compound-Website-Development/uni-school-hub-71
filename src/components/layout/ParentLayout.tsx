@@ -72,7 +72,7 @@ export const ParentLayout = ({ children, title }: ParentLayoutProps) => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background portal-page-bg">
       <MobileHeader title={title || "Parent Portal"} onMenuClick={() => setSidebarOpen(true)} />
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="w-72 p-0 bg-primary border-r-0">
@@ -104,7 +104,7 @@ export const ParentLayout = ({ children, title }: ParentLayoutProps) => {
         </SheetContent>
       </Sheet>
       <div className="hidden md:flex h-screen w-full overflow-hidden">
-        <aside className="w-[260px] bg-primary flex flex-col shrink-0">
+        <aside className="w-[270px] bg-primary flex flex-col shrink-0">
           <div className="p-5 flex items-center gap-3">
             <img src={npsLogo} alt="Imagemakers" className="h-8 w-auto" />
             <span className="text-lg font-bold text-primary-foreground">Parent Portal</span>
