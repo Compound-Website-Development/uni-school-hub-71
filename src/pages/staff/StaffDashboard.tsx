@@ -9,7 +9,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { FileText, Users, ClipboardCheck, Clock3, ArrowRight, AlertTriangle, TrendingUp, BookOpen, UserPlus } from "lucide-react";
 import StaffClockIn from "@/components/StaffClockIn";
-import { PortalIllustration } from "@/components/PortalIllustration";
 
 interface DashboardStats { totalStudents:number; totalClasses:number; pendingGrades:number; newApplications:number; }
 interface UpcomingClass { time:string; className:string; subject:string; room:string|null; }
@@ -77,7 +76,7 @@ const StaffDashboard=()=>{
         <Link to="/staff/gradebook" className="rounded-full border border-border bg-white px-4 py-2.5 text-xs font-extrabold text-[#3e5546]">Open gradebook</Link>
       </div>
     </div>
-    <PortalIllustration kind="staff" size="lg" className="hidden md:block self-center"/>
+    <div className="staff-art hidden md:block self-center" aria-hidden="true"><span/><i/><b/></div>
    </section>
 
    <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -108,7 +107,7 @@ const StaffDashboard=()=>{
    <section className="portal-surface rounded-[26px] p-5 md:p-6">
     <div className="flex items-center justify-between"><div><p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#4f8063]">My work</p><h2 className="portal-display mt-1 text-2xl font-extrabold text-[#26362b]">Open a workspace</h2></div><TrendingUp className="h-5 w-5 text-[#7c877f]"/></div>
     <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      {workbench.map(item=><Link key={item.href} to={item.href} className="portal-feature-card group p-4"><PortalIllustration kind={item.kind as any} size="md"/><p className="portal-display mt-3 text-lg font-extrabold">{item.label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{item.note}</p><span className="mt-3 inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[.12em] text-[#4f8063]">Open <ArrowRight className="h-3 w-3"/></span></Link>)}
+      {workbench.map(item=><Link key={item.href} to={item.href} className="portal-feature-card group p-4"><div className={`staff-art staff-art-${item.kind}`} aria-hidden="true"><span/><i/><b/></div><p className="portal-display mt-3 text-lg font-extrabold">{item.label}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{item.note}</p><span className="mt-3 inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-[.12em] text-[#4f8063]">Open <ArrowRight className="h-3 w-3"/></span></Link>)}
     </div>
    </section>
 
