@@ -14,7 +14,7 @@ import {
   CreditCard, Megaphone, Settings, LogOut, Search, BarChart2,
   Activity, Upload, BookUser, Database, ExternalLink, BookOpen, Bus,
   UserCheck, CreditCard as IdCard, Award, AlertTriangle, FileText,
-  Brain, Shield, Heart, Package, RefreshCw
+  Brain, Shield, Heart, Package, RefreshCw, Monitor
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
