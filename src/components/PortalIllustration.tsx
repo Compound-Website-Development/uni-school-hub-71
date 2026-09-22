@@ -2,6 +2,8 @@ import type { CSSProperties } from "react";
 
 type IllustrationKind =
   | "home"
+  | "book"
+  | "finance"
   | "results"
   | "report"
   | "transcript"
@@ -30,6 +32,8 @@ type IllustrationKind =
 
 const palette: Record<IllustrationKind, [string, string, string]> = {
   home: ["#F3A23A", "#FDE8C7", "#4B5563"],
+  book: ["#6F7FA8", "#E7EBF5", "#334155"],
+  finance: ["#66856F", "#E5EFE8", "#334155"],
   results: ["#6B8F71", "#E4F0E5", "#334155"],
   report: ["#D9776A", "#FBE5E1", "#475569"],
   transcript: ["#7C6BA6", "#EEE9F8", "#475569"],
@@ -58,7 +62,7 @@ const palette: Record<IllustrationKind, [string, string, string]> = {
 };
 
 const emoji: Record<IllustrationKind, string> = {
-  home: "⌂", results: "↗", report: "▤", transcript: "≋", cbt: "▣",
+  home: "⌂", book: "▥", finance: "₦", results: "↗", report: "▤", transcript: "≋", cbt: "▣",
   homework: "✓", learning: "✦", resources: "◈", library: "▥", schedule: "◷",
   attendance: "✓", calendar: "□", announcements: "!", community: "◎",
   complaints: "?", fees: "₦", profile: "●", settings: "⚙", students: "●",
