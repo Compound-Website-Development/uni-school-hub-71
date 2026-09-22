@@ -13,7 +13,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant
 export const AIChatWidget = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { role: "assistant", content: "Hi there! 👋 I'm your **Imagemakers AI Tutor**. Ask me anything about your homework or studies — Maths, English, Sciences, and more!" },
+    { role: "assistant", content: "Hi there! 👋 I'm your **Imagemakers AI Tutor**. I can explain lessons, give hints and work through examples with you. I will not simply do your homework for you." },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -153,7 +153,7 @@ export const AIChatWidget = () => {
               <Bot className="w-5 h-5" />
               <div>
                 <p className="font-semibold text-sm">Imagemakers AI Tutor</p>
-                <p className="text-[10px] text-primary-foreground/70">Powered by AI • Ask anything</p>
+                <p className="text-[10px] text-primary-foreground/70">Study help • explanations • hints</p>
               </div>
             </div>
             <button onClick={() => setOpen(false)} className="p-1 rounded-lg hover:bg-primary-foreground/20 transition-colors">
@@ -212,7 +212,7 @@ export const AIChatWidget = () => {
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about your homework..."
+                placeholder="Ask me to explain something..."
                 className="flex-1 rounded-xl text-sm"
                 disabled={isLoading}
               />
