@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Monitor, Clock, Play, CheckCircle, BookOpen } from "lucide-react";
+import { PortalIconArt } from "@/components/PortalIconArt";
 import { format } from "date-fns";
 
 const StudentExams = () => {
@@ -34,11 +35,15 @@ const StudentExams = () => {
 
   return (
     <StudentLayout title="Examinations">
-      <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">CBT Examinations</h1>
-          <p className="text-muted-foreground text-sm mt-1">Take your computer-based tests here</p>
-        </div>
+      <div className="dashboard-surface dashboard-student space-y-6 animate-fade-in">
+        <section className="portal-hero">
+          <PortalIconArt kind="cbt" className="portal-hero-art h-full w-[300px] opacity-70"/>
+          <div className="portal-hero-copy">
+            <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Computer-based testing</p>
+            <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-5xl">Your exam room, online.</h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">Use a school-approved computer or tablet. Your answers are saved while you work and objective papers are marked automatically when submitted.</p>
+          </div>
+        </section>
 
         {isLoading ? (
           <div className="space-y-4">
@@ -58,7 +63,7 @@ const StudentExams = () => {
               const sub = getSubmission(exam.id);
               const isCompleted = sub?.submitted_at;
               return (
-                <Card key={exam.id} className="rounded-xl border-border/50 shadow-card card-hover-subtle">
+                <Card key={exam.id} className="portal-feature-card card-hover-subtle">
                   <CardContent className="p-5">
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-start gap-4">
