@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Monitor, Plus, Clock, Users, Trash2, Eye } from "lucide-react";
+import { PortalIconArt } from "@/components/PortalIconArt";
 import { format } from "date-fns";
 
 const StaffCBT = () => {
@@ -106,13 +107,15 @@ const StaffCBT = () => {
 
   return (
     <StaffLayout title="CBT Management">
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">CBT Examinations</h1>
-            <p className="text-muted-foreground text-sm mt-1">Create and manage computer-based tests</p>
+      <div className="dashboard-surface dashboard-staff space-y-6 animate-fade-in">
+        <section className="portal-hero">
+          <PortalIconArt kind="cbt" className="portal-hero-art h-full w-[300px] opacity-70"/>
+          <div className="portal-hero-copy">
+            <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Assessment studio</p>
+            <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-5xl">Build CBTs that students can actually take.</h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">Create objective exams, add answer choices, activate a paper, and let eligible students take it through the Student Portal. Marking happens server-side.</p>
           </div>
-          <Dialog open={showCreate} onOpenChange={setShowCreate}>
+          <div className="flex justify-end"><Dialog open={showCreate} onOpenChange={setShowCreate}>
             <DialogTrigger asChild>
               <Button><Plus className="w-4 h-4 mr-2" /> Create Exam</Button>
             </DialogTrigger>
@@ -146,8 +149,8 @@ const StaffCBT = () => {
                 <Button onClick={handleCreateExam} className="w-full">Create Exam</Button>
               </div>
             </DialogContent>
-          </Dialog>
-        </div>
+          </Dialog></div>
+        </section>
 
         {/* Exam List or Question Editor */}
         {selectedExam ? (
