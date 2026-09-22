@@ -80,7 +80,7 @@ export const StaffLayout = ({
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background portal-page-bg">
       <MobileHeader title={title || "Staff Portal"} onMenuClick={() => setSidebarOpen(true)} showSearch={showSearch} searchPlaceholder={searchPlaceholder} />
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="w-72 p-0 bg-primary border-r-0">
@@ -112,7 +112,7 @@ export const StaffLayout = ({
         </SheetContent>
       </Sheet>
       <div className="hidden md:flex h-screen w-full overflow-hidden">
-        <aside className="w-[260px] bg-primary flex flex-col shrink-0">
+        <aside className="w-[270px] bg-primary/95 backdrop-blur-xl flex flex-col shrink-0 shadow-2xl shadow-primary/20">
           <div className="p-5 flex items-center gap-3">
             <img src={npsLogo} alt="Imagemakers" className="h-8 w-auto" />
             <span className="text-lg font-bold text-primary-foreground">Imagemakers Portal</span>
@@ -139,7 +139,7 @@ export const StaffLayout = ({
           </div>
         </aside>
         <main className="flex-1 flex flex-col overflow-hidden">
-          <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
+          <header className="h-16 bg-card/75 backdrop-blur-xl border-b border-border/70 flex items-center justify-between px-6 shrink-0">
             <div className="flex items-center gap-4">
               {title && <h1 className="text-xl font-bold text-foreground">{title}</h1>}
             </div>
