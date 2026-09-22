@@ -131,7 +131,7 @@ const ParentDashboard = () => {
 
   return (
     <ParentLayout title="Dashboard">
-      <div className="space-y-6 animate-fade-in">
+      <div className="dashboard-surface dashboard-parent space-y-6 animate-fade-in">
         {/* Welcome */}
         <div className="premium-card p-5">
           <h1 className="text-xl font-bold text-foreground">Parent dashboard</h1>
