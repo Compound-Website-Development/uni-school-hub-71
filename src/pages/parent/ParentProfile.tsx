@@ -25,7 +25,7 @@ const ParentProfile = () => {
         if (data?.length) {
           const ids = data.map(l => l.student_id);
           const { data: kids } = await supabase.from("students").select("id, first_name, last_name, student_id, class_id").in("id", ids);
-          setChildren(kids || []);\n          const { data: settings } = await supabase.from("student_feature_settings").select("student_id, ai_tutor_enabled, calculator_enabled").in("student_id", ids);\n          const mapped: Record<string, any> = {};\n          (settings || []).forEach((s: any) => { mapped[s.student_id] = s; });\n          setFeatureSettings(mapped);
+          setChildren(kids || []);\n          const { data: settings } = await (supabase as any).from("student_feature_settings").select("student_id, ai_tutor_enabled, calculator_enabled").in("student_id", ids);\n          const mapped: Record<string, any> = {};\n          (settings || []).forEach((s: any) => { mapped[s.student_id] = s; });\n          setFeatureSettings(mapped);
         }
       });
   }, [user]);
@@ -89,7 +89,7 @@ const ParentProfile = () => {
               const s = featureSettings[c.id] || { ai_tutor_enabled: true, calculator_enabled: true };
               const toggle = async (field: "ai_tutor_enabled" | "calculator_enabled") => {
                 const next = !s[field];
-                const { error } = await supabase.from("student_feature_settings").update({ [field]: next, updated_by: user?.id }).eq("student_id", c.id);
+                const { error } = await (supabase as any).from("student_feature_settings").update({ [field]: next, updated_by: user?.id }).eq("student_id", c.id);
                 if (error) toast.error("Could not update setting");
                 else setFeatureSettings(prev => ({ ...prev, [c.id]: { ...s, [field]: next } }));
               };
