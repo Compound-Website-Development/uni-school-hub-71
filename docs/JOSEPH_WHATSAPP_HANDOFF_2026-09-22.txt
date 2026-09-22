@@ -1,0 +1,37 @@
+IMAGEMAKERS NURSERY AND PRIMARY SCHOOL
+PROJECT HANDOFF / DATA COLLECTION MESSAGE
+22 September 2026
+
+WHATSAPP MESSAGE FOR MR JOSEPH
+
+Good afternoon Sir.
+
+Since this is now the second week of resumption, I believe most of the students should have resumed. We can now begin the collection of the remaining school data needed to put the live school records into the system.
+
+The project is already in the school repository and the live Supabase backend is connected. The main portals and school-management modules are in place, and I have also added the transport tracking foundation, parent-controlled student learning tools, and the remaining dashboard connection work.
+
+What I need from the school now is the actual school data rather than sample data:
+1. The current 2026/2027 student register, preferably Excel/CSV, class by class.
+2. Correct class/arm for every pupil.
+3. Parent/guardian names, phone numbers, emails and sibling relationships.
+4. Student photographs for the ID cards. The photos can be taken with an Android or iOS device.
+5. Final teacher-to-class assignments and any specialist subject allocations.
+6. Exact 2026/2027 term dates and subjects for each class.
+7. Attendance rules and the official first date to use for live attendance.
+8. Approved fee structure, due dates, discounts/scholarships and the school's approved receipt/payment format.
+9. CBT questions/content when the school is ready to load real examinations.
+10. Any official report-card, certificate, admission, leave, transfer, policy or other school documents that should be reproduced digitally.
+11. Transport information only if the school wants the bus tracking feature used: routes, drivers, vehicles and which parents/pupils are authorised for each route.
+
+Please do not send payment-provider secrets, passwords or private API keys through WhatsApp. Those should be configured securely when the school-owned account is ready.
+
+Once the real school data is supplied, it can replace the remaining empty states without inventing records. I will then use the real data to run the final end-to-end checks across Admin, Staff, Student, Parent and Transport.
+
+Thank you Sir.
+
+PROJECT LOCATION
+GitHub:
+https://github.com/Compound-Website-Development/uni-school-hub-71
+
+IMPORTANT STATUS NOTE
+The engineering work has been continued directly in the repository and Supabase. Some operational features cannot truthfully be called live until the school supplies the real records and provider configuration. In particular, online payments require the school's own merchant/provider account, CBT requires real exam content, and transport requires confirmed driver/route/parent authorisation data.
