@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { format, isFuture, isToday, addDays } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { PortalIconArt } from "@/components/PortalIconArt";
+import { PortalIllustration } from "@/components/PortalIllustration";
 
 const ParentDashboard = () => {
   const { user, userRole } = useAuth();
@@ -175,7 +175,7 @@ const ParentDashboard = () => {
                   <CardHeader className="relative overflow-hidden bg-gradient-to-br from-primary/8 via-card to-accent/8 pb-3">
                     <PortalIconArt kind="profile" className="absolute -right-2 -top-3 h-24 w-24 opacity-35" />
                     <CardTitle className="relative flex items-center gap-3 text-base">
-                      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-card shadow-sm"><PortalIconArt kind="profile" className="h-10 w-10"/></span>
+                      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-card shadow-sm"><PortalIllustration kind="profile" size="lg" className="h-10 w-10" /></span>
                       <span><span className="block portal-display text-lg font-extrabold">{child.first_name} {child.last_name}</span><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Linked child</span></span>
                       <Badge variant="outline" className="ml-auto capitalize text-[10px]">{child.status || "active"}</Badge>
                     </CardTitle>
@@ -293,7 +293,7 @@ const ParentDashboard = () => {
             {kind:"finance",label:"Fees & payments",href:"/parent/fees",note:"Review balances"},
             {kind:"bus",label:"School bus",href:"/parent/transport",note:"Only if authorised"},
           ].map(item=><button key={item.href} onClick={()=>navigate(item.href)} className="portal-feature-card group p-5 text-left">
-            <PortalIconArt kind={item.kind as any} className="h-14 w-14 portal-float-icon"/>
+            <PortalIllustration kind={item.kind as any} size="md" className="h-14 w-14 portal-float-icon" />
             <p className="portal-display mt-5 text-lg font-extrabold">{item.label}</p><p className="mt-1 text-xs text-muted-foreground">{item.note}</p>
             <span className="mt-4 text-[10px] font-extrabold uppercase tracking-wider text-primary">Open →</span>
           </button>)}
