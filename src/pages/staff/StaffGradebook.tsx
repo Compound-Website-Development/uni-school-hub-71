@@ -193,7 +193,9 @@ const StaffGradebook = () => {
   const isAssignedClassTeacher = classes.find((classRow) => classRow.id === selectedClass)?.class_teacher_id === teacherData?.id;
   const availableSubjects =
     userRole !== "admin" && teacherData?.id && isAssignedClassTeacher
-      ? (teacherSubjectIds?.length ? subjects.filter((subject) => teacherSubjectIds.includes(subject.id)) : subjects)
+      // Class teachers teach the normal subjects for their assigned class.
+      // Specialist mappings must not accidentally restrict the class teacher.
+      ? subjects
       : userRole !== "admin" && teacherSubjectIds?.length
         ? subjects.filter((subject) => teacherSubjectIds.includes(subject.id))
         : subjects;
