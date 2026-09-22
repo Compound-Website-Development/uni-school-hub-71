@@ -30,7 +30,7 @@ const ParentTransport = () => {
   return <ParentLayout title="School Bus">
     <div className="dashboard-surface dashboard-parent mx-auto max-w-6xl space-y-6">
       <section className="portal-hero">
-        <PortalIconArt kind="bus" className="portal-hero-art h-full w-[360px] opacity-70" />
+        <PortalIllustration kind="bus" size="lg" className="portal-hero-art opacity-70" />
         <div className="portal-hero-copy">
           <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Authorised family transport</p>
           <h1 className="portal-display mt-2 text-4xl font-extrabold">Know when the bus is moving.</h1>
