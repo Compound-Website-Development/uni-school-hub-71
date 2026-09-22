@@ -154,7 +154,7 @@ const StaffDashboard = () => {
 
   return (
     <StaffLayout title="Dashboard">
-      <div className="space-y-6">
+      <div className="dashboard-surface dashboard-staff space-y-6">
         {/* Welcome Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
