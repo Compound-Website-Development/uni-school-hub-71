@@ -83,7 +83,10 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
   const isActive = (href: string) =>
     location.pathname === href || (href !== "/student" && location.pathname.startsWith(href + "/"));
 
-  const NavList = ({ onItemClick, dark }: { onItemClick?: () => void; dark?: boolean }) => (
+  const NavList = ({ onItemClick, dark }: { onItemClick?: () => void; dark?: boolean }) => {
+    if (publicView) return null;
+
+    return (
     <div className="space-y-5">
       {navGroups.map((group) => (
         <div key={group.heading}>
@@ -115,7 +118,8 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
         </div>
       ))}
     </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background">
