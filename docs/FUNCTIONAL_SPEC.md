@@ -37,22 +37,17 @@ The canonical report-card implementation remains `ReportCardEditor` / `ReportCar
 - **23 August 2026 — Audit correction:** the live `announcements` body field is `body`, not `content`; the Student Dashboard query was corrected accordingly.
 
 ---
-\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
+\n\n<!-- AUTO-FUNCTIONAL-SPEC-START -->
 ### Automated repository change snapshot
 
-- Last synchronisation: 2026-09-22T04:11:35.760Z
-- Commit: `91cf00cc0debe3ec117edd1379a1e52e3e58b0e9`
+- Last synchronisation: 2026-09-22T04:12:32.334Z
+- Commit: `eac9bdec07a6ac400093a7cd07e677637ddf0e23`
 - Trigger: push
 
-- `A` `.github/workflows/functional-spec-sync.yml`
 - `M` `docs/FUNCTIONAL_SPEC.md`
-- `M` `docs/JOSEPH_DATA_COLLECTION_AND_PROJECT_UPDATE.md`
-- `A` `scripts/update-functional-spec.mjs`
-- `M` `src/pages/staff/StaffAttendance.tsx`
-- `M` `src/pages/staff/StaffGradebook.tsx`
 
 > This block is maintained automatically from Git history. It records added, modified and deleted files so documentation does not silently drift. It does not invent feature descriptions: meaningful behavioural, data-model, permission and visual changes should still update the affected specification sections in the same change.
-<!-- AUTO-FUNCTIONAL-SPEC-END -->\n
+<!-- AUTO-FUNCTIONAL-SPEC-END -->\n\n
 # TABLE OF CONTENTS
 
 1. Project Overview
