@@ -913,3 +913,58 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .study-art-calculator .study-art-screen{position:absolute;left:17px;right:17px;top:15px;height:22px;border-radius:7px;background:#4d7f88}
 .study-art-calculator .study-art-keys{position:absolute;left:17px;right:17px;bottom:15px;height:28px;border-radius:7px;background:repeating-linear-gradient(90deg,#fff 0 10px,transparent 10px 14px),linear-gradient(#dce7e8,#dce7e8)}
 @media(max-width:700px){.study-art-ai,.study-art-calculator{width:70px;height:70px}.study-art-ai .study-art-core{left:25px;top:25px}.study-art-calculator .study-art-screen{left:12px;right:12px}.study-art-calculator .study-art-keys{left:12px;right:12px}}
+
+
+/* Staff portal visual system: editorial, warm, functional */
+.staff-portal-shell{--staff-ink:#29352d;--staff-green:#4f8063;--staff-cream:#fbfaf6;--staff-orange:#c58a45}
+.staff-portal-shell .portal-page-bg{background:#f7f7f2}
+.staff-portal-shell .portal-page-content{color:var(--staff-ink)}
+.staff-portal-shell .portal-surface{border:1px solid #e2e6e0;background:rgba(255,255,255,.9);box-shadow:0 18px 50px -40px rgba(39,55,45,.45);border-radius:26px}
+.staff-portal-shell .portal-hero{background:linear-gradient(135deg,#fff,#eef4ee 66%,#f7efe5);border:1px solid #e0e6df}
+.staff-portal-shell .portal-feature-card{background:#fff;border-color:#e1e6e0}
+.staff-portal-shell .portal-feature-card:nth-child(2n){background:linear-gradient(135deg,#fff,#f8f1e8)}
+.staff-portal-shell .portal-page-content .card-hover-subtle:hover,.staff-portal-shell .portal-page-content .shadow-card:hover{transform:translateY(-2px);box-shadow:0 20px 50px -38px rgba(40,57,47,.5)}
+.staff-portal-shell .portal-page-content [class*="bg-success"]{background:#eaf2ec !important;color:#3f6d4f}
+.staff-portal-shell .portal-page-content [class*="bg-warning"]{background:#fbf0df !important;color:#9a6330}
+.staff-portal-shell .portal-page-content [class*="bg-destructive"]{background:#f7e9e8 !important;color:#a44f4c}
+.staff-portal-shell .portal-page-content .text-info{color:#557f91 !important}
+.staff-portal-shell .portal-page-content .text-success{color:#4f8063 !important}
+.staff-art{position:relative;width:180px;height:150px;border-radius:36px;background:linear-gradient(145deg,#eef4ee,#f8eee2);box-shadow:inset 0 0 0 1px rgba(63,109,79,.08),0 28px 60px -45px rgba(42,58,48,.45)}
+.staff-art:before{content:"";position:absolute;width:72px;height:72px;left:38px;top:32px;border-radius:22px;background:#fff;transform:rotate(-7deg);box-shadow:0 16px 24px -20px rgba(0,0,0,.35)}
+.staff-art span{position:absolute;width:42px;height:7px;left:54px;top:55px;border-radius:99px;background:#4f8063;z-index:2}
+.staff-art i{position:absolute;width:55px;height:7px;left:54px;top:73px;border-radius:99px;background:#dfe8e1;z-index:2;box-shadow:0 16px 0 #dfe8e1}
+.staff-art b{position:absolute;width:36px;height:36px;right:22px;bottom:20px;border-radius:50%;background:#c58a45;box-shadow:0 0 0 8px rgba(197,138,69,.12)}
+.staff-art-cbt{background:linear-gradient(145deg,#eaf2f3,#f8efe5)}
+.staff-art-cbt:before{width:92px;height:62px;left:44px;top:38px;border-radius:13px;transform:none;background:#4d7f88}
+.staff-art-cbt span{left:58px;top:53px;width:64px;height:7px;background:#fff}
+.staff-art-cbt i{left:58px;top:69px;width:42px;background:#cfe2e5;box-shadow:0 0 0 #cfe2e5}
+.staff-art-cbt b{width:18px;height:18px;right:32px;bottom:24px;background:#b56d63}
+.staff-art-attendance{width:66px;height:66px;border-radius:20px;background:#eef4ee}
+.staff-art-attendance:before{left:18px;top:18px;width:30px;height:30px;border-radius:50%;transform:none;background:#fff}
+.staff-art-attendance span{left:25px;top:32px;width:17px;height:5px;background:#4f8063;transform:rotate(-45deg)}
+.staff-art-attendance i{left:36px;top:25px;width:20px;height:5px;background:#4f8063;transform:rotate(45deg)}
+.staff-art-attendance b{display:none}
+.staff-art-results{width:66px;height:66px;border-radius:20px;background:#f7eee3}
+.staff-art-results:before{left:17px;top:17px;width:32px;height:34px;border-radius:8px;transform:none;background:#fff}
+.staff-art-results span{left:24px;top:42px;width:8px;height:10px;background:#c58a45}
+.staff-art-results i{left:35px;top:35px;width:8px;height:17px;background:#4f8063;box-shadow:none}
+.staff-art-results b{display:none}
+.staff-art-messages{width:66px;height:66px;border-radius:20px;background:#eeeaf4}
+.staff-art-messages:before{left:15px;top:21px;width:36px;height:26px;border-radius:12px;transform:none;background:#806ca5}
+.staff-art-messages span{left:25px;top:31px;width:16px;height:4px;background:#fff}
+.staff-art-messages i{left:28px;top:39px;width:10px;height:4px;background:#e7dff0;box-shadow:none}
+.staff-art-messages b{display:none}
+@media(max-width:700px){.staff-art{display:none}}
+/* Parent and driver illustration cards */
+.portal-css-art{position:relative;width:170px;height:135px;border-radius:32px;background:linear-gradient(145deg,#edf4ee,#f7eee3);box-shadow:inset 0 0 0 1px rgba(63,109,79,.08)}
+.portal-css-art span,.portal-css-art i,.portal-css-art b{position:absolute;display:block}
+.portal-css-art-family:before{content:"";position:absolute;width:54px;height:54px;border-radius:50%;left:31px;top:28px;background:#d28b4d;box-shadow:49px 0 0 #4f8063,25px 45px 0 #806ca5}
+.portal-css-art-family span{width:76px;height:18px;left:48px;bottom:24px;border-radius:18px 18px 8px 8px;background:#fff}
+.portal-css-art-profile{width:70px;height:70px;border-radius:20px;background:#eef4ee}
+.portal-css-art-profile span{width:24px;height:24px;border-radius:50%;left:23px;top:12px;background:#c58a45}
+.portal-css-art-profile i{width:40px;height:22px;border-radius:22px 22px 8px 8px;left:15px;bottom:11px;background:#4f8063}
+.portal-css-art-bus{background:linear-gradient(145deg,#e9f1f2,#f8efe5)}
+.portal-css-art-bus:before{content:"";position:absolute;width:105px;height:50px;left:28px;top:38px;border-radius:16px 16px 10px 10px;background:#4d7f88}
+.portal-css-art-bus span{width:26px;height:20px;left:42px;top:48px;background:#fff;border-radius:5px}
+.portal-css-art-bus i{width:26px;height:20px;left:74px;top:48px;background:#d9e9eb;border-radius:5px}
+.portal-css-art-bus b{width:13px;height:13px;border-radius:50%;left:47px;bottom:27px;background:#29352d;box-shadow:53px 0 #29352d}
