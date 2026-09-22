@@ -4,160 +4,30 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { MobileHeader } from "./MobileHeader";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import npsLogo from "@/assets/logo";
-import {
-  LayoutDashboard, Users, BookOpen, ClipboardCheck, FileText,
-  UserPlus, LogOut, Search, BarChart2, Monitor, User,
-  ClipboardList, BookOpenCheck, MessageSquare, MessagesSquare, CalendarOff
-} from "lucide-react";
+import { PortalIconArt } from "@/components/PortalIconArt";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LogOut, Menu, ChevronRight } from "lucide-react";
+import npsLogo from "@/assets/logo";
 import { cn } from "@/lib/utils";
 
-interface StaffLayoutProps {
-  children: ReactNode;
-  title?: string;
-  showSearch?: boolean;
-  searchPlaceholder?: string;
-}
+interface StaffLayoutProps { children: ReactNode; title?: string; showSearch?: boolean; searchPlaceholder?: string; }
 
-const teacherNavItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/staff" },
-  { icon: MessagesSquare, label: "Community Wall", href: "/staff/wall" },
-  { icon: Users, label: "Students", href: "/staff/students" },
-  { icon: BookOpen, label: "Classes", href: "/staff/classes" },
-  { icon: ClipboardCheck, label: "Attendance", href: "/staff/attendance" },
-  { icon: FileText, label: "Gradebook", href: "/staff/gradebook" },
-  { icon: Monitor, label: "CBT Exams", href: "/staff/cbt" },
-  { icon: ClipboardList, label: "Assignments", href: "/staff/assignments" },
-  { icon: BookOpenCheck, label: "Lesson Plans", href: "/staff/lesson-plans" },
-  { icon: BarChart2, label: "Reports", href: "/staff/reports" },
-  { icon: BarChart2, label: "Report Cards", href: "/staff/report-card" },
-  { icon: UserPlus, label: "Admissions", href: "/staff/admissions" },
-  { icon: MessageSquare, label: "Messages", href: "/staff/messages" },
-  { icon: MessagesSquare, label: "Forum", href: "/staff/forum" },
-  { icon: CalendarOff, label: "Leave", href: "/staff/leave" },
-  { icon: User, label: "My Profile", href: "/staff/profile" },
-];
+const items = [
+ {kind:"home",label:"Dashboard",href:"/staff"},{kind:"people",label:"Community Wall",href:"/staff/wall"},{kind:"people",label:"Students",href:"/staff/students"},
+ {kind:"book",label:"Classes",href:"/staff/classes"},{kind:"attendance",label:"Attendance",href:"/staff/attendance"},{kind:"book",label:"Gradebook",href:"/staff/gradebook"},
+ {kind:"cbt",label:"CBT Studio",href:"/staff/cbt"},{kind:"book",label:"Assignments",href:"/staff/assignments"},{kind:"book",label:"Lesson Plans",href:"/staff/lesson-plans"},
+ {kind:"book",label:"Reports",href:"/staff/reports"},{kind:"book",label:"Report Cards",href:"/staff/report-card"},{kind:"people",label:"Admissions",href:"/staff/admissions"},
+ {kind:"message",label:"Messages",href:"/staff/messages"},{kind:"message",label:"Forum",href:"/staff/forum"},{kind:"calendar",label:"Leave",href:"/staff/leave"},{kind:"profile",label:"My Profile",href:"/staff/profile"}
+] as const;
 
-export const StaffLayout = ({
-  children, title, showSearch = false, searchPlaceholder = "Search..."
-}: StaffLayoutProps) => {
-  useRealtimeNotifications();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { signOut, teacherData, userRole } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = async () => { await signOut(); navigate("/login"); };
-
-  const staffName = teacherData ? `${teacherData.first_name} ${teacherData.last_name}` : "Staff";
-  const staffInitials = teacherData ? `${teacherData.first_name[0]}${teacherData.last_name[0]}` : "ST";
-
-  const SidebarNav = ({ onItemClick }: { onItemClick?: () => void }) => (
-    <div className="space-y-1">
-      {teacherNavItems.map((item) => {
-        const isActive = location.pathname === item.href;
-        const Icon = item.icon;
-        return (
-          <Link key={item.href} to={item.href} onClick={onItemClick}
-            className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-sm",
-              isActive
-                ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold border-l-4 border-primary-foreground"
-                : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-            )}>
-            <Icon className="w-5 h-5 shrink-0" />
-            <span>{item.label}</span>
-          </Link>
-        );
-      })}
-    </div>
-  );
-
-  return (
-    <div className="min-h-screen bg-background portal-page-bg">
-      <MobileHeader title={title || "Staff Portal"} onMenuClick={() => setSidebarOpen(true)} showSearch={showSearch} searchPlaceholder={searchPlaceholder} />
-      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="w-72 p-0 bg-primary border-r-0">
-          <SheetHeader className="p-6">
-            <div className="flex items-center gap-3">
-              <img src={npsLogo} alt="Imagemakers" className="h-8 w-auto" />
-              <SheetTitle className="text-primary-foreground text-lg">Imagemakers Portal</SheetTitle>
-            </div>
-          </SheetHeader>
-          <div className="flex flex-col h-[calc(100%-5rem)]">
-            <div className="px-4 pb-4 border-b border-sidebar-border">
-              <div className="flex items-center gap-3">
-                <Avatar className="border-2 border-primary-foreground/20">
-                  <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-bold">{staffInitials}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-primary-foreground truncate text-sm">{staffName}</p>
-                  <Badge variant="secondary" className="text-xs capitalize bg-accent text-accent-foreground">{userRole || "Staff"}</Badge>
-                </div>
-              </div>
-            </div>
-            <nav className="flex-1 p-3 overflow-y-auto scrollbar-thin"><SidebarNav onItemClick={() => setSidebarOpen(false)} /></nav>
-            <div className="p-4 border-t border-sidebar-border">
-              <Button variant="ghost" className="w-full justify-start text-primary-foreground/70 hover:text-primary-foreground hover:bg-sidebar-accent" onClick={handleLogout}>
-                <LogOut className="w-5 h-5 mr-3" /> Sign Out
-              </Button>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-      <div className="hidden md:flex h-screen w-full overflow-hidden">
-        <aside className="w-[270px] bg-primary/95 backdrop-blur-xl flex flex-col shrink-0 shadow-2xl shadow-primary/20">
-          <div className="p-5 flex items-center gap-3">
-            <img src={npsLogo} alt="Imagemakers" className="h-8 w-auto" />
-            <span className="text-lg font-bold text-primary-foreground">Imagemakers Portal</span>
-          </div>
-          <div className="px-4 pb-4 border-b border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <Avatar className="border-2 border-primary-foreground/20">
-                <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-bold text-sm">{staffInitials}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-primary-foreground truncate text-sm">{staffName}</p>
-                <Badge variant="secondary" className="text-xs capitalize bg-accent text-accent-foreground">{userRole || "Staff"}</Badge>
-              </div>
-            </div>
-          </div>
-          <nav className="flex-1 p-3 overflow-y-auto scrollbar-thin">
-            <p className="text-xs font-semibold text-primary-foreground/40 uppercase tracking-wider mb-3 px-4">Menu</p>
-            <SidebarNav />
-          </nav>
-          <div className="p-4 border-t border-sidebar-border">
-            <Button variant="ghost" className="w-full justify-start text-primary-foreground/70 hover:text-primary-foreground hover:bg-sidebar-accent" onClick={handleLogout}>
-              <LogOut className="w-5 h-5 mr-3" /> Sign Out
-            </Button>
-          </div>
-        </aside>
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <header className="h-16 bg-card/75 backdrop-blur-xl border-b border-border/70 flex items-center justify-between px-6 shrink-0">
-            <div className="flex items-center gap-4">
-              {title && <h1 className="text-xl font-bold text-foreground">{title}</h1>}
-            </div>
-            <div className="flex items-center gap-4">
-              {showSearch && (
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input placeholder={searchPlaceholder} className="pl-10 w-64 rounded-md" />
-                </div>
-              )}
-              <ThemeToggle />
-              <NotificationDropdown />
-            </div>
-          </header>
-          <div className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</div>
-        </main>
-      </div>
-      <div className="md:hidden"><div className="p-4">{children}</div></div>
-    </div>
-  );
+export const StaffLayout=({children,title}:StaffLayoutProps)=>{
+ const [open,setOpen]=useState(false); const {signOut,teacherData,userRole}=useAuth(); useRealtimeNotifications(); const nav=useNavigate(); const loc=useLocation();
+ const name=teacherData?`${teacherData.first_name} ${teacherData.last_name}`:"Staff"; const initials=name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
+ const active=(href:string)=>loc.pathname===href||loc.pathname.startsWith(href+"/");
+ const logout=async()=>{await signOut();nav("/login");};
+ const Nav=({close}:{close?:()=>void})=><div className="space-y-1.5">{items.map(item=><Link key={item.href} to={item.href} onClick={close} className={cn("group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-semibold transition-all",active(item.href)?"bg-white text-[hsl(var(--navy))] shadow-lg":"text-white/72 hover:bg-white/10 hover:text-white")}><span className={cn("grid h-9 w-9 place-items-center rounded-xl",active(item.href)?"bg-primary/10":"bg-white/8")}><PortalIconArt kind={item.kind} className="h-7 w-7"/></span><span className="flex-1 truncate">{item.label}</span>{active(item.href)&&<ChevronRight className="h-4 w-4"/>}</Link>)}</div>;
+ return <div className="min-h-screen bg-background portal-page-bg"><MobileHeader title={title||"Staff Portal"} onMenuClick={()=>setOpen(true)}/>
+ <Sheet open={open} onOpenChange={setOpen}><SheetContent side="left" className="w-[88%] max-w-sm border-0 bg-[hsl(var(--navy))] p-0 text-white"><SheetHeader className="border-b border-white/10 p-5 text-left"><div className="flex items-center gap-3"><img src={npsLogo} className="h-9 w-auto" alt="Imagemakers"/><SheetTitle className="text-white">Staff Workspace</SheetTitle></div></SheetHeader><nav className="h-[calc(100%-7rem)] overflow-y-auto p-4"><Nav close={()=>setOpen(false)}/></nav><button onClick={logout} className="mx-4 flex w-[calc(100%-2rem)] items-center gap-3 border-t border-white/10 py-4 text-sm font-semibold text-white/70"><LogOut className="h-4 w-4"/>Sign out</button></SheetContent></Sheet>
+ <div className="hidden min-h-screen md:flex"><aside className="sticky top-0 flex h-screen w-[292px] shrink-0 flex-col overflow-hidden bg-[hsl(var(--navy))] p-4 text-white shadow-2xl"><div className="mb-5 flex items-center gap-3 rounded-3xl bg-white/8 p-4"><img src={npsLogo} className="h-10 w-auto" alt="Imagemakers"/><div><p className="portal-display text-base font-bold">Staff Workspace</p><p className="text-[10px] text-white/50">Class teacher tools</p></div></div><div className="mb-4 flex items-center gap-3 rounded-3xl border border-white/10 bg-white/6 p-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-white to-white/70 text-primary font-black">{initials}</div><div className="min-w-0"><p className="truncate text-sm font-bold">{name}</p><p className="text-[10px] text-white/50">{userRole||"Teacher"}</p></div></div><nav className="min-h-0 flex-1 overflow-y-auto pr-1 scrollbar-thin"><Nav/></nav><button onClick={logout} className="mt-3 flex items-center gap-3 rounded-2xl bg-white/8 px-4 py-3 text-sm font-bold text-white/70 hover:bg-white/12 hover:text-white"><LogOut className="h-4 w-4"/>Sign out</button></aside><main className="min-w-0 flex-1 overflow-y-auto"><div className="mx-auto w-full max-w-[1500px] p-6 lg:p-9">{children}</div></main></div><div className="px-3 pb-6 md:hidden">{children}</div></div>;
 };
