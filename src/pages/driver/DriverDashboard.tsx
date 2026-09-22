@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PortalIllustration } from "@/components/PortalIllustration";
 import { MapPin, Play, Square, ShieldCheck, Navigation, Wifi, BusFront } from "lucide-react";
 
 const DriverDashboard = () => {
@@ -59,7 +58,7 @@ const DriverDashboard = () => {
           <h1 className="portal-display mt-2 text-4xl font-extrabold tracking-tight md:text-6xl">Drive safe.<br/><span className="text-gradient">Stay connected.</span></h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">Start a school route only when you are authorised. Your device location is shared with the school and only parents linked to pupils on this route.</p>
         </div>
-        <div className="portal-hero-art"><PortalIllustration kind="bus" size="lg" className="h-full w-full" /></div>
+        <div className="portal-hero-art"><div className="portal-css-art portal-css-art-bus" aria-hidden="true"><span/><i/><b/></div></div>
       </section>
 
       <div className="grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
