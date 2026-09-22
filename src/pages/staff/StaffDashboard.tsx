@@ -1,3 +1,4 @@
+import { PortalHeroArt } from "@/components/PortalHeroArt";
 import { useState, useEffect } from "react";
 import { StaffLayout } from "@/components/layout/StaffLayout";
 import { StatCard } from "@/components/ui/stat-card";
@@ -152,15 +153,21 @@ const StaffDashboard = () => {
   return (
     <StaffLayout title="Dashboard">
       <div className="dashboard-surface dashboard-staff space-y-6">
-        {/* Welcome Header */}
+        <section className="portal-hero">
+          <PortalHeroArt variant="learning" />
+          <div className="portal-hero-copy">
+            <p className="text-xs font-bold uppercase tracking-[.22em] text-primary">Teacher workspace</p>
+            <h2 className="portal-display mt-2 text-3xl font-bold tracking-tight md:text-4xl">Good day, {userName.split(" ")[0]}.</h2>
+            <p className="mt-2 text-sm text-muted-foreground"><span className="font-semibold text-foreground">{currentDate}</span> · {upcomingClasses.length} classes scheduled from live timetable data.</p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link to="/staff/attendance" className="rounded-full bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">Take attendance</Link>
+              <Link to="/staff/cbt" className="rounded-full border border-border bg-card/80 px-4 py-2 text-xs font-bold">Open CBT studio</Link>
+            </div>
+          </div>
+        </section>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-              Good Morning, {userName.split(" ")[0]} 👋
-            </h2>
-            <p className="text-muted-foreground mt-1">
-              <span className="font-medium text-foreground">{currentDate}</span> • You have {upcomingClasses.length} classes today
-            </p>
+            <p className="text-sm text-muted-foreground">Daily operations</p>
           </div>
           <div className="flex gap-3">
             <Link to="/staff/gradebook">
