@@ -1,34 +1,54 @@
-import { useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import StudentDashboard from "./student/StudentDashboard";
 
 /**
  * Entry point for scanned ID-card QR codes (`/s/:token`).
- * A scan always opens the verified public profile, regardless of whether the
- * browser already has an admin, staff, parent, or pupil session.
- * The `/p/:token` route remains available as a direct public-profile alias.
+ * A scan opens the student dashboard in token-backed preview mode.
+ * The token is passed to the dashboard so the scanned student's name and data load.
  */
 const StudentPortalEntry = () => {
   const { token } = useParams();
-  const { user, isLoading } = useAuth();
+
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
-    if (token) sessionStorage.setItem("scanned_student_token", token);
+    if (!token) return;
+
+    let cancelled = false;
+    const authenticate = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        if (!cancelled) setStatus("ready");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("qr-student-login", {
+        body: { token },
+      });
+      if (error || !data?.token_hash) {
+        if (!cancelled) setStatus("error");
+        return;
+      }
+
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        token_hash: data.token_hash,
+        type: "magiclink",
+      });
+      if (!cancelled) setStatus(verifyError ? "error" : "ready");
+    };
+
+    authenticate();
+    return () => { cancelled = true; };
   }, [token]);
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-7 w-7 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (user) return <Navigate to="/student" replace />;
-
   if (!token) return <Navigate to="/login" replace />;
+  if (status === "loading") {
+    return <div className="flex min-h-screen items-center justify-center bg-background"><Loader2 className="h-7 w-7 animate-spin text-primary" /></div>;
+  }
+  if (status === "error") return <Navigate to="/login" replace />;
 
   return <StudentDashboard scannedToken={token} />;
 };
