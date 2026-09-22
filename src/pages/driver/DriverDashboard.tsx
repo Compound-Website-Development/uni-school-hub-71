@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PortalIconArt } from "@/components/PortalIconArt";
+import { PortalIllustration } from "@/components/PortalIllustration";
 import { MapPin, Play, Square, ShieldCheck, Navigation, Wifi, BusFront } from "lucide-react";
 
 const DriverDashboard = () => {
@@ -59,14 +59,14 @@ const DriverDashboard = () => {
           <h1 className="portal-display mt-2 text-4xl font-extrabold tracking-tight md:text-6xl">Drive safe.<br/><span className="text-gradient">Stay connected.</span></h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">Start a school route only when you are authorised. Your device location is shared with the school and only parents linked to pupils on this route.</p>
         </div>
-        <div className="portal-hero-art"><PortalIconArt kind="bus" className="h-full w-full"/></div>
+        <div className="portal-hero-art"><PortalIllustration kind="bus" size="lg" className="h-full w-full" /></div>
       </section>
 
       <div className="grid gap-5 lg:grid-cols-[1.2fr_.8fr]">
         <section className="portal-feature-card p-6 md:p-8">
           <div className="flex items-start justify-between gap-4">
             <div><p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-primary">Route control</p><h2 className="portal-display mt-1 text-2xl font-extrabold">Today's trip</h2></div>
-            <div className={trip?"grid h-14 w-14 place-items-center rounded-2xl bg-success/10":"grid h-14 w-14 place-items-center rounded-2xl bg-primary/10"}><PortalIconArt kind="bus" className="h-12 w-12"/></div>
+            <div className={trip?"grid h-14 w-14 place-items-center rounded-2xl bg-success/10":"grid h-14 w-14 place-items-center rounded-2xl bg-primary/10"}><PortalIllustration kind="bus" size="lg" className="h-12 w-12" /></div>
           </div>
           <div className="mt-6 space-y-4">
             <select value={routeId} onChange={e=>setRouteId(e.target.value)} disabled={!!trip} className="h-14 w-full rounded-2xl border border-border/70 bg-background px-4 text-sm font-semibold outline-none focus:ring-2 focus:ring-primary/30">
