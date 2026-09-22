@@ -1,3 +1,4 @@
+import { PortalHeroArt } from "@/components/PortalHeroArt";
 import { useState, useEffect } from "react";
 import { ParentLayout } from "@/components/layout/ParentLayout";
 import SchoolInfoPanel from "@/components/SchoolInfoPanel";
@@ -132,11 +133,15 @@ const ParentDashboard = () => {
   return (
     <ParentLayout title="Dashboard">
       <div className="dashboard-surface dashboard-parent space-y-6 animate-fade-in">
-        {/* Welcome */}
-        <div className="premium-card p-5">
-          <h1 className="text-xl font-bold text-foreground">Parent dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">Your linked children&apos;s live school records</p>
-        </div>
+        <section className="portal-hero">
+          <PortalHeroArt variant="family" />
+          <div className="portal-hero-copy">
+            <p className="text-xs font-bold uppercase tracking-[.22em] text-primary">Family portal</p>
+            <h1 className="portal-display mt-2 text-3xl font-bold tracking-tight md:text-4xl">Everything about your children, in one place.</h1>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Results, attendance, fees, announcements, assignments and authorised school-bus tracking stay connected to the same student record.</p>
+            <Link to="/parent/transport" className="mt-5 inline-flex rounded-full border border-border bg-card/80 px-4 py-2 text-xs font-bold">School bus tracking</Link>
+          </div>
+        </section>
 
         {isPreview && (
           <div className="border-l-2 border-accent px-3 py-2 text-xs text-muted-foreground">
