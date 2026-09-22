@@ -15,7 +15,7 @@ export const StudentTools = ({ studentId }: { studentId?: string | null }) => {
 
   useEffect(() => {
     if (!studentId) return;
-    supabase.from("student_feature_settings").select("ai_tutor_enabled,calculator_enabled").eq("student_id", studentId).maybeSingle()
+    (supabase as any).from("student_feature_settings").select("ai_tutor_enabled,calculator_enabled").eq("student_id", studentId).maybeSingle()
       .then(({ data }) => { if (data) { setAiEnabled(data.ai_tutor_enabled); setCalculatorEnabled(data.calculator_enabled); } });
   }, [studentId]);
 
