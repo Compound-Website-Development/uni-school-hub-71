@@ -1823,3 +1823,49 @@ The system is considered ready for the next stage when:
 - security findings have been re-audited before production.
 
 END OF HANDOFF
+
+
+======================================================================
+POST-AUDIT RECONCILIATION — 24 SEPTEMBER 2026
+======================================================================
+
+This section records the verified post-audit state after reconciling the latest school WhatsApp material, historical project context, GitHub and live Supabase.
+
+Verified live counts:
+- students: 219
+- classes: 13
+- teachers: 17 school-supplied active staff records remain after removing one confirmed sample/test teacher row
+- subjects: 21
+- terms: 3
+- parent_student_links: 0
+- grades: 0
+- attendance: 0
+- exams: 0
+- exam_questions: 0
+- exam_submissions: 0
+- assignments: 0
+- invoices: 0
+- invoice_lines: 0
+- receipts: 0
+- fee_items: 0
+- class_subjects: 0
+- schedules: 0
+- school_events: 0
+- policy_documents: 0
+- staff_attendance: 0
+
+Historical reconciliation decisions:
+- The latest 13-arm pupil structure remains authoritative.
+- No old class arm was reintroduced.
+- The 17 teacher records explicitly supplied in the 10 August school list were reconciled against live records.
+- Two live teacher fields were corrected to match the latest supplied source where the source and live record differed.
+- One extra live teacher row was confirmed as sample/test data with no class, subject, assignment, grade or attendance dependency and was removed. No school-supplied teacher was removed.
+- Current class-teacher assignments are not fully complete: four current arms have no class_teacher_id. The school did not supply enough arm-specific assignments in the source material to safely fill those gaps.
+- No parent links, grades, attendance, exams, assignments, finance transactions, schedules or events were fabricated.
+- Temporary PENDING-2026-### pupil IDs remain placeholders and are not official admission numbers.
+- The exact official school registration number is still not present in the available source evidence. The school only confirmed that a registration number exists.
+- The live term dates remain provisional because the historical source contains a resumption-date discrepancy; do not silently treat the live dates as school-confirmed until the official calendar is supplied.
+- School approval information already documented in project history is LASG Approval No. SLR/14097. This is distinct from the school's registration number.
+
+Privacy:
+- Do not add pupil names, guardian details, pupil photos or other sensitive school records to public documentation.
