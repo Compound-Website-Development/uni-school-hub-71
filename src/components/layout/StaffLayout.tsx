@@ -14,7 +14,7 @@ interface StaffLayoutProps { children: ReactNode; title?: string; showSearch?: b
 
 const items = [
  {icon:LayoutDashboard,label:"Dashboard",href:"/staff"},
- {icon:UsersRound,label:"Community Wall",href:"/staff/wall"},
+ {icon:MessagesSquare,label:"Community Wall",href:"/staff/wall"},
  {icon:UsersRound,label:"Students",href:"/staff/students"},
  {icon:BookOpen,label:"Classes",href:"/staff/classes"},
  {icon:CalendarCheck,label:"Attendance",href:"/staff/attendance"},
@@ -47,13 +47,13 @@ export const StaffLayout=({children,title}:StaffLayoutProps)=>{
    <MobileHeader title={title||"Staff Portal"} onMenuClick={()=>setOpen(true)}/>
    <Sheet open={open} onOpenChange={setOpen}><SheetContent side="left" className="portal-sidebar w-[88%] max-w-sm border-0 p-0"><SheetHeader className="portal-logo-card border-b p-5 text-left"><div className="flex items-center gap-3"><img src={npsLogo} className="h-9 w-auto" alt="Imagemakers"/><SheetTitle className="text-foreground">Staff Workspace</SheetTitle></div></SheetHeader><nav className="h-[calc(100%-7rem)] overflow-y-auto p-4"><Nav close={()=>setOpen(false)}/></nav><button onClick={logout} className="sidebar-muted mx-4 flex w-[calc(100%-2rem)] items-center gap-3 border-t border-border py-4 text-sm font-semibold"><LogOut className="h-4 w-4"/>Sign out</button></SheetContent></Sheet>
    <div className="hidden min-h-screen md:flex">
-     <aside className="portal-sidebar sticky top-0 flex h-screen w-[270px] shrink-0 flex-col overflow-hidden p-4">
+     <aside className="portal-sidebar staff-school-sidebar sticky top-0 flex h-screen w-[270px] shrink-0 flex-col overflow-hidden p-4">
        <div className="portal-logo-card mb-5 flex items-center gap-3 rounded-3xl p-4"><img src={npsLogo} className="h-10 w-auto" alt="Imagemakers"/><div><p className="portal-display text-base font-bold">Staff Workspace</p><p className="sidebar-muted text-[10px]">Class teacher tools</p></div></div>
        <div className="mb-4 flex items-center gap-3 rounded-3xl border border-[#e3ddd2] bg-white p-3"><div className="portal-avatar grid h-11 w-11 place-items-center rounded-2xl font-black">{initials}</div><div className="min-w-0"><p className="truncate text-sm font-bold">{name}</p><p className="sidebar-muted text-[10px]">{userRole||"Teacher"}</p></div></div>
        <nav className="min-h-0 flex-1 overflow-y-auto pr-1 scrollbar-thin"><Nav/></nav>
        <button onClick={logout} className="sidebar-muted mt-3 flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold hover:bg-[#efede7] hover:text-foreground"><LogOut className="h-4 w-4"/>Sign out</button>
      </aside>
-     <main className="min-w-0 flex-1 overflow-y-auto"><div className="portal-page-content mx-auto w-full max-w-[1500px] p-4 md:p-6 lg:p-9">{children}</div></main>
+     <main className="min-w-0 flex-1 overflow-y-auto"><div className="portal-page-content staff-workspace-content mx-auto w-full max-w-[1500px] p-4 md:p-6 lg:p-9">{children}</div></main>
    </div>
    <div className="portal-page-content px-3 pb-6 md:hidden">{children}</div>
  </div>;
