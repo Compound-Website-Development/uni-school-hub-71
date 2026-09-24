@@ -6,7 +6,7 @@ import { MobileHeader } from "./MobileHeader";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LogOut, ChevronRight, LayoutDashboard, UsersRound, ClipboardList, BookOpen, CalendarCheck, Table2, MonitorPlay, NotebookPen, FileBarChart2, GraduationCap, UserPlus, Mail, MessagesSquare, CalendarClock, UserCircle } from "lucide-react";
+import { LogOut, ChevronRight, LayoutDashboard, UsersRound, ClipboardList, BookOpen, CalendarCheck, Table2, MonitorPlay, NotebookPen, FileBarChart2, GraduationCap, UserPlus, Mail, MessagesSquare, MessageCircle, CalendarClock, UserCircle } from "lucide-react";
 import npsLogo from "@/assets/logo";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,7 @@ interface StaffLayoutProps { children: ReactNode; title?: string; showSearch?: b
 
 const items = [
  {icon:LayoutDashboard,label:"Dashboard",href:"/staff"},
- {icon:MessagesSquare,label:"Community Wall",href:"/staff/wall"},
+ {icon:MessageCircle,label:"Community Wall",href:"/staff/wall"},
  {icon:UsersRound,label:"Students",href:"/staff/students"},
  {icon:BookOpen,label:"Classes",href:"/staff/classes"},
  {icon:CalendarCheck,label:"Attendance",href:"/staff/attendance"},
