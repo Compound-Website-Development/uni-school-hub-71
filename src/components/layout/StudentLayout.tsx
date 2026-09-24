@@ -94,34 +94,6 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
 
   return (
     <div className="student-portal-shell min-h-screen bg-background portal-page-bg">
-      <header className="student-topnav sticky top-0 z-40 border-b border-[#e5e5df] bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto flex min-h-[70px] max-w-[1500px] items-center gap-2 px-3 md:px-6 lg:px-9">
-          {back ? (
-            <Link to={back} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#d7e9f4] bg-white text-[#1685c4]"><ArrowLeft className="h-5 w-5"/></Link>
-          ) : (
-            <button onClick={() => setDrawerOpen(true)} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#d7e9f4] bg-white text-[#1685c4] hover:bg-[#e9f5ff]" aria-label="Open student navigation"><Menu className="h-5 w-5"/></button>
-          )}
-          <Link to="/student" className="flex min-w-0 shrink-0 items-center gap-2.5">
-            <img src={npsLogo} className="h-9 w-auto" alt="Imagemakers"/>
-            <div className="hidden sm:block">
-              <p className="portal-display text-sm font-extrabold text-[#16384b]">Student Space</p>
-              <p className="text-[9px] font-semibold uppercase tracking-[.12em] text-[#78909d]">Learn · Grow · Achieve</p>
-            </div>
-          </Link>
-          <div className="hidden"> flex shrink-0 items-center gap-1.5">
-            <ThemeToggle/>
-            <Link to="/student/announcements" className="relative grid h-10 w-10 place-items-center rounded-xl border border-[#d7e9f4] bg-white text-[#1685c4]" aria-label="Announcements">
-              <Bell className="h-5 w-5"/>
-            </Link>
-            <div className="hidden h-10 items-center gap-2 rounded-xl border border-[#d7e9f4] bg-white px-2.5 sm:flex">
-              <span className="grid h-7 w-7 place-items-center rounded-lg bg-[#e9f5ff] text-xs font-extrabold text-[#1685c4]">{initials}</span>
-              <span className="max-w-[120px] truncate text-xs font-bold text-[#27495b]">{studentName}</span>
-            </div>
-          </div>
-        </div>
-        </div>
-      </header>
-
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
         <SheetContent side="left" className="student-mobile-drawer w-[90%] max-w-sm border-0 bg-white p-4 shadow-2xl">
           <SheetHeader className="border-b border-[#dcecf5] pb-4 text-left">
@@ -135,10 +107,10 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
         </SheetContent>
       </Sheet>
 
-      <main className="student-page-content mx-auto w-full max-w-[1500px] px-3 pb-24 pt-4 md:px-6 md:pb-12 md:pt-7 lg:px-9">
+      <main className="student-page-content mx-auto w-full max-w-[1500px] px-3 pb-28 pt-4 md:px-6 md:pb-12 md:pt-7 lg:px-9">
         {children}
       </main>
-      {!publicView && studentData?.id && <StudentTools studentId={studentData.id}/>}
+      {!publicView && <StudentTools studentId={studentData?.id}/>}
       {!publicView && <BottomNavigation /> }
     </div>
   );
