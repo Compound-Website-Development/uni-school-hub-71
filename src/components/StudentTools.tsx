@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Calculator, X, Delete, Divide, Equal, Plus, Minus, RotateCcw } from "lucide-react";
+import { Calculator, X, Delete, Equal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AIChatWidget } from "@/components/AIChatWidget";
 import { supabase } from "@/integrations/supabase/client";
