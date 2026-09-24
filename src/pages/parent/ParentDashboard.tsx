@@ -1,4 +1,5 @@
 import { PortalHeroArt } from "@/components/PortalHeroArt";
+import { PortalIllustration } from "@/components/PortalIllustration";
 import { useState, useEffect } from "react";
 import { ParentLayout } from "@/components/layout/ParentLayout";
 import SchoolInfoPanel from "@/components/SchoolInfoPanel";
