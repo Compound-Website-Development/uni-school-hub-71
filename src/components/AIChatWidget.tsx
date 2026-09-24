@@ -37,6 +37,12 @@ export const AIChatWidget = () => {
     return () => window.removeEventListener("imagemakers-open-ai", openTutor);
   }, []);
 
+  useEffect(() => {
+    const openTutor = () => setOpen(true);
+    window.addEventListener("imagemakers-open-ai", openTutor);
+    return () => window.removeEventListener("imagemakers-open-ai", openTutor);
+  }, []);
+
   const send = async () => {
     const text = input.trim();
     if (!text || isLoading) return;
