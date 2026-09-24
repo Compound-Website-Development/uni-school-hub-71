@@ -81,7 +81,7 @@ const StaffDashboard=()=>{
 
    <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
     <StatCard icon="group" label="Active Students" value={String(stats?.totalStudents||0)} variant="primary"/>
-    <StatCard icon="book" label="Classes" value={String(stats?.totalClasses||0)} variant="success"/>
+    <StatCard icon="book" label="Classes" value={String(stats?.totalClasses||0)} variant="primary"/>
     <StatCard icon="assignment" label="Draft Grades" value={String(stats?.pendingGrades||0)} variant="warning"/>
     <StatCard icon="person_add" label="Pending Applications" value={String(stats?.newApplications||0)} variant="destructive"/>
    </section>
