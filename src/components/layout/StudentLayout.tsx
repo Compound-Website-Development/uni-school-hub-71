@@ -79,7 +79,7 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
               const active = isActive(item.href);
               return (
                 <Link key={item.href} to={item.href} onClick={() => setDrawerOpen(false)}
-                  className={cn("flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors", active ? "bg-[#edf4ee] text-[#3f6d4f]" : "text-foreground hover:bg-muted")}>
+                  className={cn("flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors", active ? "bg-[#e9f5ff] text-[#1685c4]" : "text-foreground hover:bg-muted")}>
                   <Icon className="h-[17px] w-[17px] shrink-0" strokeWidth={1.8}/>
                   <span className="flex-1">{item.label}</span>
                   {active && <ChevronRight className="h-4 w-4 opacity-60" />}
@@ -94,53 +94,44 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
 
   return (
     <div className="student-portal-shell min-h-screen bg-background portal-page-bg">
-      <header className="student-topnav sticky top-0 z-40 border-b border-[#e5e5df] bg-[#fbfaf6]/95 backdrop-blur-xl">
+      <header className="student-topnav sticky top-0 z-40 border-b border-[#e5e5df] bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex min-h-[70px] max-w-[1500px] items-center gap-2 px-3 md:px-6 lg:px-9">
           {back ? (
-            <Link to={back} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#dfe5df] bg-white text-[#3f6d4f]"><ArrowLeft className="h-5 w-5"/></Link>
+            <Link to={back} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#d7e9f4] bg-white text-[#1685c4]"><ArrowLeft className="h-5 w-5"/></Link>
           ) : (
-            <button onClick={() => setDrawerOpen(true)} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#dfe5df] bg-white text-[#3f6d4f] hover:bg-[#edf4ee]" aria-label="Open student navigation"><Menu className="h-5 w-5"/></button>
+            <button onClick={() => setDrawerOpen(true)} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#d7e9f4] bg-white text-[#1685c4] hover:bg-[#e9f5ff]" aria-label="Open student navigation"><Menu className="h-5 w-5"/></button>
           )}
           <Link to="/student" className="flex min-w-0 shrink-0 items-center gap-2.5">
             <img src={npsLogo} className="h-9 w-auto" alt="Imagemakers"/>
             <div className="hidden sm:block">
-              <p className="portal-display text-sm font-extrabold text-[#29352d]">Student Space</p>
-              <p className="text-[9px] font-semibold uppercase tracking-[.12em] text-[#7b837d]">Learn · Grow · Achieve</p>
+              <p className="portal-display text-sm font-extrabold text-[#16384b]">Student Space</p>
+              <p className="text-[9px] font-semibold uppercase tracking-[.12em] text-[#78909d]">Learn · Grow · Achieve</p>
             </div>
           </Link>
-          <div className="ml-3 hidden min-w-0 flex-1 items-center gap-1 lg:flex">
-            {quickItems.map(({icon:Icon,...item}) => <Link key={item.href} to={item.href} className={cn("flex items-center gap-1.5 rounded-full px-3 py-2 text-[11px] font-bold transition-colors",isActive(item.href)?"bg-[#3f6d4f] text-white":"text-[#5f6962] hover:bg-white hover:text-[#29352d]")}><Icon className="h-3.5 w-3.5" strokeWidth={1.8}/>{item.label}</Link>)}
-            <button onClick={()=>setDrawerOpen(true)} className="ml-1 flex items-center gap-1.5 rounded-full border border-[#dfe5df] bg-white px-3 py-2 text-[11px] font-bold text-[#5f6962] hover:bg-[#edf4ee]"><PanelTopOpen className="h-3.5 w-3.5"/>All modules</button>
-          </div>
-          <div className="ml-auto flex shrink-0 items-center gap-1.5">
+          <div className="hidden"> flex shrink-0 items-center gap-1.5">
             <ThemeToggle/>
-            <Link to="/student/announcements" className="relative grid h-10 w-10 place-items-center rounded-xl border border-[#dfe5df] bg-white text-[#3f6d4f]" aria-label="Announcements">
+            <Link to="/student/announcements" className="relative grid h-10 w-10 place-items-center rounded-xl border border-[#d7e9f4] bg-white text-[#1685c4]" aria-label="Announcements">
               <Bell className="h-5 w-5"/>
             </Link>
-            <div className="hidden h-10 items-center gap-2 rounded-xl border border-[#dfe5df] bg-white px-2.5 sm:flex">
-              <span className="grid h-7 w-7 place-items-center rounded-lg bg-[#edf4ee] text-xs font-extrabold text-[#3f6d4f]">{initials}</span>
-              <span className="max-w-[120px] truncate text-xs font-bold text-[#344139]">{studentName}</span>
+            <div className="hidden h-10 items-center gap-2 rounded-xl border border-[#d7e9f4] bg-white px-2.5 sm:flex">
+              <span className="grid h-7 w-7 place-items-center rounded-lg bg-[#e9f5ff] text-xs font-extrabold text-[#1685c4]">{initials}</span>
+              <span className="max-w-[120px] truncate text-xs font-bold text-[#27495b]">{studentName}</span>
             </div>
           </div>
         </div>
-        <div className="border-t border-[#e7e8e2] lg:hidden">
-          <div className="mx-auto flex max-w-[1500px] items-center gap-1.5 overflow-x-auto px-3 py-2">
-            {quickItems.map(({icon:Icon,...item}) => <Link key={item.href} to={item.href} className={cn("flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[11px] font-bold",isActive(item.href)?"bg-[#3f6d4f] text-white":"bg-white text-[#5f6962] border border-[#e1e4df]")}><Icon className="h-3.5 w-3.5"/>{item.label}</Link>)}
-            <button onClick={()=>setDrawerOpen(true)} className="flex shrink-0 items-center gap-1.5 rounded-full border border-[#dfe5df] bg-[#f0f3ef] px-3 py-2 text-[11px] font-bold text-[#3f6d4f]"><Menu className="h-3.5 w-3.5"/>More</button>
-          </div>
         </div>
       </header>
 
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent side="left" className="student-mobile-drawer w-[90%] max-w-sm border-0 bg-[#fbfaf6] p-4 shadow-2xl">
-          <SheetHeader className="border-b border-[#e2e4de] pb-4 text-left">
+        <SheetContent side="left" className="student-mobile-drawer w-[90%] max-w-sm border-0 bg-white p-4 shadow-2xl">
+          <SheetHeader className="border-b border-[#dcecf5] pb-4 text-left">
             <div className="flex items-center gap-3">
               <img src={npsLogo} className="h-9 w-auto" alt="Imagemakers"/>
-              <div><SheetTitle className="text-[#29352d]">Student Space</SheetTitle><p className="text-xs text-[#7b837d]">{studentName}</p></div>
+              <div><SheetTitle className="text-[#16384b]">Student Space</SheetTitle><p className="text-xs text-[#78909d]">{studentName}</p></div>
             </div>
           </SheetHeader>
           <nav className="h-[calc(100%-8rem)] overflow-y-auto py-4"><DrawerNav/></nav>
-          <button onClick={logout} className="flex w-full items-center gap-3 border-t border-[#e2e4de] py-4 text-sm font-bold text-[#657169]"><LogOut className="h-4 w-4"/>Sign out</button>
+          <button onClick={logout} className="flex w-full items-center gap-3 border-t border-[#dcecf5] py-4 text-sm font-bold text-[#657169]"><LogOut className="h-4 w-4"/>Sign out</button>
         </SheetContent>
       </Sheet>
 
