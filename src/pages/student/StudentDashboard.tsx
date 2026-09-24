@@ -7,7 +7,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import heroImage from "@/assets/student-home-hero.jpg";
 
 interface Grade {
   id: string;
@@ -164,10 +163,17 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
               </div>
               <p className="mt-7 text-xs font-semibold text-[#7a847d]">{[className, studentData?.student_id || scannedProfile?.admission_no].filter(Boolean).join(" · ") || "Pupil record"}</p>
             </div>
-            <div className="relative min-h-[220px] overflow-hidden md:min-h-0">
-              <img src={heroImage} alt="School learning scene" className="absolute inset-0 h-full w-full object-cover"/>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#f7fcff] via-[#f7fcff]/20 to-transparent md:from-[#f7fcff] md:via-transparent"/>
-              <div className="absolute right-5 top-5 rounded-2xl bg-white/85 p-2 shadow-lg backdrop-blur-sm"><span className="study-art study-art-learning" aria-hidden="true"><span className="study-art-sun"/><span className="study-art-paper"/><span className="study-art-dot"/></span></div>
+            <div className="student-hero-visual relative min-h-[220px] overflow-hidden md:min-h-0">
+              <div className="student-hero-orbit" aria-hidden="true"/>
+              <div className="absolute left-[18%] top-[18%] h-20 w-20 rounded-[26px] border border-white/80 bg-white/55 shadow-xl backdrop-blur-xl rotate-[-8deg]"/>
+              <div className="absolute right-[18%] bottom-[18%] h-24 w-24 rounded-full border border-white/80 bg-white/50 shadow-xl backdrop-blur-xl"/>
+              <div className="absolute inset-x-[20%] top-[27%] grid place-items-center rounded-[34px] border border-white/80 bg-white/60 p-7 shadow-[0_30px_70px_-35px_rgba(22,125,183,.55)] backdrop-blur-2xl">
+                <div className="relative grid h-28 w-28 place-items-center rounded-[32px] bg-gradient-to-br from-[#fff] via-[#dff4fd] to-[#9bdcf5] shadow-inner">
+                  <div className="absolute h-14 w-14 rounded-full border-[5px] border-[#2f9bd1]/35"/>
+                  <div className="h-7 w-7 rounded-full bg-[#2f9bd1] shadow-[0_0_0_10px_rgba(47,155,209,.12)]"/>
+                </div>
+              </div>
+              <div className="absolute bottom-7 left-7 rounded-2xl border border-white/80 bg-white/70 px-3 py-2 text-[10px] font-black uppercase tracking-[.16em] text-[#167db7] shadow-lg backdrop-blur-xl">Learn · explore · grow</div>
             </div>
           </div>
         </section>
@@ -242,12 +248,12 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
             )}
           </div>
 
-          <div className="rounded-[26px] bg-[#2f8fca] p-5 text-white shadow-[0_22px_55px_-35px_rgba(79,128,99,.7)]">
+          <div className="rounded-[26px] bg-gradient-to-br from-[#2f9bd1] via-[#218cc3] to-[#176c9c] p-5 text-white shadow-[0_22px_55px_-35px_rgba(22,125,183,.55)]">
             <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-white/65">Your record</p>
             <h2 className="portal-display mt-1 text-2xl font-extrabold">Keep your routine steady.</h2>
             <p className="mt-2 text-sm leading-5 text-white/75">{statusCopy}</p>
             <div className="mt-5 flex flex-wrap gap-2">
-              <Link to="/student/attendance" className="rounded-full bg-white px-3.5 py-2 text-[11px] font-extrabold text-[#416b52]">Attendance</Link>
+              <Link to="/student/attendance" className="rounded-full bg-white px-3.5 py-2 text-[11px] font-extrabold text-[#167db7]">Attendance</Link>
               <Link to="/student/fees" className="rounded-full bg-white/15 px-3.5 py-2 text-[11px] font-extrabold text-white">Fee record</Link>
             </div>
           </div>
