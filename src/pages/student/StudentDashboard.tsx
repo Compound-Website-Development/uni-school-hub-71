@@ -141,139 +141,160 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
       <main className="student-home space-y-5 md:space-y-7">
         {isShadowIdentity && (
           <div className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900">
-            <BellRing className="h-4 w-4" /> Admin preview identity — this is a pupil record preview.
-          </div>
-        )}
-        {failed && (
-          <div className="flex items-center gap-3 rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-            <p className="flex-1">Your latest school data could not be refreshed.</p>
-            <Button variant="ghost" size="sm" onClick={() => setReloadKey(v => v + 1)}><RefreshCw className="mr-1.5 h-4 w-4"/>Retry</Button>
+            <BellRing className="h-4 w-4" />
+            Admin preview identity — this is a pupil record preview.
           </div>
         )}
 
-        <section className="relative overflow-hidden rounded-[30px] border border-[#d7e9f4] bg-[#f7fcff] shadow-[0_25px_70px_-45px_rgba(48,73,58,.5)]">
-          <div className="grid min-h-[360px] md:min-h-[430px] md:grid-cols-[1.05fr_.95fr]">
-            <div className="relative z-10 flex flex-col justify-center p-6 md:p-10 lg:p-12">
-              <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-[#2f8fca]">Your Imagemakers day</p>
-              <h1 className="portal-display mt-3 max-w-xl text-5xl font-extrabold leading-[.95] tracking-[-.055em] text-[#17394c] md:text-7xl">Hello, {firstName}.</h1>
-              <p className="mt-4 max-w-lg text-sm leading-6 text-[#5b7481] md:text-base">{todayLabel}. Here is what matters today — classes, schoolwork, results and the next thing you need to do.</p>
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Link to="/student/schedule" className="rounded-full bg-[#2f8fca] px-4 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-[#2f8fca]/15">View today</Link>
-                <Link to="/student/homework" className="rounded-full border border-[#d7e9f4] bg-white px-4 py-2.5 text-xs font-extrabold text-[#365f74]">Homework</Link>
-              </div>
-              <p className="mt-7 text-xs font-semibold text-[#7a847d]">{[className, studentData?.student_id || scannedProfile?.admission_no].filter(Boolean).join(" · ") || "Pupil record"}</p>
+        {failed && (
+          <div className="flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <p className="flex-1">Your latest school data could not be refreshed.</p>
+            <Button variant="ghost" size="sm" onClick={() => setReloadKey((v) => v + 1)}>
+              <RefreshCw className="mr-1.5 h-4 w-4" /> Retry
+            </Button>
+          </div>
+        )}
+
+        <section className="student-home-hero">
+          <div className="student-home-hero-copy">
+            <p className="student-kicker">Imagemakers Nursery &amp; Primary School · 2026/27</p>
+            <h1 className="student-home-title">Hello, <span>{firstName}</span>.</h1>
+            <p className="student-home-lede">
+              {todayLabel}. Your school day, work and progress in one calm place.
+            </p>
+            <div className="student-home-actions">
+              <Link to="/student/schedule" className="student-primary-action"><CalendarDays className="h-4 w-4" /> View today</Link>
+              <Link to="/student/homework" className="student-secondary-action"><NotebookPen className="h-4 w-4" /> Homework</Link>
             </div>
-            <div className="student-hero-visual relative min-h-[220px] overflow-hidden md:min-h-0">
-              <div className="student-hero-orbit" aria-hidden="true"/>
-              <div className="absolute left-[18%] top-[18%] h-20 w-20 rounded-[26px] border border-white/80 bg-white/55 shadow-xl backdrop-blur-xl rotate-[-8deg]"/>
-              <div className="absolute right-[18%] bottom-[18%] h-24 w-24 rounded-full border border-white/80 bg-white/50 shadow-xl backdrop-blur-xl"/>
-              <div className="absolute inset-x-[20%] top-[27%] grid place-items-center rounded-[34px] border border-white/80 bg-white/60 p-7 shadow-[0_30px_70px_-35px_rgba(22,125,183,.55)] backdrop-blur-2xl">
-                <div className="relative grid h-28 w-28 place-items-center rounded-[32px] bg-gradient-to-br from-[#fff] via-[#dff4fd] to-[#9bdcf5] shadow-inner">
-                  <div className="absolute h-14 w-14 rounded-full border-[5px] border-[#2f9bd1]/35"/>
-                  <div className="h-7 w-7 rounded-full bg-[#2f9bd1] shadow-[0_0_0_10px_rgba(47,155,209,.12)]"/>
-                </div>
-              </div>
-              <div className="absolute bottom-7 left-7 rounded-2xl border border-white/80 bg-white/70 px-3 py-2 text-[10px] font-black uppercase tracking-[.16em] text-[#167db7] shadow-lg backdrop-blur-xl">Learn · explore · grow</div>
+            <div className="student-home-meta">
+              <span>{className || "Class not assigned yet"}</span>
+              <span className="student-meta-dot" />
+              <span>{studentData?.student_id || scannedProfile?.admission_no || "Admission number pending"}</span>
             </div>
+          </div>
+
+          <div className="student-home-visual" aria-hidden="true">
+            <div className="student-orbit-ring" />
+            <div className="student-art-spark one" />
+            <div className="student-art-spark two" />
+            <div className="student-art-spark three" />
+            <div className="student-study-stack">
+              <span className="student-study-sheet" />
+              <span className="student-study-book" />
+              <span className="student-study-pencil" />
+            </div>
+            <div className="student-visual-label">Learn · explore · grow</div>
           </div>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-[1.35fr_.65fr]">
-          <div className="portal-surface rounded-[26px] p-5 md:p-6">
-            <div className="flex items-center justify-between gap-4">
-              <div><p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#2f8fca]">Next up</p><h2 className="portal-display mt-1 text-2xl font-extrabold text-[#17394c] md:text-3xl">Today&apos;s class</h2></div>
-              <span className="study-art study-art-schedule" aria-hidden="true"><span className="study-art-ring"/><span className="study-art-line"/></span>
+        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            { label: "Attendance", value: attendanceRate === null ? "—" : `${attendanceRate}%`, note: attendanceRate === null ? "No attendance yet" : "Current term", tone: "sky" },
+            { label: "Homework", value: String(pendingHomework), note: pendingHomework ? "Open assignment(s)" : "Nothing due", tone: "gold" },
+            { label: "Outstanding", value: balance > 0 ? `₦${balance.toLocaleString("en-NG")}` : "₦0", note: balance > 0 ? "Check fee record" : "No balance recorded", tone: "ink" },
+            { label: "Results", value: String(recentGrades.length), note: recentGrades.length ? "Latest records" : "Nothing published yet", tone: "blue" },
+          ].map((item) => (
+            <div key={item.label} className={cn("student-stat-card", `tone-${item.tone}`)}>
+              <div className="flex items-start justify-between gap-3"><p className="student-kicker !tracking-[.12em]">{item.label}</p><span className="student-stat-dot" /></div>
+              <p className="student-stat-value">{item.value}</p>
+              <p className="student-stat-note">{item.note}</p>
             </div>
-            {loading ? <Skeleton className="mt-5 h-24 rounded-2xl"/> : nextClass ? (
-              <div className="mt-5 rounded-2xl bg-[#eef8fd] p-4 md:p-5">
+          ))}
+        </section>
+
+        <section className="grid gap-4 lg:grid-cols-[1.25fr_.75fr]">
+          <div className="student-panel student-panel-blue">
+            <div className="flex items-start justify-between gap-4">
+              <div><p className="student-kicker text-[#5ec7ef]">Next up</p><h2 className="student-panel-title text-white">Today&apos;s class</h2></div>
+              <Clock3 className="h-5 w-5 text-white/55" />
+            </div>
+            {loading ? <Skeleton className="mt-6 h-24 rounded-2xl bg-white/10" /> : nextClass ? (
+              <div className="mt-6 rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-xl md:p-5">
                 <div className="flex items-start gap-4">
-                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white text-[#2f8fca] shadow-sm"><Clock3 className="h-5 w-5"/></div>
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white text-[#1688bd]"><BookOpen className="h-5 w-5" /></div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="portal-display text-xl font-extrabold text-[#17394c]">{nextClass.subject_name}</h3>
-                    <p className="mt-1 text-xs text-[#6d776f]">{timeLabel(nextClass.start_time)} – {timeLabel(nextClass.end_time)} · {nextClass.teacher_name}</p>
-                    <p className="mt-1 flex items-center gap-1 text-xs text-[#6d776f]"><MapPin className="h-3.5 w-3.5"/> {nextClass.room || "Classroom"}</p>
+                    <h3 className="text-xl font-extrabold tracking-tight text-white md:text-2xl">{nextClass.subject_name}</h3>
+                    <p className="mt-1 text-xs text-white/70">{timeLabel(nextClass.start_time)} – {timeLabel(nextClass.end_time)} · {nextClass.teacher_name}</p>
+                    <p className="mt-1 flex items-center gap-1 text-xs text-white/60"><MapPin className="h-3.5 w-3.5" /> {nextClass.room || "Classroom"}</p>
                   </div>
-                  <Link to="/student/schedule" className="hidden shrink-0 rounded-full bg-white px-3 py-2 text-[11px] font-extrabold text-[#2f8fca] shadow-sm sm:block">Timetable</Link>
+                  <Link to="/student/schedule" className="hidden rounded-full bg-white/10 px-3 py-2 text-[11px] font-extrabold text-white hover:bg-white/15 sm:block">Timetable</Link>
                 </div>
               </div>
             ) : (
-              <div className="mt-5 rounded-2xl border border-dashed border-[#d7e9f4] p-5"><h3 className="font-bold text-[#365f74]">No lessons scheduled today</h3><p className="mt-1 text-xs leading-5 text-[#718995]">Your timetable will appear here when the school publishes the class schedule.</p></div>
+              <div className="mt-6 rounded-2xl border border-dashed border-white/15 bg-white/5 p-5">
+                <h3 className="font-bold text-white">No lessons scheduled today</h3>
+                <p className="mt-1 text-xs leading-5 text-white/60">Your timetable will appear here when the school publishes the class schedule.</p>
+              </div>
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-1">
-            <div className="portal-surface rounded-[24px] p-4"><p className="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#78909d]">Attendance</p><p className="portal-display mt-1 text-3xl font-extrabold text-[#17394c]">{attendanceRate === null ? "—" : `${attendanceRate}%`}</p><p className="text-[11px] text-[#718995]">{attendanceRate === null ? "Not marked yet" : "This term"}</p></div>
-            <div className="portal-surface rounded-[24px] p-4"><p className="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#78909d]">Homework</p><p className="portal-display mt-1 text-3xl font-extrabold text-[#17394c]">{pendingHomework}</p><p className="text-[11px] text-[#718995]">{pendingHomework ? "Open assignment(s)" : "Nothing due"}</p></div>
+          <div className="student-panel student-panel-soft">
+            <div><p className="student-kicker">Your record</p><h2 className="student-panel-title">Keep your routine steady.</h2><p className="mt-2 text-sm leading-6 text-[#607886]">{statusCopy}</p></div>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <Link to="/student/attendance" className="student-mini-link"><CheckCircle2 className="h-4 w-4" />Attendance</Link>
+              <Link to="/student/fees" className="student-mini-link"><WalletCards className="h-4 w-4" />Fee record</Link>
+            </div>
           </div>
         </section>
 
         <section className="grid gap-4 md:grid-cols-2">
-          <button onClick={() => window.dispatchEvent(new Event("imagemakers-open-ai"))} className="portal-feature-card group p-5 text-left md:p-6">
-            <div className="flex items-start gap-4">
-              <span className="study-art study-art-ai" aria-hidden="true"><span className="study-art-orbit"/><span className="study-art-core"/></span>
-              <div className="min-w-0 flex-1 pt-1">
-                <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#5d79c8]">Study companion</p>
-                <h2 className="portal-display mt-1 text-2xl font-extrabold text-[#2d2936]">Ask the AI Tutor</h2>
-                <p className="mt-2 max-w-md text-sm leading-5 text-muted-foreground">Ask it to explain a lesson, give you a clue or show you a similar example. It should help you learn — not do your work for you.</p>
-                <span className="mt-4 inline-flex rounded-full bg-[#5d79c8] px-3.5 py-2 text-[11px] font-extrabold text-white">Open tutor</span>
-              </div>
+          <button type="button" onClick={() => window.dispatchEvent(new Event("imagemakers-open-ai"))} className="student-tool-card student-tool-ai text-left">
+            <div className="student-tool-art student-tool-art-ai" aria-hidden="true"><span className="student-tool-orb" /><span className="student-tool-star star-a" /><span className="student-tool-star star-b" /></div>
+            <div className="relative z-10">
+              <p className="student-kicker text-[#2b7ea9]">Study companion</p>
+              <h2 className="student-tool-title">Ask the AI Tutor</h2>
+              <p className="mt-2 max-w-md text-sm leading-6 text-[#5f7480]">Get an explanation, a hint or a worked example. For problem-solving, the tutor guides your thinking rather than just handing over an answer.</p>
+              <span className="student-tool-action">Open tutor <ArrowRight className="h-3.5 w-3.5" /></span>
             </div>
           </button>
-          <button onClick={() => window.dispatchEvent(new Event("imagemakers-open-calculator"))} className="portal-feature-card group p-5 text-left md:p-6">
-            <div className="flex items-start gap-4">
-              <span className="study-art study-art-calculator" aria-hidden="true"><span className="study-art-screen"/><span className="study-art-keys"/></span>
-              <div className="min-w-0 flex-1 pt-1">
-                <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#2f86b5]">Study tool</p>
-                <h2 className="portal-display mt-1 text-2xl font-extrabold text-[#2d3436]">Calculator</h2>
-                <p className="mt-2 max-w-md text-sm leading-5 text-muted-foreground">Useful for checking your working during maths practice on an approved school device.</p>
-                <span className="mt-4 inline-flex rounded-full bg-[#2f86b5] px-3.5 py-2 text-[11px] font-extrabold text-white">Open calculator</span>
-              </div>
+
+          <button type="button" onClick={() => window.dispatchEvent(new Event("imagemakers-open-calculator"))} className="student-tool-card student-tool-calc text-left">
+            <div className="student-tool-art student-tool-art-calc" aria-hidden="true"><span className="student-calc-screen" /><span className="student-calc-keys" /></div>
+            <div className="relative z-10">
+              <p className="student-kicker text-[#9d6c20]">Maths helper</p>
+              <h2 className="student-tool-title">Study calculator</h2>
+              <p className="mt-2 max-w-md text-sm leading-6 text-[#5f7480]">Check your working while practising. It opens as an on-page study tool, not a new browser tab.</p>
+              <span className="student-tool-action student-tool-action-gold">Open calculator <ArrowRight className="h-3.5 w-3.5" /></span>
             </div>
           </button>
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-[1.2fr_.8fr]">
-          <div className="portal-surface rounded-[26px] p-5 md:p-6">
-            <div className="flex items-center justify-between"><div><p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#2f8fca]">Academic</p><h2 className="portal-display mt-1 text-2xl font-extrabold text-[#17394c]">Recent results</h2></div><Link to="/student/grades" className="flex items-center gap-1 text-xs font-extrabold text-[#2f8fca]">All results <ArrowRight className="h-3.5 w-3.5"/></Link></div>
-            {recentGrades.length === 0 ? <p className="mt-6 rounded-2xl bg-[#f5faff] p-4 text-sm text-muted-foreground">No results have been published to your record yet.</p> : (
-              <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                {recentGrades.map(grade => (
-                  <Link key={grade.id} to="/student/grades" className="rounded-2xl border border-[#dcecf5] bg-white p-4 transition hover:-translate-y-0.5 hover:shadow-md">
-                    <p className="text-xs font-bold text-muted-foreground">{grade.subjects?.name || "Subject"}</p>
-                    <p className="portal-display mt-2 text-3xl font-extrabold text-[#17394c]">{grade.total_score ?? "—"}</p>
-                    <p className="mt-1 text-[11px] text-muted-foreground">{grade.letter_grade ? `Grade ${grade.letter_grade}` : "Grade pending"} · {dayLabel(grade.created_at)}</p>
-                  </Link>
-                ))}
-              </div>
-            )}
+        <section className="student-panel">
+          <div className="flex items-start justify-between gap-4">
+            <div><p className="student-kicker">Academic</p><h2 className="student-panel-title">Recent results</h2></div>
+            <Link to="/student/grades" className="student-text-link">All results <ArrowRight className="h-3.5 w-3.5" /></Link>
           </div>
-
-          <div className="rounded-[26px] bg-gradient-to-br from-[#2f9bd1] via-[#218cc3] to-[#176c9c] p-5 text-white shadow-[0_22px_55px_-35px_rgba(22,125,183,.55)]">
-            <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-white/65">Your record</p>
-            <h2 className="portal-display mt-1 text-2xl font-extrabold">Keep your routine steady.</h2>
-            <p className="mt-2 text-sm leading-5 text-white/75">{statusCopy}</p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Link to="/student/attendance" className="rounded-full bg-white px-3.5 py-2 text-[11px] font-extrabold text-[#167db7]">Attendance</Link>
-              <Link to="/student/fees" className="rounded-full bg-white/15 px-3.5 py-2 text-[11px] font-extrabold text-white">Fee record</Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="portal-surface rounded-[26px] p-5 md:p-6">
-          <div className="flex items-center justify-between"><div><p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#2f8fca]">School life</p><h2 className="portal-display mt-1 text-2xl font-extrabold text-[#17394c]">What&apos;s coming up</h2></div><CalendarDays className="h-5 w-5 text-[#8a958d]"/></div>
-          {moments.length === 0 ? <p className="mt-5 text-sm text-muted-foreground">No upcoming events or announcements have been published yet.</p> : (
-            <div className="mt-4 grid gap-2 md:grid-cols-3">
-              {moments.map(moment => (
-                <div key={moment.id} className="rounded-2xl bg-[#f5faff] p-4">
-                  <p className="text-[10px] font-extrabold uppercase tracking-[.12em] text-[#78909d]">{moment.kind === "event" ? "Event" : "Announcement"} · {dayLabel(moment.date)}</p>
-                  <p className="mt-2 text-sm font-bold text-[#274e63]">{moment.title}</p>
-                </div>
-              ))}
+          {recentGrades.length === 0 ? (
+            <div className="student-empty-row"><div className="student-empty-mark">01</div><div><p className="font-bold text-[#294b5e]">No results published yet</p><p className="mt-1 text-xs leading-5 text-[#748994]">Your result ledger will appear here when the school enters and publishes marks.</p></div></div>
+          ) : (
+            <div className="mt-5 grid gap-2 md:grid-cols-3">
+              {recentGrades.map((grade,index)=><Link key={grade.id} to="/student/grades" className="student-result-card"><div className="student-result-number">0{index+1}</div><div className="min-w-0"><p className="truncate text-xs font-bold text-[#5d7683]">{grade.subjects?.name || "Subject"}</p><p className="mt-2 text-3xl font-black tracking-tight text-[#17384b]">{grade.total_score ?? "—"}</p><p className="mt-1 text-[11px] text-[#758894]">{grade.letter_grade ? `Grade ${grade.letter_grade}` : "Grade pending"} · {dayLabel(grade.created_at)}</p></div></Link>)}
             </div>
           )}
         </section>
+
+        <section className="grid gap-4 lg:grid-cols-[.9fr_1.1fr]">
+          <div className="student-panel student-panel-soft">
+            <div className="flex items-start justify-between gap-3">
+              <div><p className="student-kicker">School life</p><h2 className="student-panel-title">What&apos;s coming up</h2></div>
+              <Link to="/student/calendar" className="student-icon-link" aria-label="Open school calendar"><CalendarDays className="h-4 w-4" /></Link>
+            </div>
+            {moments.length === 0 ? (
+              <div className="student-empty-row mt-5"><div className="student-empty-mark">02</div><div><p className="font-bold text-[#294b5e]">Nothing published yet</p><p className="mt-1 text-xs leading-5 text-[#748994]">Events and announcements will appear here when the school adds them.</p></div></div>
+            ) : (
+              <div className="mt-5 space-y-2">{moments.map(moment=><div key={`${moment.kind}-${moment.id}`} className="student-moment-row"><span className={cn("student-moment-badge",moment.kind==="event"?"event":"notice")}>{moment.kind==="event"?"Event":"Notice"}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-[#294b5e]">{moment.title}</p><p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[.10em] text-[#7a8e99]">{dayLabel(moment.date)}</p></div></div>)}</div>
+            )}
+          </div>
+
+          <div className="student-panel student-footer-panel">
+            <div className="student-footer-crest"><img src={npsLogo} alt="Imagemakers" className="h-12 w-auto" /></div>
+            <div><p className="student-kicker">A school that keeps records clear</p><h2 className="student-footer-title">Imagemakers Nursery &amp; Primary School</h2><p className="mt-2 max-w-xl text-sm leading-6 text-[#607886]">Imparting Wisdom &amp; Morals · 2026/2027 session</p></div>
+            <div className="student-footer-links"><Link to="/student/announcements">Announcements</Link><Link to="/student/library">Library</Link><Link to="/student/complaints">Support</Link></div>
+          </div>
+        </section>
       </main>
     </StudentLayout>
+  );
   );
 };
 
