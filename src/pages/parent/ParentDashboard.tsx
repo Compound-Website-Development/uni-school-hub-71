@@ -14,7 +14,7 @@ import {
   ClipboardList, Monitor, AlertTriangle
 } from "lucide-react";
 import { format, isFuture, isToday, addDays } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const ParentDashboard = () => {
   const { user, userRole } = useAuth();
