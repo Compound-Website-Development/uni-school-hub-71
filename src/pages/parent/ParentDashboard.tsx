@@ -1,8 +1,6 @@
 import { PortalHeroArt } from "@/components/PortalHeroArt";
-import { PortalIllustration } from "@/components/PortalIllustration";
 import { useState, useEffect } from "react";
 import { ParentLayout } from "@/components/layout/ParentLayout";
-import SchoolInfoPanel from "@/components/SchoolInfoPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -147,7 +145,7 @@ const ParentDashboard = () => {
     <ParentLayout title="Dashboard">
       <div className="dashboard-surface dashboard-parent space-y-6 animate-fade-in">
         <section className="portal-hero">
-          <div className="portal-css-art portal-css-art-family" aria-hidden="true"><span/><i/><b/></div>
+          <div className="parent-hero-orb" aria-hidden="true"><span/><i/><b/></div>
           <div className="portal-hero-copy">
             <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Imagemakers family space</p>
             <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-6xl">Your child&apos;s school life,<br/><span className="text-gradient">without the guesswork.</span></h1>
@@ -187,7 +185,7 @@ const ParentDashboard = () => {
                   <CardHeader className="relative overflow-hidden bg-gradient-to-br from-primary/8 via-card to-accent/8 pb-3">
                     <div className="portal-css-art portal-css-art-profile" aria-hidden="true"><span/><i/></div>
                     <CardTitle className="relative flex items-center gap-3 text-base">
-                      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-card shadow-sm"><PortalIllustration kind="profile" size="lg" className="h-10 w-10" /></span>
+                      <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#e8f6fc] text-[#2f8fca] shadow-sm"><GraduationCap className="h-6 w-6" /></span>
                       <span><span className="block portal-display text-lg font-extrabold">{child.first_name} {child.last_name}</span><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Linked child</span></span>
                       <Badge variant="outline" className="ml-auto capitalize text-[10px]">{child.status || "active"}</Badge>
                     </CardTitle>
@@ -305,7 +303,7 @@ const ParentDashboard = () => {
             {kind:"finance",label:"Fees & payments",href:"/parent/fees",note:"Review balances"},
             {kind:"bus",label:"School bus",href:"/parent/transport",note:"Only if authorised"},
           ].map(item=><button key={item.href} onClick={()=>navigate(item.href)} className="portal-feature-card group p-5 text-left">
-            <PortalIllustration kind={item.kind as any} size="md" className="h-14 w-14 portal-float-icon" />
+            <span className="portal-feature-symbol" aria-hidden="true">{item.kind === "book" ? <BookOpen/> : item.kind === "attendance" ? <Clock/> : item.kind === "finance" ? <CreditCard/> : <Monitor/>}</span>
             <p className="portal-display mt-5 text-lg font-extrabold">{item.label}</p><p className="mt-1 text-xs text-muted-foreground">{item.note}</p>
             <span className="mt-4 text-[10px] font-extrabold uppercase tracking-wider text-primary">Open →</span>
           </button>)}
@@ -333,7 +331,6 @@ const ParentDashboard = () => {
             </CardContent>
           </Card>
         )}
-        <SchoolInfoPanel sections={["school", "terms", "grading", "classes"]} />
       </div>
     </ParentLayout>
   );
