@@ -295,7 +295,6 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
       </main>
     </StudentLayout>
   );
-  );
 };
 
 export default StudentDashboard;
