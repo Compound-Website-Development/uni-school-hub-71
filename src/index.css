@@ -984,3 +984,67 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .staff-gradebook-page input:focus,.staff-gradebook-page [role="combobox"]:focus{box-shadow:0 0 0 3px rgba(79,128,99,.12)}
 .staff-attendance-page button,.staff-gradebook-page button,.staff-students-page button{transition:transform .16s ease,box-shadow .16s ease}
 .staff-attendance-page button:hover,.staff-gradebook-page button:hover,.staff-students-page button:hover{transform:translateY(-1px)}
+
+
+/* 2026 Imagemakers portal refinement: sky-blue school identity, not green. */
+.student-portal-shell {
+  --portal-sky: #2f9bd1;
+  --portal-sky-deep: #167db7;
+  --portal-sky-soft: #e8f6fd;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(73,181,232,.13), transparent 28%),
+    radial-gradient(circle at 92% 12%, rgba(113,207,246,.11), transparent 25%),
+    #f7fbfd;
+}
+.student-portal-shell .portal-surface,
+.student-portal-shell .portal-feature-card,
+.student-portal-shell .student-page-card {
+  border: 1px solid #d8ebf5;
+  background: rgba(255,255,255,.84);
+  box-shadow: 0 20px 60px -45px rgba(26,103,145,.42);
+  backdrop-filter: blur(16px);
+}
+.student-portal-shell .portal-feature-card:hover,
+.student-portal-shell .student-page-card:hover { transform: translateY(-2px); box-shadow: 0 24px 60px -42px rgba(22,125,183,.5); }
+.student-nav-item.active { background: linear-gradient(135deg,#e4f6fd,#f5fbfe); color:#167db7; box-shadow: inset 0 0 0 1px #d4edf8, 0 10px 30px -24px rgba(22,125,183,.8); }
+.student-sidebar { box-shadow: 18px 0 60px -55px rgba(22,125,183,.55); }
+.student-brand-card { box-shadow: 0 16px 40px -32px rgba(22,125,183,.55); }
+.student-liquid-nav { padding-bottom: env(safe-area-inset-bottom); }
+.student-home .student-hero-visual { background: linear-gradient(135deg,#dff4fd,#b9e8fa 48%,#f6fcff); }
+.student-home .student-hero-visual:before,
+.student-home .student-hero-visual:after { content:""; position:absolute; border-radius:999px; filter:blur(2px); animation: student-float 7s ease-in-out infinite; }
+.student-home .student-hero-visual:before { width:180px;height:180px;right:8%;top:12%;background:radial-gradient(circle,rgba(47,155,209,.28),transparent 65%); }
+.student-home .student-hero-visual:after { width:100px;height:100px;left:12%;bottom:12%;background:radial-gradient(circle,rgba(112,207,244,.3),transparent 65%);animation-delay:-2s; }
+@keyframes student-float { 0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-9px,0)} }
+.student-home .student-hero-orbit { position:absolute; width:190px;height:190px;right:12%;top:18%;border:1px solid rgba(22,125,183,.2);border-radius:50%;animation:student-spin 18s linear infinite; }
+@keyframes student-spin { to { transform:rotate(360deg); } }
+
+/* Staff is sky-blue too; keep status colours only where semantically required. */
+.staff-portal-shell { --staff-sky:#2f9bd1; --staff-ink:#17394c; --staff-cream:#f6fbfd; --staff-orange:#e0a45a; }
+.staff-portal-shell .portal-page-bg { background: linear-gradient(135deg,#f5fbfe,#eef8fd 55%,#f9fcfd) !important; }
+.staff-portal-shell .portal-sidebar { background:rgba(255,255,255,.9); border-color:#d8ebf5 !important; box-shadow:16px 0 55px -48px rgba(22,125,183,.55); }
+.staff-portal-shell .portal-logo-card { background:linear-gradient(135deg,#eef9fe,#ffffff) !important; border-color:#d8ebf5 !important; }
+.staff-portal-shell .portal-avatar { background:#e2f5fc !important; color:#167db7 !important; }
+.staff-portal-shell .portal-nav-item.active { background:linear-gradient(135deg,#e1f5fd,#f5fbfe) !important; color:#167db7 !important; box-shadow:inset 0 0 0 1px #d3edf8; }
+.staff-portal-shell .portal-nav-icon { background:#f0f9fd !important; color:#52809a; }
+.staff-portal-shell .portal-nav-item.active .portal-nav-icon { background:#dff3fc !important; color:#167db7 !important; }
+.staff-portal-shell .portal-hero { background:linear-gradient(135deg,#ffffff,#e8f7fd 68%,#f7fcfe) !important; border-color:#d8ebf5 !important; }
+.staff-portal-shell .portal-feature-card:nth-child(2n) { background:linear-gradient(135deg,#ffffff,#eef8fd) !important; }
+.staff-portal-shell .staff-art { background:linear-gradient(145deg,#e4f6fd,#f5fbfe) !important; }
+.staff-portal-shell .staff-art span,.staff-portal-shell .staff-art-results i { background:#2f9bd1 !important; }
+.staff-portal-shell .staff-art b { background:#e0a45a !important; }
+.staff-portal-shell .staff-art-cbt:before { background:#5b9bb7 !important; }
+
+/* Parent shell: sky-blue, distribute dashboard content rather than a giant bottom dump. */
+.parent-portal-shell { background:linear-gradient(135deg,#f6fbfd,#eef8fd 58%,#f8fcfe); }
+.parent-portal-shell .portal-sidebar { background:rgba(255,255,255,.9); border-color:#d8ebf5 !important; }
+.parent-portal-shell .portal-nav-item.active { background:linear-gradient(135deg,#e2f5fc,#f6fbfe) !important; color:#167db7 !important; }
+.parent-portal-shell .portal-nav-icon { background:#f0f9fd !important; color:#5b7e92; }
+.parent-portal-shell .portal-nav-item.active .portal-nav-icon { background:#dff3fc !important; color:#167db7 !important; }
+.parent-portal-shell .portal-logo-card { background:linear-gradient(135deg,#eef9fe,#fff) !important; border-color:#d8ebf5 !important; }
+.parent-portal-shell .portal-page-content { color:#17394c; }
+.parent-portal-shell .parent-hero-orb { background:radial-gradient(circle at 35% 35%,rgba(47,155,209,.45),rgba(47,155,209,.08) 48%,transparent 70%) !important; }
+.parent-portal-shell .portal-hero { background:linear-gradient(135deg,#ffffff,#e9f7fd 62%,#f8fcfe) !important; border-color:#d8ebf5 !important; }
+.parent-portal-shell .portal-css-art { background:linear-gradient(145deg,#e5f6fd,#f7fbfd) !important; }
+.parent-portal-shell .portal-css-art-profile span { background:#e0a45a !important; }
+.parent-portal-shell .portal-css-art-profile i { background:#2f9bd1 !important; }
