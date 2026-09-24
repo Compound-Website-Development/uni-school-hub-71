@@ -1,4 +1,3 @@
-import { PortalHeroArt } from "@/components/PortalHeroArt";
 import { useState, useEffect } from "react";
 import { ParentLayout } from "@/components/layout/ParentLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -149,18 +148,17 @@ const ParentDashboard = () => {
           <div className="portal-hero-copy">
             <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Imagemakers family space</p>
             <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-6xl">Your child&apos;s school life,<br/><span className="text-gradient">without the guesswork.</span></h1>
-            <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">One connected view of results, attendance, assignments, fees, messages and authorised transport. Empty school records stay empty until the school records real data.</p>
+            <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">One connected view of results, attendance, assignments, fees, messages and school notices. Empty school records stay empty until the school records real data.</p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Link to="/parent/grades" className="rounded-full bg-primary px-4 py-2.5 text-xs font-extrabold text-white">View grades</Link>
               <Link to="/parent/fees" className="rounded-full border border-border bg-card/80 px-4 py-2.5 text-xs font-extrabold">Fee status</Link>
-              <Link to="/parent/transport" className="rounded-full border border-border bg-card/80 px-4 py-2.5 text-xs font-extrabold">School bus</Link>
-            </div>
+              </div>
           </div>
         </section>
 
         {isPreview && (
           <div className="border-l-2 border-accent px-3 py-2 text-xs text-muted-foreground">
-            Preview identity — this view is showing a pupil record for demonstration, not a linked child.
+            Preview identity — no parent or child links are being fabricated in preview mode.
           </div>
         )}
 
@@ -301,7 +299,6 @@ const ParentDashboard = () => {
             {kind:"book",label:"Grades",href:"/parent/grades",note:"See published results"},
             {kind:"attendance",label:"Attendance",href:"/parent/attendance",note:"Track school attendance"},
             {kind:"finance",label:"Fees & payments",href:"/parent/fees",note:"Review balances"},
-            {kind:"bus",label:"School bus",href:"/parent/transport",note:"Only if authorised"},
           ].map(item=><button key={item.href} onClick={()=>navigate(item.href)} className="portal-feature-card group p-5 text-left">
             <span className="portal-feature-symbol" aria-hidden="true">{item.kind === "book" ? <BookOpen/> : item.kind === "attendance" ? <Clock/> : item.kind === "finance" ? <CreditCard/> : <Monitor/>}</span>
             <p className="portal-display mt-5 text-lg font-extrabold">{item.label}</p><p className="mt-1 text-xs text-muted-foreground">{item.note}</p>
