@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, BellRing, CalendarDays, Clock3, MapPin, RefreshCw } from "lucide-react";
+import { ArrowRight, BellRing, BookOpen, CalendarDays, CheckCircle2, Clock3, MapPin, NotebookPen, RefreshCw, WalletCards } from "lucide-react";
 import { StudentLayout } from "@/components/layout/StudentLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
