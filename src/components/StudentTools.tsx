@@ -60,7 +60,7 @@ export const StudentTools = ({ studentId }: { studentId?: string | null }) => {
     {aiEnabled && <AIChatWidget />}
     {calculatorEnabled && (
       <div className="fixed bottom-5 right-5 z-40 hidden md:block">
-        <button onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-full border border-border bg-white/90 px-3 py-2 text-xs font-extrabold text-[#416b52] shadow-xl backdrop-blur-xl transition hover:-translate-y-0.5" aria-label="Open calculator">
+        <button onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-full border border-border bg-white/90 px-3 py-2 text-xs font-extrabold text-[#2578a7] shadow-xl backdrop-blur-xl transition hover:-translate-y-0.5" aria-label="Open calculator">
           <Calculator className="h-4 w-4" /> Calculator
         </button>
       </div>
@@ -68,24 +68,24 @@ export const StudentTools = ({ studentId }: { studentId?: string | null }) => {
     {open && calculatorEnabled && (
       <div className="fixed inset-0 z-[70] grid place-items-center bg-[hsl(var(--navy)/.45)] p-4 backdrop-blur-sm" onClick={() => setOpen(false)}>
         <Card className="w-full max-w-sm overflow-hidden rounded-[28px] border-border shadow-2xl" onClick={e => e.stopPropagation()}>
-          <CardHeader className="flex flex-row items-center justify-between bg-[#eef3ef]">
-            <CardTitle className="flex items-center gap-2 text-[#2e4435]"><Calculator className="h-5 w-5 text-[#4f8063]"/>Study calculator</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between bg-[#eaf6fb]">
+            <CardTitle className="flex items-center gap-2 text-[#17394c]"><Calculator className="h-5 w-5 text-[#2f8fca]"/>Study calculator</CardTitle>
             <Button variant="ghost" size="icon" onClick={() => setOpen(false)}><X className="h-4 w-4"/></Button>
           </CardHeader>
           <CardContent className="space-y-3 p-5">
-            <div className="rounded-2xl border border-[#dfe6e1] bg-[#f7f8f5] p-3">
-              <p className="min-h-7 text-right text-xs font-semibold text-[#7b847d]">{expression || "Ready"}</p>
-              <p className="mt-1 min-h-9 text-right text-2xl font-black text-[#2e4435]">{answer || "0"}</p>
+            <div className="rounded-2xl border border-[#d7e9f4] bg-[#f6fbfe] p-3">
+              <p className="min-h-7 text-right text-xs font-semibold text-[#78909d]">{expression || "Ready"}</p>
+              <p className="mt-1 min-h-9 text-right text-2xl font-black text-[#17394c]">{answer || "0"}</p>
             </div>
             <div className="grid grid-cols-4 gap-2">
               {["C","⌫","÷","×","7","8","9","−","4","5","6","+","1","2","3","%","0",".","(",")"].map(key => (
-                <button key={key} onClick={() => press(key)} className="h-11 rounded-xl border border-[#dfe6e1] bg-white text-sm font-extrabold text-[#344239] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#edf4ee]">
+                <button key={key} onClick={() => press(key)} className="h-11 rounded-xl border border-[#d7e9f4] bg-white text-sm font-extrabold text-[#274e63] shadow-sm transition hover:-translate-y-0.5 hover:bg-[#e9f5ff]">
                   {key === "⌫" ? <Delete className="mx-auto h-4 w-4"/> : key}
                 </button>
               ))}
-              <button onClick={() => press("=")} className="col-span-2 h-11 rounded-xl bg-[#4f8063] text-sm font-extrabold text-white shadow-sm hover:bg-[#416b52]"><Equal className="mx-auto h-4 w-4"/></button>
+              <button onClick={() => press("=")} className="col-span-2 h-11 rounded-xl bg-[#2f8fca] text-sm font-extrabold text-white shadow-sm hover:bg-[#2578a7]"><Equal className="mx-auto h-4 w-4"/></button>
             </div>
-            <p className="text-center text-[10px] font-semibold text-[#7b847d]">Use this to check your working. Show your method in class.</p>
+            <p className="text-center text-[10px] font-semibold text-[#78909d]">Use this to check your working. Show your method in class.</p>
           </CardContent>
         </Card>
       </div>
