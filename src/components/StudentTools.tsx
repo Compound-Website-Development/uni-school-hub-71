@@ -59,7 +59,7 @@ export const StudentTools = ({ studentId }: { studentId?: string | null }) => {
   return <>
     {aiEnabled && <AIChatWidget />}
     {calculatorEnabled && (
-      <div className="fixed bottom-5 right-5 z-40 hidden md:block">
+      <div className="fixed bottom-24 right-4 md:bottom-5 md:right-5 z-40">
         <button onClick={() => setOpen(true)} className="flex items-center gap-2 rounded-full border border-border bg-white/90 px-3 py-2 text-xs font-extrabold text-[#2578a7] shadow-xl backdrop-blur-xl transition hover:-translate-y-0.5" aria-label="Open calculator">
           <Calculator className="h-4 w-4" /> Calculator
         </button>
