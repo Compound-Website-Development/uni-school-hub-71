@@ -6,7 +6,7 @@ import { StudentTools } from "@/components/StudentTools";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
-  ArrowRight, Bell, CalendarDays, CheckCircle2, ClipboardList, GraduationCap,
+  ArrowRight, Bell, CalendarDays, CalendarClock, CheckCircle2, ClipboardList, GraduationCap,
   Home, LayoutGrid, Library, LogOut, Menu, MessageSquare, NotebookPen,
   ScrollText, Settings2, UserCircle, WalletCards, BookOpen, MonitorPlay
 } from "lucide-react";
@@ -40,7 +40,7 @@ const navGroups = [
   {
     heading: "School life",
     items: [
-      { icon: CalendarDays, label: "Schedule", href: "/student/schedule" },
+      { icon: CalendarClock, label: "Schedule", href: "/student/schedule" },
       { icon: CheckCircle2, label: "Attendance", href: "/student/attendance" },
       { icon: CalendarDays, label: "Calendar", href: "/student/calendar" },
       { icon: Bell, label: "Announcements", href: "/student/announcements" },
