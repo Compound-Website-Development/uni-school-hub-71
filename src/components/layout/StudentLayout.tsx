@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { StudentTools } from "@/components/StudentTools";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { BottomNavigation } from "@/components/layout/BottomNavigation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   LogOut, Menu, Bell, ArrowLeft, ChevronRight, Home, GraduationCap, ClipboardList,
@@ -143,10 +144,11 @@ export const StudentLayout = ({ children, title, back, studentNameOverride, stud
         </SheetContent>
       </Sheet>
 
-      <main className="student-page-content mx-auto w-full max-w-[1500px] px-3 pb-8 pt-4 md:px-6 md:pb-12 md:pt-7 lg:px-9">
+      <main className="student-page-content mx-auto w-full max-w-[1500px] px-3 pb-24 pt-4 md:px-6 md:pb-12 md:pt-7 lg:px-9">
         {children}
       </main>
       {!publicView && studentData?.id && <StudentTools studentId={studentData.id}/>}
+      {!publicView && <BottomNavigation /> }
     </div>
   );
 };
