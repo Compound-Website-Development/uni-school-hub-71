@@ -2,13 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Home, GraduationCap, ClipboardList, CalendarDays, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface NavItem {
-  icon: typeof Home;
-  label: string;
-  href: string;
-}
-
-const studentNavItems: NavItem[] = [
+const studentNavItems = [
   { icon: Home, label: "Home", href: "/student" },
   { icon: GraduationCap, label: "Results", href: "/student/grades" },
   { icon: ClipboardList, label: "Reports", href: "/student/reports" },
@@ -18,31 +12,16 @@ const studentNavItems: NavItem[] = [
 
 export const BottomNavigation = () => {
   const location = useLocation();
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border border-[#d6ebf6] bg-white/75 px-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-18px_50px_-28px_rgba(14,116,170,.45)] backdrop-blur-2xl md:hidden">
-      <div className="mx-auto flex h-[72px] max-w-md items-center justify-around gap-1">
+    <nav className="student-liquid-nav fixed bottom-3 left-1/2 z-[60] w-[calc(100%-20px)] max-w-md -translate-x-1/2 md:hidden">
+      <div className="flex h-[68px] items-center justify-around gap-1 rounded-[26px] border border-white/70 bg-white/72 px-2 shadow-[0_18px_55px_-24px_rgba(22,125,183,.65)] backdrop-blur-2xl">
         {studentNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.href || (item.href !== "/student" && location.pathname.startsWith(item.href + "/"));
-
+          const active = location.pathname === item.href || (item.href !== "/student" && location.pathname.startsWith(item.href + "/"));
           return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={cn(
-                "relative flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-2xl px-1 text-[10px] font-extrabold transition-all",
-                isActive ? "text-[#1685c4]" : "text-[#7c857f] hover:text-[#3f6d4f]"
-              )}
-            >
-              {isActive && <span className="absolute top-1 h-1 w-8 rounded-full bg-[#1685c4]" />}
-              <span className={cn(
-                "grid h-9 w-9 place-items-center rounded-xl transition-all",
-                isActive ? "bg-[#e9f5ff] shadow-sm" : "bg-transparent"
-              )}>
-                <Icon className="h-[19px] w-[19px]" strokeWidth={isActive ? 2.25 : 1.8} />
-              </span>
-              <span className="truncate">{item.label}</span>
+            <Link key={item.href} to={item.href} className={cn("relative flex h-[54px] min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[19px] text-[10px] font-black transition-all", active ? "bg-[#e5f5fd] text-[#167db7] shadow-sm" : "text-[#6f8795] hover:bg-[#f1f9fd]")}>
+              <Icon className="h-[19px] w-[19px]" strokeWidth={active ? 2.2 : 1.7}/>
+              <span>{item.label}</span>
             </Link>
           );
         })}
