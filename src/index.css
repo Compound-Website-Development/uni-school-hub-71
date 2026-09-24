@@ -741,23 +741,23 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
   font-size:12px; font-weight:700; transition:.2s ease;
 }
 .student-topnav-link:hover { background:hsl(210 20% 95%); color:hsl(205 28% 20%); }
-.student-topnav-link.active { background:hsl(151 31% 42%); color:#fff; box-shadow:0 8px 18px hsl(151 31% 42%/.18); }
+.student-topnav-link.active { background:hsl(200 63% 49%); color:#fff; box-shadow:0 8px 18px hsl(151 31% 42%/.18); }
 .student-mobile-drawer {
   background:#fbfaf7 !important; color:hsl(205 25% 20%) !important;
 }
 .student-mobile-drawer .student-topnav-link { display:flex; align-items:center; }
-.student-home .student-blue { color:hsl(151 31% 42%); }
-.student-home .student-blue-bg { background:hsl(151 31% 42%); }
-.student-home .student-blue-soft { background:hsl(151 31% 94%); color:hsl(151 31% 35%); }
-.student-home .student-today-surface { background:linear-gradient(135deg,#fff,hsl(151 31% 97%)); border-color:hsl(151 31% 82%); box-shadow:0 22px 50px -38px hsl(151 31% 42%/.45); }
-.student-home .student-status-surface { background:linear-gradient(100deg,hsl(151 31% 97%),#fff); }
+.student-home .student-blue { color:hsl(200 63% 49%); }
+.student-home .student-blue-bg { background:hsl(200 63% 49%); }
+.student-home .student-blue-soft { background:hsl(200 63% 96%); color:hsl(200 63% 40%); }
+.student-home .student-today-surface { background:linear-gradient(135deg,#fff,hsl(200 63% 98%)); border-color:hsl(200 63% 84%); box-shadow:0 22px 50px -38px hsl(151 31% 42%/.45); }
+.student-home .student-status-surface { background:linear-gradient(100deg,hsl(200 63% 98%),#fff); }
 .student-home .student-hero-fade { background:linear-gradient(90deg,hsl(var(--background)) 4%,hsl(var(--background)/.94) 45%,hsl(var(--background)/.10) 80%); }
 .student-home .portal-feature-card:nth-child(2) { background:linear-gradient(135deg,#fff,hsl(32 78% 97%)); }
 .student-home .portal-feature-card:nth-child(2) .portal-float-icon { background:hsl(32 78% 92%); }
 
 /* Student content pages: convert the old sparse/editorial treatment into actual app surfaces. */
 .student-portal-shell .editorial-link {
-  color:hsl(151 31% 38%); text-decoration:none; text-transform:none; letter-spacing:0;
+  color:hsl(200 63% 42%); text-decoration:none; text-transform:none; letter-spacing:0;
 }
 .student-portal-shell .app-card,
 .student-portal-shell .student-page-card {
@@ -765,7 +765,7 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
   box-shadow:0 16px 44px -36px hsl(205 30% 30%/.32);
 }
 .student-portal-shell table { border-collapse:separate; border-spacing:0; overflow:hidden; border:1px solid hsl(210 20% 88%); border-radius:20px; background:rgba(255,255,255,.8); }
-.student-portal-shell table thead { background:hsl(151 31% 96%); }
+.student-portal-shell table thead { background:hsl(200 63% 96%); }
 .student-portal-shell table th { color:hsl(205 18% 35%); }
 .student-portal-shell table td { border-color:hsl(210 20% 91%); }
 .student-portal-shell input,.student-portal-shell textarea,.student-portal-shell [role="combobox"] { border-radius:14px; }
@@ -781,10 +781,10 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
   color:hsl(205 12% 42%) !important;
 }
 .staff-portal-shell .portal-sidebar .portal-nav-item.active, .parent-portal-shell .portal-sidebar .portal-nav-item.active {
-  background:#e6efe8 !important; color:hsl(151 31% 31%) !important; box-shadow:none !important;
+  background:#e9f5ff !important; color:hsl(200 63% 37%) !important; box-shadow:none !important;
 }
 .staff-portal-shell .portal-sidebar .portal-nav-icon, .parent-portal-shell .portal-sidebar .portal-nav-icon {
-  background:#fff !important; color:hsl(151 31% 38%) !important; border:1px solid hsl(35 18% 86%);
+  background:#fff !important; color:hsl(200 63% 42%) !important; border:1px solid hsl(35 18% 86%);
 }
 .staff-portal-shell .portal-sidebar .portal-nav-item:nth-child(2n) .portal-nav-icon { color:hsl(32 63% 45%) !important; }
 .staff-portal-shell .portal-sidebar .portal-nav-item:nth-child(3n) .portal-nav-icon { color:hsl(205 45% 46%) !important; }
@@ -796,7 +796,7 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
   background:#fff !important; border:1px solid hsl(35 18% 86%);
 }
 .staff-portal-shell .portal-sidebar .portal-avatar {
-  background:#e7efe9 !important; color:hsl(151 31% 32%) !important;
+  background:#e9f5ff !important; color:hsl(151 31% 32%) !important;
 }
 
 /* Staff pages: stronger hierarchy, cards, filters and tables without touching functionality. */
@@ -814,17 +814,17 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .staff-portal-shell .portal-page-content textarea,
 .staff-portal-shell .portal-page-content [role="combobox"] { border-radius:14px; }
 .staff-portal-shell .portal-page-content h1,.staff-portal-shell .portal-page-content h2,.staff-portal-shell .portal-page-content h3 { font-family:'Manrope','Plus Jakarta Sans',sans-serif; }
-.staff-portal-shell .portal-page-content .bg-primary { background:#4f8063 !important; }
-.staff-portal-shell .portal-page-content .text-primary { color:#4f8063 !important; }
+.staff-portal-shell .portal-page-content .bg-primary { background:#2f8fca !important; }
+.staff-portal-shell .portal-page-content .text-primary { color:#2f8fca !important; }
 .staff-portal-shell .portal-page-content .bg-accent { background:#d28b4d !important; }
 .staff-portal-shell .portal-page-content .text-accent { color:#b56f35 !important; }
 
 /* Community wall — distinct from a messaging/forum page. */
 .community-wall-shell { max-width:880px; margin:0 auto; }
-.community-wall-shell .community-composer { background:linear-gradient(135deg,#fff,hsl(151 31% 97%)); border:1px solid hsl(151 31% 86%); }
+.community-wall-shell .community-composer { background:linear-gradient(135deg,#fff,hsl(200 63% 98%)); border:1px solid hsl(200 63% 88%); }
 .community-wall-shell .community-post { background:#fff; border:1px solid hsl(210 20% 88%); box-shadow:0 18px 44px -38px hsl(205 30% 25%/.35); }
 .community-wall-shell .community-post:nth-child(3n) { background:linear-gradient(135deg,#fff,hsl(32 78% 97%)); }
-.community-wall-shell .community-avatar { background:#e7efe9 !important; color:#4f8063 !important; border:0 !important; }
+.community-wall-shell .community-avatar { background:#e9f5ff !important; color:#2f8fca !important; border:0 !important; }
 .community-wall-shell .community-action { border-radius:999px; }
 .community-wall-shell .community-action.like-active { color:#b75f62 !important; }
 
@@ -833,13 +833,13 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .student-results-page .editorial-eyebrow,
 .student-homework-page .editorial-eyebrow,
 .student-transcript-page .editorial-eyebrow,
-.student-attendance-page .editorial-eyebrow { color:#4f8063; }
+.student-attendance-page .editorial-eyebrow { color:#2f8fca; }
 .student-results-page table tbody tr,
 .student-transcript-page .divide-y > *,
 .student-attendance-page .divide-y > * { transition:background .18s ease; }
 .student-results-page table tbody tr:hover,
 .student-transcript-page .divide-y > div:hover,
-.student-attendance-page .divide-y > li:hover { background:hsl(151 31% 97%); }
+.student-attendance-page .divide-y > li:hover { background:hsl(200 63% 98%); }
 .student-results-page section,
 .student-homework-page > .relative,
 .student-transcript-page > .student-page-card,
@@ -881,7 +881,7 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .student-report-page .canonical-report-card,
 .student-report-page [class*="report-card"] { border-radius:24px; }
 .student-homework-page .homework-ai-prompt {
-  border:1px solid hsl(151 31% 84%);
+  border:1px solid hsl(200 63% 86%);
   background:linear-gradient(135deg,#eef5ef,#fff);
   border-radius:22px;
 }
@@ -916,7 +916,7 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 
 
 /* Staff portal visual system: editorial, warm, functional */
-.staff-portal-shell{--staff-ink:#29352d;--staff-green:#4f8063;--staff-cream:#fbfaf6;--staff-orange:#c58a45}
+.staff-portal-shell{--staff-ink:#29352d;--staff-sky:#2f8fca;--staff-cream:#fbfaf6;--staff-orange:#c58a45}
 .staff-portal-shell .portal-page-bg{background:#f7f7f2}
 .staff-portal-shell .portal-page-content{color:var(--staff-ink)}
 .staff-portal-shell .portal-surface{border:1px solid #e2e6e0;background:rgba(255,255,255,.9);box-shadow:0 18px 50px -40px rgba(39,55,45,.45);border-radius:26px}
@@ -924,14 +924,14 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .staff-portal-shell .portal-feature-card{background:#fff;border-color:#e1e6e0}
 .staff-portal-shell .portal-feature-card:nth-child(2n){background:linear-gradient(135deg,#fff,#f8f1e8)}
 .staff-portal-shell .portal-page-content .card-hover-subtle:hover,.staff-portal-shell .portal-page-content .shadow-card:hover{transform:translateY(-2px);box-shadow:0 20px 50px -38px rgba(40,57,47,.5)}
-.staff-portal-shell .portal-page-content [class*="bg-success"]{background:#eaf2ec !important;color:#3f6d4f}
+.staff-portal-shell .portal-page-content [class*="bg-success"]{background:#eaf2ec !important;color:#2578a7}
 .staff-portal-shell .portal-page-content [class*="bg-warning"]{background:#fbf0df !important;color:#9a6330}
 .staff-portal-shell .portal-page-content [class*="bg-destructive"]{background:#f7e9e8 !important;color:#a44f4c}
 .staff-portal-shell .portal-page-content .text-info{color:#557f91 !important}
-.staff-portal-shell .portal-page-content .text-success{color:#4f8063 !important}
+.staff-portal-shell .portal-page-content .text-success{color:#2f8fca !important}
 .staff-art{position:relative;width:180px;height:150px;border-radius:36px;background:linear-gradient(145deg,#eef4ee,#f8eee2);box-shadow:inset 0 0 0 1px rgba(63,109,79,.08),0 28px 60px -45px rgba(42,58,48,.45)}
 .staff-art:before{content:"";position:absolute;width:72px;height:72px;left:38px;top:32px;border-radius:22px;background:#fff;transform:rotate(-7deg);box-shadow:0 16px 24px -20px rgba(0,0,0,.35)}
-.staff-art span{position:absolute;width:42px;height:7px;left:54px;top:55px;border-radius:99px;background:#4f8063;z-index:2}
+.staff-art span{position:absolute;width:42px;height:7px;left:54px;top:55px;border-radius:99px;background:#2f8fca;z-index:2}
 .staff-art i{position:absolute;width:55px;height:7px;left:54px;top:73px;border-radius:99px;background:#dfe8e1;z-index:2;box-shadow:0 16px 0 #dfe8e1}
 .staff-art b{position:absolute;width:36px;height:36px;right:22px;bottom:20px;border-radius:50%;background:#c58a45;box-shadow:0 0 0 8px rgba(197,138,69,.12)}
 .staff-art-cbt{background:linear-gradient(145deg,#eaf2f3,#f8efe5)}
@@ -941,13 +941,13 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .staff-art-cbt b{width:18px;height:18px;right:32px;bottom:24px;background:#b56d63}
 .staff-art-attendance{width:66px;height:66px;border-radius:20px;background:#eef4ee}
 .staff-art-attendance:before{left:18px;top:18px;width:30px;height:30px;border-radius:50%;transform:none;background:#fff}
-.staff-art-attendance span{left:25px;top:32px;width:17px;height:5px;background:#4f8063;transform:rotate(-45deg)}
-.staff-art-attendance i{left:36px;top:25px;width:20px;height:5px;background:#4f8063;transform:rotate(45deg)}
+.staff-art-attendance span{left:25px;top:32px;width:17px;height:5px;background:#2f8fca;transform:rotate(-45deg)}
+.staff-art-attendance i{left:36px;top:25px;width:20px;height:5px;background:#2f8fca;transform:rotate(45deg)}
 .staff-art-attendance b{display:none}
 .staff-art-results{width:66px;height:66px;border-radius:20px;background:#f7eee3}
 .staff-art-results:before{left:17px;top:17px;width:32px;height:34px;border-radius:8px;transform:none;background:#fff}
 .staff-art-results span{left:24px;top:42px;width:8px;height:10px;background:#c58a45}
-.staff-art-results i{left:35px;top:35px;width:8px;height:17px;background:#4f8063;box-shadow:none}
+.staff-art-results i{left:35px;top:35px;width:8px;height:17px;background:#2f8fca;box-shadow:none}
 .staff-art-results b{display:none}
 .staff-art-messages{width:66px;height:66px;border-radius:20px;background:#eeeaf4}
 .staff-art-messages:before{left:15px;top:21px;width:36px;height:26px;border-radius:12px;transform:none;background:#806ca5}
@@ -958,11 +958,11 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 /* Parent and driver illustration cards */
 .portal-css-art{position:relative;width:170px;height:135px;border-radius:32px;background:linear-gradient(145deg,#edf4ee,#f7eee3);box-shadow:inset 0 0 0 1px rgba(63,109,79,.08)}
 .portal-css-art span,.portal-css-art i,.portal-css-art b{position:absolute;display:block}
-.portal-css-art-family:before{content:"";position:absolute;width:54px;height:54px;border-radius:50%;left:31px;top:28px;background:#d28b4d;box-shadow:49px 0 0 #4f8063,25px 45px 0 #806ca5}
+.portal-css-art-family:before{content:"";position:absolute;width:54px;height:54px;border-radius:50%;left:31px;top:28px;background:#d28b4d;box-shadow:49px 0 0 #2f8fca,25px 45px 0 #806ca5}
 .portal-css-art-family span{width:76px;height:18px;left:48px;bottom:24px;border-radius:18px 18px 8px 8px;background:#fff}
 .portal-css-art-profile{width:70px;height:70px;border-radius:20px;background:#eef4ee}
 .portal-css-art-profile span{width:24px;height:24px;border-radius:50%;left:23px;top:12px;background:#c58a45}
-.portal-css-art-profile i{width:40px;height:22px;border-radius:22px 22px 8px 8px;left:15px;bottom:11px;background:#4f8063}
+.portal-css-art-profile i{width:40px;height:22px;border-radius:22px 22px 8px 8px;left:15px;bottom:11px;background:#2f8fca}
 .portal-css-art-bus{background:linear-gradient(145deg,#e9f1f2,#f8efe5)}
 .portal-css-art-bus:before{content:"";position:absolute;width:105px;height:50px;left:28px;top:38px;border-radius:16px 16px 10px 10px;background:#4d7f88}
 .portal-css-art-bus span{width:26px;height:20px;left:42px;top:48px;background:#fff;border-radius:5px}
@@ -978,9 +978,9 @@ body { font-family:'Manrope','Outfit',system-ui,sans-serif; }
 .staff-tool-page table tbody tr:nth-child(even){background:#fcfcfa}
 .staff-tool-page table tbody tr:hover{background:#eef5ef !important}
 .staff-attendance-page>div:first-child,.staff-gradebook-page>div:first-child,.staff-students-page>div:first-child{border-radius:28px}
-.staff-attendance-page .text-primary,.staff-gradebook-page .text-primary,.staff-students-page .text-primary{color:#4f8063 !important}
-.staff-attendance-page .bg-primary,.staff-gradebook-page .bg-primary,.staff-students-page .bg-primary{background:#4f8063 !important}
-.staff-attendance-page .border-primary,.staff-gradebook-page .border-primary,.staff-students-page .border-primary{border-color:#4f8063 !important}
+.staff-attendance-page .text-primary,.staff-gradebook-page .text-primary,.staff-students-page .text-primary{color:#2f8fca !important}
+.staff-attendance-page .bg-primary,.staff-gradebook-page .bg-primary,.staff-students-page .bg-primary{background:#2f8fca !important}
+.staff-attendance-page .border-primary,.staff-gradebook-page .border-primary,.staff-students-page .border-primary{border-color:#2f8fca !important}
 .staff-gradebook-page input:focus,.staff-gradebook-page [role="combobox"]:focus{box-shadow:0 0 0 3px rgba(79,128,99,.12)}
 .staff-attendance-page button,.staff-gradebook-page button,.staff-students-page button{transition:transform .16s ease,box-shadow .16s ease}
 .staff-attendance-page button:hover,.staff-gradebook-page button:hover,.staff-students-page button:hover{transform:translateY(-1px)}
