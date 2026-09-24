@@ -13,7 +13,7 @@ Audience: Product managers, designers (Readdy AI / Google Stitch), engineers, QA
 This file is the canonical functional record for the project. Every future feature addition, removal, route change, data-model change, permission change, or substantial visual change must update only the affected sections and append a concise entry to the change log below. This is an implementation workflow requirement rather than a scheduled AI cron job: it adds no recurring Lovable AI credit usage and keeps documentation changes in the same reviewed change set as the code they describe.
 
 ### Change log
-### Current live-state verification — 22 September 2026
+### Current live-state verification — 24 September 2026
 
 The repository and connected Supabase project were re-checked on 24 September 2026. The current live state is **219 students, 13 classes, 17 school-supplied active teacher records, 3 terms and 21 subjects**. The latest roster replacement intentionally cleared class-linked operational records that could no longer be trusted against the current pupil list. Current operational rows are **0 grades, 0 attendance, 0 exams, 0 exam questions, 0 exam submissions, 0 assignments, 0 invoices, 0 invoice lines, 0 receipts, 0 fee items, 0 class-subject allocations, 0 schedules and 0 school events**. These empty tables must not be filled with invented marks, attendance, payments, exam results, schedules or other fake school records.
 
