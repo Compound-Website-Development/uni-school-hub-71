@@ -13,9 +13,9 @@ Audience: Product managers, designers (Readdy AI / Google Stitch), engineers, QA
 This file is the canonical functional record for the project. Every future feature addition, removal, route change, data-model change, permission change, or substantial visual change must update only the affected sections and append a concise entry to the change log below. This is an implementation workflow requirement rather than a scheduled AI cron job: it adds no recurring Lovable AI credit usage and keeps documentation changes in the same reviewed change set as the code they describe.
 
 ### Change log
-### Current live-state verification — 24 September 2026
+### Current live-state verification — 25 September 2026
 
-The repository and connected Supabase project were re-checked on 24 September 2026. The current live state is **219 students, 13 classes, 17 school-supplied active teacher records, 3 terms and 21 subjects**. The latest roster replacement intentionally cleared class-linked operational records that could no longer be trusted against the current pupil list. Current operational rows are **0 grades, 0 attendance, 0 exams, 0 exam questions, 0 exam submissions, 0 assignments, 0 invoices, 0 invoice lines, 0 receipts, 0 fee items, 0 class-subject allocations, 0 schedules and 0 school events**. These empty tables must not be filled with invented marks, attendance, payments, exam results, schedules or other fake school records.
+The repository and connected Supabase project were re-checked on 25 September 2026. The current live state is **219 students, 13 classes, 17 school-supplied active teacher records, 3 terms and 21 subjects**. The latest roster replacement intentionally cleared class-linked operational records that could no longer be trusted against the current pupil list. Current operational rows are **0 grades, 0 attendance, 0 exams, 0 exam questions, 0 exam submissions, 0 assignments, 0 invoices, 0 invoice lines, 0 receipts, 0 fee items, 0 class-subject allocations, 0 schedules and 18 school events**. The 18 school events are the named first-term calendar events supplied by the school on 25 September 2026. Empty operational tables must not be filled with invented marks, attendance, payments, exam results, schedules or other fake school records.
 
 The staff class-teacher model is represented by `classes.class_teacher_id`; teachers should be scoped to their assigned class, while specialist-subject relationships remain optional through `class_subjects`. The current live `class_subjects` table has zero rows, so specialist mappings must be entered only from confirmed school information.
 
@@ -1600,3 +1600,16 @@ A narrower "safe launch" covering only Phases 1 and 2 plus QA — enough to run 
 - Removed synthetic staff schedule fallback records.
 - Added dashboard visual refresh classes for Admin, Staff and Parent while retaining the existing Student dashboard rebuild.
 - Added docs/PROJECT_COMPLETION_STATUS.md and docs/JOSEPH_WHATSAPP_HANDOFF_2026-09-22.txt.
+
+
+### 2026-09-25 school-data reconciliation
+
+- The school confirmed that current pupil and parent data is being collected through a Google Form. The school does **not** want the older school-held pupil/parent records used as the authoritative current data. Responses will be supplied in batches, with the latest expected by next week. This means the remaining pupil/parent profile fields are **pending source data**, not a missing deliverable caused by the school failing to respond.
+- The previously partial pupil name has been confirmed as **S-ARIBISALA AYOOLUWATOFUNMI** and the live record was updated.
+- Official first-term calendar supplied: **14 September 2026 – 18 December 2026**, theme **STRIVING FOR EXCELLENCE**. First-term calendar events have been loaded into `school_events`.
+- The school confirmed the stored school address is accurate: **38E Nathan Street, Off Ojuelegba Road, By Surulere Baptist Church, Surulere, Lagos**. Staff clock-in still requires actual latitude/longitude, an approved attendance radius and a clock-in cutoff; none has been invented.
+- School fees have **no fixed due date** because installment payment is permitted through the last day. The system must not force an invented due date.
+- Current textbook sales are concluded. The system should not create textbook charges from this information.
+- The school bus no longer operates. Do not reintroduce school-bus fees/routes from older project data.
+- Newly supplied clothing/club amounts are: Monday/Tuesday uniform pair **₦26,500**; Wednesday wear **₦10,000**; Friday wear **₦10,000**; Taekwondo **₦18,000**; Red Cross **₦12,000**; Cub Scout **₦18,000**; Brownie **₦12,000**. Each child is expected to belong to one club. These are currently stored as reference settings, not live `fee_items`, because the current invoice generation logic would treat applicable fee items as billable and could incorrectly charge every child for all four club options.
+- Current arm-specific class-teacher information was applied only where it could be safely matched to the existing 17-teacher roster. Grade 1 Gold, Nursery 1 Peace and Grade 4 Opal remain unassigned. The school also supplied **Miss Benita** for Grade 4 Sapphire, which conflicts with the current live assignment and therefore was not blindly overwritten. Subject allocations, specialist-teacher mappings and timetables are still pending.
