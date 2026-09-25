@@ -212,7 +212,7 @@ KG 2 — JOY — 15
 12. Okonkwo Beatrice
 13. Nnabuike Abigail Otitochukwu
 14. Njoku Chiemerie
-15. S---Aribisala
+15. S-ARIBISALA AYOOLUWATOFUNMI
 
 NURSERY 1 — GRACE — 14
 1. Bakare Azeema
@@ -426,7 +426,7 @@ Notes on names:
 - "Olorunrinu Abdulkareem" legitimately appears in Grade 2 Topaz and Grade 6 Diamond. Do not deduplicate by name because they are different pupils in different classes.
 - "Ngwu Munachi" and "Okenedum Munachi" are separate pupils.
 - Do not normalize names merely because they look unusual.
-- "S---Aribisala" is incomplete/partially supplied and requires confirmation before ID cards or official records are finalized.
+- "S-ARIBISALA AYOOLUWATOFUNMI" is now the school-confirmed full name supplied on 25 September 2026.
 
 ======================================================================
 6. DATA REQUESTS ALREADY SENT TO THE SCHOOL
@@ -1545,7 +1545,7 @@ I just need the remaining information required to complete the live pupil record
 
 You can send these in batches, class by class, so everything does not have to come at once. For the photographs, each photo should be matched to the pupil's full name or admission number.
 
-I also need the full official name for the KG 2 pupil currently supplied as "S---Aribisala", and confirmation of the Nursery 2 arm because the current official list says Gift while an earlier photo was labelled Love.
+The full official name for the KG 2 pupil has now been confirmed as "S-ARIBISALA AYOOLUWATOFUNMI". The latest official class list also confirms Nursery 2 — Gift; do not reopen that question unless the school provides a newer conflicting record.
 
 There is no need to send the school bus information again for now; I have noted that the transport is outsourced.
 
