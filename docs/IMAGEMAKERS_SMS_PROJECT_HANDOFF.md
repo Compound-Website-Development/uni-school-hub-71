@@ -14,7 +14,7 @@ IMPORTANT:
 - Never invent pupil admission numbers, parent details, DOBs, genders, photos, payments, attendance, marks, timetable entries or other school records.
 - Never send or commit secrets, passwords, private API keys or payment-provider credentials.
 - Use real school data only where the school has supplied/confirmed it.
-- There is an unresolved partially supplied pupil name: "S---Aribisala". Preserve exactly as supplied until the school gives the full official name.
+- The previously partial pupil name has now been supplied by the school as "S-ARIBISALA AYOOLUWATOFUNMI" on 25 September 2026. Preserve that exact supplied spelling; the live student record has been updated accordingly.
 
 ======================================================================
 1. PROJECT IDENTITY
@@ -543,7 +543,7 @@ Supabase currently contains:
 Term 1:
 - Wisdom Term
 - Session: 2026/2027
-- Start: 2026-09-07
+- Start: 2026-09-14
 - End: 2026-12-18
 - Current: yes
 
@@ -560,7 +560,7 @@ Term 3:
 - End: 2027-07-23
 
 IMPORTANT:
-An earlier WhatsApp message referenced the Lagos 2026/2027 calendar using a 14 September resumption date. The live Supabase term currently begins 7 September 2026. The school's exact official term calendar still needs confirmation. Do not silently change the dates based on the earlier WhatsApp assumption.
+The school supplied the official first-term calendar on 25 September 2026 and confirmed resumption as 14 September 2026. The live Supabase first-term dates now match that confirmation. Full second- and third-term calendar details have not been re-confirmed in this message and should not be invented.
 
 ======================================================================
 9. SUBJECTS CURRENTLY IN SUPABASE
