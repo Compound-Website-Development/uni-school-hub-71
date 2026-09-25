@@ -90,7 +90,7 @@ Tech stack:
 
 ---
 
-# 2. VERIFIED LIVE DATABASE STATE — 24 SEPTEMBER 2026
+# 2. VERIFIED LIVE DATABASE STATE — 25 SEPTEMBER 2026
 
 Current live counts:
 - students: 219
@@ -109,7 +109,7 @@ Current live counts:
 - fee_items: 0
 - class_subjects: 0
 - schedules: 0
-- school_events: 0
+- school_events: 18
 
 Important:
 The current 219 pupil records are the latest school-supplied class-by-class list. They are actual school names/classes, but the official admission numbers and most other personal/administrative fields are still missing.
@@ -160,7 +160,7 @@ Changes versus older project data:
 - Earlier photo labelling included “Nur2 love”; latest official list says Nursery 2 — Gift. Treat the official class list as current and flag the naming discrepancy if it matters.
 
 The latest KG2 final entry was supplied as:
-- “S---Aribisala”
+- “S-ARIBISALA AYOOLUWATOFUNMI”
 Preserve it exactly until the school supplies the full official name. Do not attempt to infer or reconstruct it.
 
 ---
@@ -629,3 +629,16 @@ Use:
 - live Supabase for the actual data/schema
 
 The objective is to continue engineering from the real project state with minimal context rot.
+
+
+## 25 SEPTEMBER 2026 SCHOOL-DATA UPDATE
+
+- Current pupil/parent details are being collected by the school through a Google Form because the school wants current parent/pupil information rather than older school-held records. Responses will be supplied in batches, with the latest expected by next week. Do not treat these missing fields as a school failure or fill them from old data.
+- Official first-term calendar supplied: 14 September 2026 to 18 December 2026; theme: STRIVING FOR EXCELLENCE.
+- 18 named first-term school calendar events have been loaded into `school_events`.
+- The school confirmed the existing school address is accurate. Do not invent staff-clock-in latitude/longitude, radius or cutoff values.
+- No fixed fee due date: installment payment is allowed through the last day.
+- Textbook sales are already concluded.
+- School bus service no longer operates.
+- Clothing/club amounts supplied: Monday/Tuesday uniform pair ₦26,500; Wednesday wear ₦10,000; Friday wear ₦10,000; Taekwondo ₦18,000; Red Cross ₦12,000; Cub Scout ₦18,000; Brownie ₦12,000. Each child is expected to choose one club. These amounts are stored as reference settings, not billable fee_items, until optional club billing is modelled safely.
+- Class-teacher assignments were updated only for identities safely matched to the existing 17-teacher roster. Grade 1 Gold, Nursery 1 Peace and Grade 4 Opal remain unresolved; Grade 4 Sapphire also has a new school-supplied name that conflicts with the current database assignment.
