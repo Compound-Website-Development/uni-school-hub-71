@@ -1826,7 +1826,7 @@ END OF HANDOFF
 
 
 ======================================================================
-POST-AUDIT RECONCILIATION — 24 SEPTEMBER 2026
+POST-AUDIT RECONCILIATION — 25 SEPTEMBER 2026
 ======================================================================
 
 This section records the verified post-audit state after reconciling the latest school WhatsApp material, historical project context, GitHub and live Supabase.
@@ -1850,7 +1850,7 @@ Verified live counts:
 - fee_items: 0
 - class_subjects: 0
 - schedules: 0
-- school_events: 0
+- school_events: 18
 - policy_documents: 0
 - staff_attendance: 0
 
@@ -1864,8 +1864,25 @@ Historical reconciliation decisions:
 - No parent links, grades, attendance, exams, assignments, finance transactions, schedules or events were fabricated.
 - Temporary PENDING-2026-### pupil IDs remain placeholders and are not official admission numbers.
 - The exact official school registration number is still not present in the available source evidence. The school only confirmed that a registration number exists.
-- The live term dates remain provisional because the historical source contains a resumption-date discrepancy; do not silently treat the live dates as school-confirmed until the official calendar is supplied.
+- The school supplied the official first-term calendar on 25 September 2026: 14 September 2026 resumption, 18 December 2026 closing, theme STRIVING FOR EXCELLENCE. The live first-term record now matches that confirmation. Second- and third-term dates remain unconfirmed by this latest message.
 - School approval information already documented in project history is LASG Approval No. SLR/14097. This is distinct from the school's registration number.
 
 Privacy:
 - Do not add pupil names, guardian details, pupil photos or other sensitive school records to public documentation.
+
+
+======================================================================
+LATEST SCHOOL-DATA RECONCILIATION — 25 SEPTEMBER 2026
+======================================================================
+
+- The school is collecting current pupil/parent information through a Google Form because it wants current data rather than the older school-held records. Responses will be supplied in batches, latest expected by next week. Treat missing pupil/parent fields as pending source data, not as a school-side failure.
+- The KG2 pupil previously recorded as "S---Aribisala" is now confirmed as "S-ARIBISALA AYOOLUWATOFUNMI" and the live student record has been updated.
+- Official first-term calendar: 14 September 2026 to 18 December 2026. Theme: STRIVING FOR EXCELLENCE.
+- 18 named first-term calendar events are now in `school_events`.
+- School location was confirmed as accurate: 38E Nathan Street, Off Ojuelegba Road, By Surulere Baptist Church, Surulere, Lagos. Actual clock-in coordinates, attendance radius and cutoff remain unconfirmed.
+- Fees have no fixed due date; installment payments are allowed through the last day.
+- Textbook sales are concluded. Do not add textbook charges unless requested later.
+- School bus service no longer operates.
+- New fee reference information: Monday/Tuesday uniform pair ₦26,500; Wednesday wear ₦10,000; Friday wear ₦10,000; Taekwondo ₦18,000; Red Cross ₦12,000; Cub Scout ₦18,000; Brownie ₦12,000. Each child is expected to belong to one club. These amounts are stored as school-setting reference data, not billable fee_items, because optional club selection is not yet modelled safely in the current invoice generator.
+- Class-teacher data was updated only where the supplied name could be safely matched to the existing 17-teacher roster. Grade 1 Gold, Nursery 1 Peace and Grade 4 Opal remain unassigned. The school supplied Miss Benita for Grade 4 Sapphire, conflicting with the existing live assignment; this was not overwritten without identity confirmation.
+- Subject allocations, specialist-teacher mapping, timetables, CA/exam weighting, late/absence rules, and full pupil/parent records remain pending.
