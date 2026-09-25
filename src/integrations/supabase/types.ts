@@ -2028,6 +2028,38 @@ export type Database = {
           },
         ]
       }
+      student_feature_settings: {
+        Row: {
+          ai_tutor_enabled: boolean
+          calculator_enabled: boolean
+          student_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          ai_tutor_enabled?: boolean
+          calculator_enabled?: boolean
+          student_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          ai_tutor_enabled?: boolean
+          calculator_enabled?: boolean
+          student_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_feature_settings_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: true
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       students: {
         Row: {
           address: string | null
@@ -2410,6 +2442,82 @@ export type Database = {
         }
         Relationships: []
       }
+      transport_driver_profiles: {
+        Row: {
+          active: boolean
+          created_at: string
+          driver_name: string
+          id: string
+          phone: string | null
+          route_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          driver_name: string
+          id?: string
+          phone?: string | null
+          route_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          driver_name?: string
+          id?: string
+          phone?: string | null
+          route_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_driver_profiles_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "transport_routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transport_location_points: {
+        Row: {
+          accuracy_m: number | null
+          id: string
+          latitude: number
+          longitude: number
+          recorded_at: string
+          trip_id: string
+        }
+        Insert: {
+          accuracy_m?: number | null
+          id?: string
+          latitude: number
+          longitude: number
+          recorded_at?: string
+          trip_id: string
+        }
+        Update: {
+          accuracy_m?: number | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          recorded_at?: string
+          trip_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_location_points_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "transport_trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transport_routes: {
         Row: {
           created_at: string
@@ -2439,6 +2547,83 @@ export type Database = {
           vehicle_number?: string | null
         }
         Relationships: []
+      }
+      transport_student_links: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          parent_user_id: string
+          route_id: string
+          student_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          parent_user_id: string
+          route_id: string
+          student_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          parent_user_id?: string
+          route_id?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_student_links_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "transport_routes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transport_student_links_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transport_trips: {
+        Row: {
+          driver_user_id: string
+          ended_at: string | null
+          id: string
+          route_id: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          driver_user_id: string
+          ended_at?: string | null
+          id?: string
+          route_id: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          driver_user_id?: string
+          ended_at?: string | null
+          id?: string
+          route_id?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_trips_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "transport_routes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -2674,6 +2859,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      send_message_to_admin: {
+        Args: { _body: string; _subject: string }
+        Returns: {
+          body: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          receiver_id: string
+          sender_id: string
+          subject: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "messages"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       staff_teacher_records: {
         Args: never
         Returns: {
@@ -2864,7 +3067,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["student", "teacher", "admin", "parent"],
+      app_role: ["student", "teacher", "admin", "parent", "driver"],
     },
   },
 } as const
