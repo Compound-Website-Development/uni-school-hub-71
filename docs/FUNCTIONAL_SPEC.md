@@ -1613,3 +1613,14 @@ A narrower "safe launch" covering only Phases 1 and 2 plus QA — enough to run 
 - The school bus no longer operates. Do not reintroduce school-bus fees/routes from older project data.
 - Newly supplied clothing/club amounts are: Monday/Tuesday uniform pair **₦26,500**; Wednesday wear **₦10,000**; Friday wear **₦10,000**; Taekwondo **₦18,000**; Red Cross **₦12,000**; Cub Scout **₦18,000**; Brownie **₦12,000**. Each child is expected to belong to one club. These are currently stored as reference settings, not live `fee_items`, because the current invoice generation logic would treat applicable fee items as billable and could incorrectly charge every child for all four club options.
 - Current arm-specific class-teacher information was applied only where it could be safely matched to the existing 17-teacher roster. Grade 1 Gold, Nursery 1 Peace and Grade 4 Opal remain unassigned. The school also supplied **Miss Benita** for Grade 4 Sapphire, which conflicts with the current live assignment and therefore was not blindly overwritten. Subject allocations, specialist-teacher mappings and timetables are still pending.
+
+
+## Finance Portal and optional fee billing — 26 Sep 2026
+- Admin navigation now treats Finance as a dedicated portal area: Finance Dashboard, Fee Setup, Financial Intelligence and Finance Reports.
+- fee_items now supports category, is_mandatory and is_active, and the Fee Setup screen can edit the fee name, amount, category and billing status.
+- Optional club billing is modelled through student_fee_selections, keyed to pupil + fee item + term. Invoice generation includes mandatory active fees automatically and optional fees only when explicitly selected.
+- Current seeded club options: Taekwondo ₦18,000; Red Cross ₦12,000; Cub Scout ₦18,000; Brownie ₦12,000.
+- Current seeded clothing items: Monday/Tuesday uniform pair ₦26,500; Wednesday wear ₦10,000; Friday wear ₦10,000.
+- Textbook Fee exists at ₦0 as an editable placeholder and is not mandatory.
+- No optional club selections or financial transactions were fabricated.
+- Princess's access level remains pending Mr Joseph's decision.
