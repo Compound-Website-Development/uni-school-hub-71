@@ -23,7 +23,7 @@ interface AdminLayoutProps { children: ReactNode; title?: string; showSearch?: b
 const sections=[
  {label:"Overview",items:[["home","Dashboard","/admin"],["book","Analytics","/admin/analytics"],["message","Activity Logs","/admin/activity"]]},
  {label:"People",items:[["people","Students","/admin/students"],["people","Staff","/admin/staff"],["people","Pending Approvals","/admin/approvals"]]},
- {label:"Finance & communication",items:[["finance","Fee Management","/admin/fees"],["finance","Invoices & Receipts","/admin/finance"],["message","Message Templates","/admin/communication"],["finance","Financial Intelligence","/admin/financial"],["message","Announcements","/admin/announcements"],["book","Reports & Export","/admin/reports"]]},
+ {label:"Finance Portal",items:[["finance","Finance Dashboard","/admin/finance"],["finance","Fee Setup","/admin/fees"],["finance","Financial Intelligence","/admin/financial"],["book","Finance Reports","/admin/reports"]]},\n {label:"Communication",items:[["message","Message Templates","/admin/communication"],["message","Announcements","/admin/announcements"]]},
  {label:"AI & wellbeing",items:[["ai","Predictive Analytics","/admin/predictive"],["people","Behavioural Records","/admin/behavioral"],["people","Student Wellbeing","/admin/wellbeing"]]},
  {label:"Academics & transport",items:[["cbt","CBT Exams","/admin/cbt"],["bus","Driver & Bus Tracking","/admin/transport"]]},
  {label:"School operations",items:[["book","Library","/admin/library"],["bus","Transport Setup","/admin/transport"],["people","Visitors","/admin/visitors"],["finance","Inventory","/admin/inventory"],["calendar","Substitutions","/admin/substitutions"]]},
@@ -38,7 +38,7 @@ const adminIconMap: Record<string, LucideIcon> = {
   "Students": GraduationCap,
   "Staff": BriefcaseBusiness,
   "Pending Approvals": UserCheck,
-  "Fee Management": WalletCards,
+  "Fee Management": WalletCards,\n  "Fee Setup": WalletCards,\n  "Finance Dashboard": WalletCards,\n  "Finance Reports": FileSpreadsheet,
   "Invoices & Receipts": Receipt,
   "Message Templates": Mail,
   "Financial Intelligence": ChartPie,
