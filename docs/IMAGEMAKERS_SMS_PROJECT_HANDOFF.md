@@ -1886,3 +1886,14 @@ LATEST SCHOOL-DATA RECONCILIATION — 25 SEPTEMBER 2026
 - New fee reference information: Monday/Tuesday uniform pair ₦26,500; Wednesday wear ₦10,000; Friday wear ₦10,000; Taekwondo ₦18,000; Red Cross ₦12,000; Cub Scout ₦18,000; Brownie ₦12,000. Each child is expected to belong to one club. These amounts are stored as school-setting reference data, not billable fee_items, because optional club selection is not yet modelled safely in the current invoice generator.
 - Class-teacher data was updated only where the supplied name could be safely matched to the existing 17-teacher roster. Grade 1 Gold, Nursery 1 Peace and Grade 4 Opal remain unassigned. The school supplied Miss Benita for Grade 4 Sapphire, conflicting with the existing live assignment; this was not overwritten without identity confirmation.
 - Subject allocations, specialist-teacher mapping, timetables, CA/exam weighting, late/absence rules, and full pupil/parent records remain pending.
+
+
+## 2026-09-26 Finance catalogue update
+- Finance is now grouped in the Admin navigation as a dedicated Finance Portal, with separate Finance Dashboard, Fee Setup, Financial Intelligence and Finance Reports entries; existing routes remain available.
+- The live fee catalogue now supports editable name, amount, category, mandatory/optional billing and active/inactive status.
+- Confirmed clothing amounts were seeded as active mandatory fee items: Monday/Tuesday uniform pair ₦26,500; Wednesday wear ₦10,000; Friday wear ₦10,000.
+- Confirmed club options were seeded as active optional fee items: Taekwondo ₦18,000; Red Cross ₦12,000; Cub Scout ₦18,000; Brownie ₦12,000. Optional clubs are selected per pupil and term, with one club selection replacing another for that pupil/term.
+- A Textbook Fee item was created at ₦0 and is editable. It remains non-mandatory because the school previously confirmed current textbook sales had concluded.
+- Term invoice generation was updated so mandatory active fees are included automatically, while optional fees are included only when explicitly selected for the pupil/term.
+- No pupil club selections have been created yet; the live selection table is currently empty.
+- Princess/admin finance access has NOT been changed. Mr Joseph should confirm whether Princess should receive full Admin Dashboard access or a restricted finance-focused role/permission set.
