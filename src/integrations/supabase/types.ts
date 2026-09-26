@@ -884,25 +884,34 @@ export type Database = {
       fee_items: {
         Row: {
           amount: number
+          category: string
           class_id: string | null
           created_at: string
           id: string
+          is_active: boolean
+          is_mandatory: boolean
           name: string
           term_id: string | null
         }
         Insert: {
           amount?: number
+          category?: string
           class_id?: string | null
           created_at?: string
           id?: string
+          is_active?: boolean
+          is_mandatory?: boolean
           name: string
           term_id?: string | null
         }
         Update: {
           amount?: number
+          category?: string
           class_id?: string | null
           created_at?: string
           id?: string
+          is_active?: boolean
+          is_mandatory?: boolean
           name?: string
           term_id?: string | null
         }
@@ -2056,6 +2065,55 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: true
             referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_fee_selections: {
+        Row: {
+          fee_item_id: string
+          id: string
+          selected_at: string
+          selected_by: string | null
+          student_id: string
+          term_id: string | null
+        }
+        Insert: {
+          fee_item_id: string
+          id?: string
+          selected_at?: string
+          selected_by?: string | null
+          student_id: string
+          term_id?: string | null
+        }
+        Update: {
+          fee_item_id?: string
+          id?: string
+          selected_at?: string
+          selected_by?: string | null
+          student_id?: string
+          term_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_fee_selections_fee_item_id_fkey"
+            columns: ["fee_item_id"]
+            isOneToOne: false
+            referencedRelation: "fee_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_fee_selections_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_fee_selections_term_id_fkey"
+            columns: ["term_id"]
+            isOneToOne: false
+            referencedRelation: "terms"
             referencedColumns: ["id"]
           },
         ]
