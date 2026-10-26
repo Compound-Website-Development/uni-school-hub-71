@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -163,6 +164,9 @@ const AdminDocumentsPage = () => {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline">
+              <Link to="/admin/reports"><FileText className="mr-1.5 h-4 w-4" /> Report cards & exports</Link>
+            </Button>
             <div className="relative">
               <Search className="w-4 h-4 absolute left-2.5 top-2.5 text-muted-foreground" />
               <Input

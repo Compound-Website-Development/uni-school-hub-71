@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { StaffLayout } from "@/components/layout/StaffLayout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,8 +78,24 @@ const AdminStudentUpload = () => {
     reader.readAsText(file);
   };
 
+  const duplicateRows = parsedData.filter((student, index) => {
+    const signature = (row: ParsedStudent) =>
+      [row.first_name, row.last_name, row.guardian_phone]
+        .map((value) => (value || "").trim().toLowerCase().replace(/\s+/g, " "))
+        .join("|");
+    return parsedData.findIndex((candidate) => signature(candidate) === signature(student)) !== index;
+  });
+
   const uploadStudents = async () => {
     if (parsedData.length === 0) return;
+    if (duplicateRows.length > 0) {
+      toast({
+        title: "Possible duplicate rows",
+        description: "Review the repeated pupil details in the preview and correct the CSV before importing. No records have been merged or deleted.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsUploading(true);
     setProgress(0);
@@ -147,7 +163,7 @@ const AdminStudentUpload = () => {
   };
 
   return (
-    <StaffLayout title="Bulk Student Upload">
+    <AdminLayout title="Bulk Student Upload">
       <div className="space-y-6 max-w-4xl">
         {/* Header */}
         <div>
@@ -249,6 +265,17 @@ const AdminStudentUpload = () => {
                 )}
               </div>
 
+              {duplicateRows.length > 0 && (
+                <div role="alert" className="mt-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+                  <p className="font-semibold text-amber-800 dark:text-amber-300">
+                    {duplicateRows.length} possible duplicate row(s) detected
+                  </p>
+                  <p className="mt-1 text-muted-foreground">
+                    Compare the repeated names and guardian phone numbers in your spreadsheet. The system will not merge or delete records automatically.
+                  </p>
+                </div>
+              )}
+
               {/* Upload Progress */}
               {isUploading && (
                 <div className="mt-4 space-y-2">
@@ -288,7 +315,7 @@ const AdminStudentUpload = () => {
           </Card>
         )}
       </div>
-    </StaffLayout>
+    </AdminLayout>
   );
 };
 
