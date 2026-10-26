@@ -52,13 +52,13 @@ const AdminFeesPage = () => {
   const [optionalFee, setOptionalFee] = useState("");
 
   const clubItems = useMemo(() => feeItems.filter((f) => f.category === "club" && f.is_active), [feeItems]);
-  const optionalItems = useMemo(() => feeItems.filter((f) => f.category !== "club" && f.is_active && !f.is_mandatory), [feeItems]);
+  const optionalItems = useMemo(() => {\n    const pupil = students.find((s) => s.id === optionalStudent);\n    return feeItems.filter((f) => f.category !== "club" && f.is_active && !f.is_mandatory && (!f.class_id || f.class_id === pupil?.class_id) && (!f.term_id || f.term_id === optionalTerm));\n  }, [feeItems, students, optionalStudent, optionalTerm]);
 
   const fetchData = async () => {
     const [{ data: items }, { data: pays }, { data: stu }, { data: trms }, { data: sels }, { data: cls }] = await Promise.all([
       supabase.from("fee_items").select("*, classes(name)").order("category").order("name"),
       supabase.from("receipts").select("*, students(first_name, last_name, student_id), invoices(serial)").order("created_at", { ascending: false }).limit(50),
-      supabase.from("students").select("id, first_name, last_name, student_id").eq("status", "active").order("first_name"),
+      supabase.from("students").select("id, first_name, last_name, student_id, class_id").eq("status", "active").order("first_name"),
       supabase.from("terms").select("id, name, is_current").order("term_number"),
       supabase.from("student_fee_selections").select("*, students(first_name, last_name, student_id), fee_items(name, category), terms(name)").order("selected_at", { ascending: false }).limit(300),
       supabase.from("classes").select("id, name, level, arm").order("name"),
