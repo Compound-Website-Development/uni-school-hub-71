@@ -54,7 +54,8 @@ const randomBlock = (len: number) => {
 };
 
 export const generateParentId = () => `IMS-P-${randomBlock(6)}`;
-export const generateParentCode = () => randomBlock(6);
+/** Strong, unambiguous parent access code: three 4-character blocks (~60 bits of entropy). */
+export const generateParentCode = () => [randomBlock(4), randomBlock(4), randomBlock(4)].join("-");
 
 /**
  * Upload a passport photo and return its STORAGE PATH.
