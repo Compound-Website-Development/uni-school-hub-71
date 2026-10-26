@@ -19,6 +19,11 @@ const categories = [
   { value: "uniform", label: "Uniform" },
   { value: "club", label: "Club" },
   { value: "textbook", label: "Textbook" },
+  { value: "notebook", label: "Notebooks / exercise books" },
+  { value: "books", label: "Books and learning materials" },
+  { value: "transport", label: "Transport" },
+  { value: "supplies", label: "School supplies" },
+  { value: "other", label: "Other charge" },
 ];
 
 const AdminFeesPage = () => {
@@ -27,7 +32,7 @@ const AdminFeesPage = () => {
   const [feeItems, setFeeItems] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
-  const [terms, setTerms] = useState<any[]>([]);
+  const [terms, setTerms] = useState<any[]>([]);\n  const [classes, setClasses] = useState<any[]>([]);\n  const [appliesToClass, setAppliesToClass] = useState("all");\n  const [appliesToTerm, setAppliesToTerm] = useState("all");
   const [selections, setSelections] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
@@ -43,17 +48,17 @@ const AdminFeesPage = () => {
   const clubItems = useMemo(() => feeItems.filter((f) => f.category === "club" && f.is_active), [feeItems]);
 
   const fetchData = async () => {
-    const [{ data: items }, { data: pays }, { data: stu }, { data: trms }, { data: sels }] = await Promise.all([
-      supabase.from("fee_items").select("*").order("category").order("name"),
+    const [{ data: items }, { data: pays }, { data: stu }, { data: trms }, { data: sels }, { data: cls }] = await Promise.all([
+      supabase.from("fee_items").select("*, classes(name)").order("category").order("name"),
       supabase.from("receipts").select("*, students(first_name, last_name, student_id), invoices(serial)").order("created_at", { ascending: false }).limit(50),
       supabase.from("students").select("id, first_name, last_name, student_id").eq("status", "active").order("first_name"),
       supabase.from("terms").select("id, name, is_current").order("term_number"),
-      supabase.from("student_fee_selections").select("*, students(first_name, last_name, student_id), fee_items(name, category), terms(name)").order("selected_at", { ascending: false }).limit(300),
+      supabase.from("student_fee_selections").select("*, students(first_name, last_name, student_id), fee_items(name, category), terms(name)").order("selected_at", { ascending: false }).limit(300),\n      supabase.from("classes").select("id, name, level, arm").order("name"),
     ]);
     setFeeItems(items || []);
     setPayments(pays || []);
     setStudents(stu || []);
-    setTerms(trms || []);
+    setTerms(trms || []);\n    setClasses(cls || []);
     setSelections(sels || []);
     const current = (trms || []).find((t: any) => t.is_current);
     if (current) setClubTerm((prev) => prev || current.id);
@@ -64,17 +69,17 @@ const AdminFeesPage = () => {
   useEffect(() => { void fetchData(); }, []);
 
   const openAdd = () => {
-    setEditing(null); setName(""); setAmount(""); setCategory("general"); setMandatory(true); setActive(true); setDialogOpen(true);
+    setEditing(null); setName(""); setAmount(""); setCategory("general"); setMandatory(true); setActive(true); setAppliesToClass("all"); setAppliesToTerm("all"); setDialogOpen(true);
   };
 
   const openEdit = (item: any) => {
     setEditing(item); setName(item.name); setAmount(String(item.amount)); setCategory(item.category || "general");
-    setMandatory(Boolean(item.is_mandatory)); setActive(Boolean(item.is_active)); setDialogOpen(true);
+    setMandatory(Boolean(item.is_mandatory)); setActive(Boolean(item.is_active)); setAppliesToClass(item.class_id || "all"); setAppliesToTerm(item.term_id || "all"); setDialogOpen(true);
   };
 
   const handleSave = async () => {
     if (!name.trim() || amount === "" || Number(amount) < 0) { toast.error("Enter a fee name and valid amount"); return; }
-    const payload = { name: name.trim(), amount: Number(amount), category, is_mandatory: mandatory, is_active: active };
+    const payload = { name: name.trim(), amount: Number(amount), category, is_mandatory: mandatory, is_active: active, class_id: appliesToClass === "all" ? null : appliesToClass, term_id: appliesToTerm === "all" ? null : appliesToTerm };
     const result = editing
       ? await supabase.from("fee_items").update(payload).eq("id", editing.id)
       : await supabase.from("fee_items").insert(payload);
@@ -132,7 +137,7 @@ const AdminFeesPage = () => {
             <Button size="sm" onClick={openAdd}><Plus className="w-4 h-4 mr-1" /> Add fee</Button>
           </CardHeader>
           <CardContent className="p-0 overflow-x-auto"><Table>
-            <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Amount</TableHead><TableHead>Billing</TableHead><TableHead>Status</TableHead><TableHead /></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Applies to</TableHead><TableHead>Amount</TableHead><TableHead>Billing</TableHead><TableHead>Status</TableHead><TableHead /></TableRow></TableHeader>
             <TableBody>
               {feeItems.map((item) => <TableRow key={item.id}>
                 <TableCell className="font-medium">{item.name}</TableCell>
@@ -145,7 +150,7 @@ const AdminFeesPage = () => {
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(item.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
                 </TableCell>
               </TableRow>)}
-              {!feeItems.length && <TableRow><TableCell colSpan={6} className="text-center py-10 text-muted-foreground"><CreditCard className="w-8 h-8 mx-auto mb-2 opacity-20" />No fee items defined yet.</TableCell></TableRow>}
+              {!feeItems.length && <TableRow><TableCell colSpan={7} className="text-center py-10 text-muted-foreground"><CreditCard className="w-8 h-8 mx-auto mb-2 opacity-20" />No fee items defined yet.</TableCell></TableRow>}
             </TableBody>
           </Table></CardContent>
         </Card>
@@ -181,7 +186,7 @@ const AdminFeesPage = () => {
         <div className="space-y-4">
           <div><Label className="text-xs">Fee name</Label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
           <div><Label className="text-xs">Amount (₦)</Label><Input type="number" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} /></div>
-          <div><Label className="text-xs">Category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{categories.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent></Select></div>
+          <div><Label className="text-xs">Category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{categories.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent></Select></div>\n          <div><Label className="text-xs">Class / arm</Label><Select value={appliesToClass} onValueChange={setAppliesToClass}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All classes</SelectItem>{classes.map((cl) => <SelectItem key={cl.id} value={cl.id}>{cl.name}{cl.arm ? " — " + cl.arm : ""}</SelectItem>)}</SelectContent></Select><p className="mt-1 text-xs text-muted-foreground">Use this for class-specific textbooks and charges.</p></div>\n          <div><Label className="text-xs">Billing term</Label><Select value={appliesToTerm} onValueChange={setAppliesToTerm}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Every term</SelectItem>{terms.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select></div>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={mandatory} onChange={(e) => setMandatory(e.target.checked)} /> Mandatory — include automatically on term invoices</label>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active — available for billing/selection</label>
           <Button className="w-full" onClick={handleSave}>{editing ? "Save changes" : "Create fee"}</Button>
