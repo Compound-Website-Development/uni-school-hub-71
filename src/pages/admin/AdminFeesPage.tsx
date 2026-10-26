@@ -32,7 +32,10 @@ const AdminFeesPage = () => {
   const [feeItems, setFeeItems] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
-  const [terms, setTerms] = useState<any[]>([]);\n  const [classes, setClasses] = useState<any[]>([]);\n  const [appliesToClass, setAppliesToClass] = useState("all");\n  const [appliesToTerm, setAppliesToTerm] = useState("all");
+  const [terms, setTerms] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [appliesToClass, setAppliesToClass] = useState("all");
+  const [appliesToTerm, setAppliesToTerm] = useState("all");
   const [selections, setSelections] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
@@ -53,12 +56,14 @@ const AdminFeesPage = () => {
       supabase.from("receipts").select("*, students(first_name, last_name, student_id), invoices(serial)").order("created_at", { ascending: false }).limit(50),
       supabase.from("students").select("id, first_name, last_name, student_id").eq("status", "active").order("first_name"),
       supabase.from("terms").select("id, name, is_current").order("term_number"),
-      supabase.from("student_fee_selections").select("*, students(first_name, last_name, student_id), fee_items(name, category), terms(name)").order("selected_at", { ascending: false }).limit(300),\n      supabase.from("classes").select("id, name, level, arm").order("name"),
+      supabase.from("student_fee_selections").select("*, students(first_name, last_name, student_id), fee_items(name, category), terms(name)").order("selected_at", { ascending: false }).limit(300),
+      supabase.from("classes").select("id, name, level, arm").order("name"),
     ]);
     setFeeItems(items || []);
     setPayments(pays || []);
     setStudents(stu || []);
-    setTerms(trms || []);\n    setClasses(cls || []);
+    setTerms(trms || []);
+    setClasses(cls || []);
     setSelections(sels || []);
     const current = (trms || []).find((t: any) => t.is_current);
     if (current) setClubTerm((prev) => prev || current.id);
@@ -186,7 +191,9 @@ const AdminFeesPage = () => {
         <div className="space-y-4">
           <div><Label className="text-xs">Fee name</Label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
           <div><Label className="text-xs">Amount (₦)</Label><Input type="number" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} /></div>
-          <div><Label className="text-xs">Category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{categories.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent></Select></div>\n          <div><Label className="text-xs">Class / arm</Label><Select value={appliesToClass} onValueChange={setAppliesToClass}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All classes</SelectItem>{classes.map((cl) => <SelectItem key={cl.id} value={cl.id}>{cl.name}{cl.arm ? " — " + cl.arm : ""}</SelectItem>)}</SelectContent></Select><p className="mt-1 text-xs text-muted-foreground">Use this for class-specific textbooks and charges.</p></div>\n          <div><Label className="text-xs">Billing term</Label><Select value={appliesToTerm} onValueChange={setAppliesToTerm}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Every term</SelectItem>{terms.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select></div>
+          <div><Label className="text-xs">Category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{categories.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent></Select></div>
+          <div><Label className="text-xs">Class / arm</Label><Select value={appliesToClass} onValueChange={setAppliesToClass}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All classes</SelectItem>{classes.map((cl) => <SelectItem key={cl.id} value={cl.id}>{cl.name}{cl.arm ? " — " + cl.arm : ""}</SelectItem>)}</SelectContent></Select><p className="mt-1 text-xs text-muted-foreground">Use this for class-specific textbooks and charges.</p></div>
+          <div><Label className="text-xs">Billing term</Label><Select value={appliesToTerm} onValueChange={setAppliesToTerm}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Every term</SelectItem>{terms.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select></div>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={mandatory} onChange={(e) => setMandatory(e.target.checked)} /> Mandatory — include automatically on term invoices</label>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active — available for billing/selection</label>
           <Button className="w-full" onClick={handleSave}>{editing ? "Save changes" : "Create fee"}</Button>
