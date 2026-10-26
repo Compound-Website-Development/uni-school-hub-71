@@ -88,7 +88,7 @@ const AdminStudentsPage = () => {
   const downloadCredentials = () => {
     const rows = [["Name", "Admission No", "Login email", "Password", "Class", "Status"]]
       .concat((accounts || []).map((a) => [a.name, a.admission_no || "", a.email || "", a.password || "", a.class_name || "", a.status]))
-      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))
+      .map((r) => r.map((v) => csvCell(v)).join(","))
       .join("\n");
     const url = URL.createObjectURL(new Blob([rows], { type: "text/csv" }));
     const link = document.createElement("a");
