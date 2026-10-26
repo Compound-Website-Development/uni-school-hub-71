@@ -64,6 +64,7 @@ import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminApprovalsPage from "./pages/admin/AdminApprovalsPage";
 import AdminReportsPage from "./pages/admin/AdminReportsPage";
 import AdminOversightPage from "./pages/admin/AdminOversightPage";
+import AdminProgressionPage from "./pages/admin/AdminProgressionPage";
 import AdminLibrary from "./pages/admin/AdminLibrary";
 import AdminTransport from "./pages/admin/AdminTransport";
 import AdminVisitors from "./pages/admin/AdminVisitors";
@@ -190,6 +191,7 @@ const App = () => (
             <Route path="/admin/transport" element={<ProtectedRoute allowedRoles={["admin"]}><AdminTransport /></ProtectedRoute>} />
             <Route path="/admin/cbt" element={<ProtectedRoute allowedRoles={["admin"]}><StaffCBT /></ProtectedRoute>} />
             <Route path="/admin/oversight" element={<ProtectedRoute allowedRoles={["admin"]}><AdminOversightPage /></ProtectedRoute>} />
+            <Route path="/admin/progression" element={<ProtectedRoute allowedRoles={["admin"]}><AdminProgressionPage /></ProtectedRoute>} />
             <Route path="/admin/visitors" element={<ProtectedRoute allowedRoles={["admin"]}><AdminVisitors /></ProtectedRoute>} />
             <Route path="/admin/id-cards" element={<ProtectedRoute allowedRoles={["admin"]}><AdminIDCards /></ProtectedRoute>} />
             <Route path="/admin/certificates" element={<ProtectedRoute allowedRoles={["admin"]}><AdminCertificates /></ProtectedRoute>} />
