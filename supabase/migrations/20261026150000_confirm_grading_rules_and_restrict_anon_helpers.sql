@@ -1,9 +1,49 @@
--- Tighten anonymous access to internal authorization helpers.
--- Token-based public student profile/results RPCs are intentionally unchanged.
-REVOKE EXECUTE ON FUNCTION public.can_manage_student(uuid) FROM anon;
-REVOKE EXECUTE ON FUNCTION public.has_admin_permission(uuid, text) FROM anon;
-REVOKE EXECUTE ON FUNCTION public.send_message_to_admin(text, text) FROM anon;
-REVOKE EXECUTE ON FUNCTION public.teaches_class(uuid, uuid) FROM anon;
+-- Confirmed school grading rules (Otuagoma Joseph, 26 October 2026).
+-- Tighten helper RPC access by removing inherited PUBLIC execution.
+REVOKE EXECUTE ON FUNCTION public.can_manage_student(uuid) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.has_admin_permission(uuid, text) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.send_message_to_admin(text, text) FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.teaches_class(uuid, uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.can_manage_student(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_admin_permission(uuid, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.send_message_to_admin(text, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.teaches_class(uuid, uuid) TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.compute_grade_fields()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path TO 'public'
+AS $function$
+DECLARE t numeric;
+BEGIN
+  IF NEW.continuous_assessment IS NULL AND NEW.exam_score IS NULL THEN
+    NEW.total_score := NULL;
+    NEW.letter_grade := NULL;
+    NEW.remark := NULL;
+  ELSE
+    t := COALESCE(NEW.continuous_assessment, 0) + COALESCE(NEW.exam_score, 0);
+    NEW.total_score := t;
+    NEW.letter_grade := CASE
+      WHEN t >= 90 THEN 'A'
+      WHEN t >= 80 THEN 'B'
+      WHEN t >= 70 THEN 'C'
+      WHEN t >= 60 THEN 'D'
+      WHEN t >= 50 THEN 'E'
+      ELSE 'F'
+    END;
+    NEW.remark := CASE
+      WHEN t >= 90 THEN 'Outstanding'
+      WHEN t >= 70 THEN 'Excellent'
+      WHEN t >= 60 THEN 'Very Good'
+      WHEN t >= 50 THEN 'Good'
+      WHEN t >= 40 THEN 'Fair'
+      ELSE 'Poor'
+    END;
+  END IF;
+  NEW.updated_at := now();
+  RETURN NEW;
+END;
+$function$;
 
 INSERT INTO public.school_settings (key, value)
 VALUES
