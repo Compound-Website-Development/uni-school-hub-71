@@ -82,13 +82,14 @@ const AdminFinancialIntelligence = () => {
   const runForecast = async () => {
     setIsForecasting(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            Authorization: `Bearer ${session?.access_token ?? ""}`,
           },
           body: JSON.stringify({
             type: "report_comment",

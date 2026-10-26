@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { supabase } from "@/integrations/supabase/client";
 import { Search, Eye, Edit, Briefcase, Plus, UserX, UserCheck, KeyRound, Loader2, Copy, Download } from "lucide-react";
 import { toast } from "sonner";
+import { csvCell } from "@/lib/csv";
 import { StaffFormDialog } from "@/components/admin/StaffFormDialog";
 
 const AdminStaffPage = () => {
@@ -72,7 +73,7 @@ const AdminStaffPage = () => {
   const downloadCredentials = () => {
     const rows = [["Name", "Email", "Password", "Department", "Status"]]
       .concat((accounts || []).map((a) => [a.name, a.email, a.password || "", a.department || "", a.status]))
-      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))
+      .map((r) => r.map((v) => csvCell(v)).join(","))
       .join("\n");
     const url = URL.createObjectURL(new Blob([rows], { type: "text/csv" }));
     const link = document.createElement("a");

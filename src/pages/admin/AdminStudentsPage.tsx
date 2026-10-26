@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import StudentPhoto from "@/components/StudentPhoto";
 import { Search, Plus, Eye, Edit, UserX, UserCheck, GraduationCap, Upload, BadgeCheck, User, KeyRound, Loader2, Copy, Download } from "lucide-react";
 import { toast } from "sonner";
+import { csvCell } from "@/lib/csv";
 import { Link } from "react-router-dom";
 import { StudentFormDialog, ClassOption } from "@/components/admin/StudentFormDialog";
 
@@ -88,7 +89,7 @@ const AdminStudentsPage = () => {
   const downloadCredentials = () => {
     const rows = [["Name", "Admission No", "Login email", "Password", "Class", "Status"]]
       .concat((accounts || []).map((a) => [a.name, a.admission_no || "", a.email || "", a.password || "", a.class_name || "", a.status]))
-      .map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))
+      .map((r) => r.map((v) => csvCell(v)).join(","))
       .join("\n");
     const url = URL.createObjectURL(new Blob([rows], { type: "text/csv" }));
     const link = document.createElement("a");

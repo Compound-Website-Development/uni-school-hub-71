@@ -9,17 +9,14 @@ import { toast } from "sonner";
 import { loadReportContext, StudentOption } from "@/lib/reportCards";
 import CanonicalReportCard from "@/components/reports/CanonicalReportCard";
 
+import { csvCell } from "@/lib/csv";
+
 const downloadCSV = (data: Record<string, any>[], filename: string) => {
   if (!data.length) { toast.error("No data to export"); return; }
   const headers = Object.keys(data[0]);
   const csv = [
     headers.join(","),
-    ...data.map(row => headers.map(h => {
-      const val = row[h];
-      const str = val === null || val === undefined ? "" : String(val);
-      return str.includes(",") || str.includes('"') || str.includes("\n")
-        ? `"${str.replace(/"/g, '""')}"` : str;
-    }).join(","))
+    ...data.map(row => headers.map(h => csvCell(row[h])).join(","))
   ].join("\n");
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
