@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 import { naira, printDocument } from "@/lib/finance";
+import schoolLogo from "@/assets/logo";
+import { SCHOOL } from "@/lib/schoolConfig";
 
 interface Props {
   receipt: any;
@@ -16,7 +18,20 @@ export const ReceiptDocument = ({ receipt, studentName, invoiceSerial, balanceAf
 
   return (
     <div className="rounded-xl border border-border/60 bg-card overflow-hidden">
-      <div id={domId} className="p-4">
+      <div id={domId} className="p-4 text-foreground">
+        <header className="mb-4 flex items-center gap-3 border-b border-border pb-4">
+          <img src={schoolLogo} alt={SCHOOL.shortName + " logo"} className="h-16 w-16 shrink-0 object-contain" />
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg font-bold leading-tight">{SCHOOL.name}</h2>
+            <p className="text-xs text-muted-foreground">{SCHOOL.motto}</p>
+            <p className="text-[11px] text-muted-foreground">{SCHOOL.address}</p>
+            <p className="text-[11px] text-muted-foreground">{SCHOOL.approvalNo}</p>
+          </div>
+          <div className="text-right">
+            <h3 className="text-base font-extrabold uppercase tracking-wide">Official Receipt</h3>
+            <p className="text-xs text-muted-foreground">Payment acknowledgement</p>
+          </div>
+        </header>
         <div className="meta flex flex-wrap justify-between gap-3 text-xs sm:text-sm">
           <div>
             <p><strong>Receipt:</strong> {receipt.serial}</p>
@@ -39,7 +54,7 @@ export const ReceiptDocument = ({ receipt, studentName, invoiceSerial, balanceAf
         {!compact && (
           <div className="stamp mt-6 flex justify-between text-[11px] text-muted-foreground">
             <span>Received by: ____________________</span>
-            <span>School stamp</span>
+            <span>Authorised school stamp</span>
           </div>
         )}
       </div>
