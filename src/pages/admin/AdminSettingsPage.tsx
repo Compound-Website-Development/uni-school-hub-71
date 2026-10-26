@@ -13,7 +13,7 @@ import { Save, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { ASSESSMENT_WEIGHTS, GRADE_BANDS, letterGradeForScore } from "@/lib/schoolConfig";
+import { ASSESSMENT_WEIGHTS, GRADE_BANDS } from "@/lib/schoolConfig";
 
 const AdminSettingsPage = () => {
   const { user } = useAuth();
@@ -99,7 +99,6 @@ const AdminSettingsPage = () => {
 
   const gradingScale = GRADE_BANDS.map((band) => ({
     range: `${band.min}–${band.max}`,
-    grade: letterGradeForScore(band.min),
     remark: band.remark,
   }));
 
@@ -157,7 +156,7 @@ const AdminSettingsPage = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-xs">Score Range</TableHead>
-                      <TableHead className="text-xs">Letter Grade</TableHead>
+                      
                       <TableHead className="text-xs">Remark</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -165,7 +164,7 @@ const AdminSettingsPage = () => {
                     {gradingScale.map((g, idx) => (
                       <TableRow key={idx}>
                         <TableCell className="text-sm font-mono">{g.range}</TableCell>
-                        <TableCell><Badge variant="outline" className="font-bold">{g.grade}</Badge></TableCell>
+                        
                         <TableCell className="text-sm">{g.remark}</TableCell>
                       </TableRow>
                     ))}
