@@ -47,8 +47,12 @@ const AdminFeesPage = () => {
   const [clubStudent, setClubStudent] = useState("");
   const [clubTerm, setClubTerm] = useState("");
   const [clubFee, setClubFee] = useState("");
+  const [optionalStudent, setOptionalStudent] = useState("");
+  const [optionalTerm, setOptionalTerm] = useState("");
+  const [optionalFee, setOptionalFee] = useState("");
 
   const clubItems = useMemo(() => feeItems.filter((f) => f.category === "club" && f.is_active), [feeItems]);
+  const optionalItems = useMemo(() => feeItems.filter((f) => f.category !== "club" && f.is_active && !f.is_mandatory), [feeItems]);
 
   const fetchData = async () => {
     const [{ data: items }, { data: pays }, { data: stu }, { data: trms }, { data: sels }, { data: cls }] = await Promise.all([
@@ -110,6 +114,17 @@ const AdminFeesPage = () => {
     toast.success("Club selection saved"); fetchData();
   };
 
+  const assignOptionalItem = async () => {
+    if (!optionalStudent || !optionalTerm || !optionalFee) { toast.error("Choose a pupil, term and optional item"); return; }
+    const { data: existing, error: checkError } = await supabase.from("student_fee_selections").select("id").eq("student_id", optionalStudent).eq("term_id", optionalTerm).eq("fee_item_id", optionalFee).maybeSingle();
+    if (checkError) { toast.error(checkError.message); return; }
+    if (existing) { toast.error("This optional item is already selected for this pupil and term."); return; }
+    const { error } = await supabase.from("student_fee_selections").insert({ student_id: optionalStudent, term_id: optionalTerm, fee_item_id: optionalFee });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Optional charge selected for this pupil and term");
+    await fetchData();
+  };
+
   const removeClub = async (studentId: string, termId: string) => {
     const { error } = await supabase.from("student_fee_selections").delete()
       .eq("student_id", studentId).eq("term_id", termId).in("fee_item_id", clubItems.map((f) => f.id));
@@ -158,6 +173,16 @@ const AdminFeesPage = () => {
               {!feeItems.length && <TableRow><TableCell colSpan={7} className="text-center py-10 text-muted-foreground"><CreditCard className="w-8 h-8 mx-auto mb-2 opacity-20" />No fee items defined yet.</TableCell></TableRow>}
             </TableBody>
           </Table></CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader><CardTitle className="text-sm font-semibold">Optional uniforms, books and supplies</CardTitle><p className="text-xs text-muted-foreground">Select one-off items for a particular pupil and term. These items are not added to invoices unless selected. Uniform prices remain unchanged and are not charged automatically each term.</p></CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-4">
+            <div className="sm:col-span-2"><Label className="text-xs">Pupil</Label><Select value={optionalStudent} onValueChange={setOptionalStudent}><SelectTrigger><SelectValue placeholder="Choose pupil" /></SelectTrigger><SelectContent>{students.map((s) => <SelectItem key={s.id} value={s.id}>{s.first_name} {s.last_name} · {s.student_id}</SelectItem>)}</SelectContent></Select></div>
+            <div><Label className="text-xs">Term</Label><Select value={optionalTerm} onValueChange={setOptionalTerm}><SelectTrigger><SelectValue placeholder="Term" /></SelectTrigger><SelectContent>{terms.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select></div>
+            <div><Label className="text-xs">Optional item</Label><Select value={optionalFee} onValueChange={setOptionalFee}><SelectTrigger><SelectValue placeholder="Choose item" /></SelectTrigger><SelectContent>{optionalItems.map((f) => <SelectItem key={f.id} value={f.id}>{f.name} · ₦{Number(f.amount).toLocaleString()}</SelectItem>)}</SelectContent></Select></div>
+            <div className="sm:col-span-4"><Button onClick={assignOptionalItem}>Add selected item to pupil's term</Button></div>
+          </CardContent>
         </Card>
 
         <Card>
