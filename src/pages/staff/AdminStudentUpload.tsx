@@ -44,36 +44,52 @@ const AdminStudentUpload = () => {
     }
   };
 
+  // Parse quoted CSV fields correctly, including commas and escaped quotes.
   const parseCSV = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      const text = e.target?.result as string;
-      const lines = text.split('\n');
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g, '_'));
-      
-      const students: ParsedStudent[] = [];
-      for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',').map(v => v.trim());
-        if (values.length >= 2 && values[0]) {
-          const student: ParsedStudent = {
-            first_name: values[headers.indexOf('first_name')] || values[0] || '',
-            last_name: values[headers.indexOf('last_name')] || values[1] || '',
-            email: values[headers.indexOf('email')] || undefined,
-            gender: values[headers.indexOf('gender')] || undefined,
-            date_of_birth: values[headers.indexOf('date_of_birth')] || values[headers.indexOf('dob')] || undefined,
-            guardian_name: values[headers.indexOf('guardian_name')] || values[headers.indexOf('parent_name')] || undefined,
-            guardian_phone: values[headers.indexOf('guardian_phone')] || values[headers.indexOf('parent_phone')] || undefined,
-            class_name: values[headers.indexOf('class')] || values[headers.indexOf('class_name')] || undefined,
-          };
-          students.push(student);
-        }
+      const source = String(e.target?.result ?? "").replace(/^\\uFEFF/, "");
+      const rows: string[][] = [];
+      let row: string[] = [];
+      let field = "";
+      let quoted = false;
+      for (let i = 0; i < source.length; i++) {
+        const ch = source[i];
+        if (ch === '"' && quoted && source[i + 1] === '"' ) { field += '"' ; i++; }
+        else if (ch === '"' ) quoted = !quoted;
+        else if (ch === "," && !quoted) { row.push(field.trim()); field = ""; }
+        else if ((ch === "\\n" || ch === "\\r") && !quoted) {
+          if (ch === "\\r" && source[i + 1] === "\\n") i++;
+          row.push(field.trim());
+          if (row.some((cell) => cell !== "")) rows.push(row);
+          row = []; field = "";
+        } else field += ch;
       }
-      
+      if (field.length || row.length) { row.push(field.trim()); if (row.some((cell) => cell !== "")) rows.push(row); }
+      if (rows.length < 2) {
+        setParsedData([]);
+        toast({ title: "No pupil rows found", description: "The CSV needs a header row and at least one pupil row.", variant: "destructive" });
+        return;
+      }
+      const headers = rows[0].map((h) => h.trim().toLowerCase().replace(/\\s+/g, "_"));
+      const get = (values: string[], ...keys: string[]) => {
+        const index = keys.map((key) => headers.indexOf(key)).find((i) => i >= 0);
+        return index === undefined ? "" : (values[index] ?? "").trim();
+      };
+      const students: ParsedStudent[] = rows.slice(1).map((values) => ({
+        first_name: get(values, "first_name", "firstname") || values[0] || "",
+        last_name: get(values, "last_name", "lastname", "surname") || values[1] || "",
+        email: get(values, "email") || undefined,
+        gender: get(values, "gender") || undefined,
+        date_of_birth: get(values, "date_of_birth", "dob") || undefined,
+        guardian_name: get(values, "guardian_name", "parent_name") || undefined,
+        guardian_phone: get(values, "guardian_phone", "parent_phone") || undefined,
+        class_name: get(values, "class_name", "class", "arm") || undefined,
+      })).filter((student) => student.first_name || student.last_name);
+      const invalid = students.filter((student) => !student.first_name || !student.last_name);
+      if (invalid.length) toast({ title: "Some rows need attention", description: invalid.length + " pupil row(s) are missing a first or last name. Correct the CSV before importing.", variant: "destructive" });
       setParsedData(students);
-      toast({
-        title: "File Parsed",
-        description: `Found ${students.length} students in the file`,
-      });
+      toast({ title: "File parsed", description: "Found " + students.length + " pupil rows. Review duplicates and incomplete details before importing." });
     };
     reader.readAsText(file);
   };
