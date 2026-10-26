@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,22 +34,75 @@ Guidelines for student comments:
 - Suggest actionable next steps for improvement`,
 };
 
+const MAX_MESSAGES = 30;
+const MAX_CONTENT_LENGTH = 4000;
+const MAX_STUDENT_DATA_LENGTH = 4000;
+
+type ChatMessage = { role: "user" | "assistant"; content: string };
+
+/** Only user/assistant turns from the caller are accepted; system instructions are set here. */
+const sanitizeMessages = (raw: unknown): ChatMessage[] => {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter(
+      (m): m is { role: "user" | "assistant"; content: string } =>
+        !!m &&
+        typeof m === "object" &&
+        (m.role === "user" || m.role === "assistant") &&
+        typeof m.content === "string" &&
+        m.content.trim().length > 0,
+    )
+    .slice(-MAX_MESSAGES)
+    .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_CONTENT_LENGTH) }));
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Only signed-in portal users may spend AI credits.
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!authHeader.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Sign in to use the assistant." }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const caller = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: claims, error: claimsError } = await caller.auth.getClaims(authHeader.replace("Bearer ", ""));
+    if (claimsError || !claims?.claims?.sub) {
+      return new Response(JSON.stringify({ error: "Sign in to use the assistant." }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const { messages, type = "homework", studentData } = await req.json();
+    const body = await req.json();
+    const requestedType = typeof body?.type === "string" ? body.type : "homework";
+    const type = requestedType in SYSTEM_PROMPTS ? requestedType : "homework";
+    const messages = sanitizeMessages(body?.messages);
+    if (messages.length === 0) {
+      return new Response(JSON.stringify({ error: "No message provided." }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
-    let systemPrompt = SYSTEM_PROMPTS[type] || SYSTEM_PROMPTS.homework;
+    let systemPrompt = SYSTEM_PROMPTS[type];
 
     // For report comments, append student data context
-    if (type === "report_comment" && studentData) {
-      systemPrompt += `\n\nStudent Performance Data:\n${JSON.stringify(studentData, null, 2)}`;
+    if (type === "report_comment" && body?.studentData) {
+      systemPrompt += `\n\nStudent Performance Data:\n${JSON.stringify(body.studentData).slice(0, MAX_STUDENT_DATA_LENGTH)}`;
     }
 
     const useStreaming = type === "homework";
@@ -63,7 +117,7 @@ serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          ...(messages || []),
+          ...messages,
         ],
         stream: useStreaming,
       }),
