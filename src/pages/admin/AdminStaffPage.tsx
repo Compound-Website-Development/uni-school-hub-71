@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { supabase } from "@/integrations/supabase/client";
 import { Search, Eye, Edit, Briefcase, Plus, UserX, UserCheck, KeyRound, Loader2, Copy, Download } from "lucide-react";
 import { toast } from "sonner";
+import { csvCell } from "@/lib/csv";
 import { StaffFormDialog } from "@/components/admin/StaffFormDialog";
 
 const AdminStaffPage = () => {

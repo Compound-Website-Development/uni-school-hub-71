@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import StudentPhoto from "@/components/StudentPhoto";
 import { Search, Plus, Eye, Edit, UserX, UserCheck, GraduationCap, Upload, BadgeCheck, User, KeyRound, Loader2, Copy, Download } from "lucide-react";
 import { toast } from "sonner";
+import { csvCell } from "@/lib/csv";
 import { Link } from "react-router-dom";
 import { StudentFormDialog, ClassOption } from "@/components/admin/StudentFormDialog";
 
