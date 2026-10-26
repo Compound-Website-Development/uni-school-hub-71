@@ -81,7 +81,7 @@ const AdminStudentUpload = () => {
   const duplicateRows = parsedData.filter((student, index) => {
     const signature = (row: ParsedStudent) =>
       [row.first_name, row.last_name, row.guardian_phone]
-        .map((value) => (value || "").trim().toLowerCase().replace(/\\s+/g, " "))
+        .map((value) => (value || "").trim().toLowerCase().replace(/\s+/g, " "))
         .join("|");
     return parsedData.findIndex((candidate) => signature(candidate) === signature(student)) !== index;
   });
