@@ -17,6 +17,7 @@ import {
   ASSESSMENT_WEIGHTS,
   PSYCHOMOTOR_SKILLS,
   letterGradeForScore,
+  remarkForScore,
 } from "@/lib/schoolConfig";
 
 interface ClassOption {
@@ -283,9 +284,9 @@ const StaffGradebook = () => {
     return (grade.ca || 0) + (grade.exam || 0);
   };
 
-  const calculateLetterGrade = (total: number | string): string => {
+  const calculateRemark = (total: number | string): string => {
     if (total === "-") return "-";
-    return letterGradeForScore(typeof total === "string" ? parseFloat(total) : total);
+    return remarkForScore(typeof total === "string" ? parseFloat(total) : total);
   };
 
   const handleSave = async () => {
@@ -587,14 +588,14 @@ const StaffGradebook = () => {
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-24">CA ({ASSESSMENT_WEIGHTS.ca})</th>
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-24">Exam ({ASSESSMENT_WEIGHTS.exam})</th>
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-20">Total</th>
-                      <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-20">Grade</th>
+                      <th className="text-center py-3 px-4 text-sm font-semibold text-foreground">Official Remark</th>
                       <th className="text-center py-3 px-4 text-sm font-semibold text-foreground w-16">AI</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredStudents.map((student) => {
                       const total = calculateTotal(student.id);
-                      const letterGrade = calculateLetterGrade(total);
+                      const remark = calculateRemark(total);
                       return (
                         <tr key={student.id} className="border-b border-border/50 hover:bg-secondary/30">
                           <td className="py-3 px-4">
@@ -623,14 +624,8 @@ const StaffGradebook = () => {
                           </td>
                           <td className="py-3 px-4 text-center font-semibold text-foreground">{total}</td>
                           <td className="py-3 px-4 text-center">
-                            <span className={`px-3 py-1 rounded-full text-sm font-bold ${
-                              letterGrade === "A" ? "bg-success/10 text-success" :
-                              letterGrade.startsWith("B") ? "bg-primary/10 text-primary" :
-                              letterGrade.startsWith("C") ? "bg-warning/10 text-warning" :
-                              letterGrade === "F" ? "bg-destructive/10 text-destructive" :
-                              "bg-muted text-muted-foreground"
-                            }`}>
-                              {letterGrade}
+                            <span className="px-3 py-1 rounded-full text-sm font-semibold bg-muted text-foreground">
+                              {remark}
                             </span>
                           </td>
                           <td className="py-3 px-4 text-center">
