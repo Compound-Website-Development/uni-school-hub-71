@@ -131,10 +131,10 @@ const AdminStudentUpload = () => {
       return;
     }
     const normalise = (value?: string | null) => String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
-    const classMap = new Map((classesData || []).map(c => [normalise(c.name), c.id]));
-    const existingSignatures = new Set((existingStudents || []).map(s => [normalise(s.first_name), normalise(s.last_name), normalise(s.guardian_phone)].join("|")));
+    const classMap = new Map((classesData || []).flatMap(c => [[normalise(c.name), c.id] as [string, string], ...(c.arm ? [[normalise(c.name + " " + c.arm), c.id] as [string, string]] : [])]));
+    const existingSignatures = new Set((existingStudents || []).filter(s => normalise(s.guardian_phone)).map(s => [normalise(s.first_name), normalise(s.last_name), normalise(s.guardian_phone)].join("|")));
     const existingIds = new Set((existingStudents || []).map(s => normalise(s.student_id)).filter(Boolean));
-    const duplicates = parsedData.filter(s => existingSignatures.has([normalise(s.first_name), normalise(s.last_name), normalise(s.guardian_phone)].join("|")) || (s.student_id && existingIds.has(normalise(s.student_id))));
+    const duplicates = parsedData.filter(s => (normalise(s.guardian_phone) && existingSignatures.has([normalise(s.first_name), normalise(s.last_name), normalise(s.guardian_phone)].join("|"))) || (s.student_id && existingIds.has(normalise(s.student_id))));
     if (duplicates.length) {
       setIsUploading(false);
       toast({ title: "Possible existing duplicates", description: duplicates.length + " imported pupil row(s) match an existing pupil or admission number. Review the records and correct the file; nothing was merged or deleted.", variant: "destructive" });
