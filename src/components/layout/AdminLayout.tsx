@@ -8,7 +8,7 @@ import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { LucideIcon } from "lucide-react";
 import {
-  LogOut, ChevronRight, ExternalLink, LayoutDashboard, BarChart3, Activity,
+  LogOut, ChevronRight, ExternalLink, LayoutDashboard, BarChart3, Activity, CalendarDays,
   GraduationCap, BriefcaseBusiness, UserCheck, WalletCards, Receipt, Mail,
   ChartPie, Megaphone, FileSpreadsheet, Sparkles, ClipboardPenLine, HeartPulse,
   MonitorPlay, BusFront, LibraryBig, Route, DoorOpen, Boxes, ArrowLeftRight,
