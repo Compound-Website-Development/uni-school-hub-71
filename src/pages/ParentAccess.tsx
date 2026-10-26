@@ -72,7 +72,7 @@ const ParentAccess = () => {
               <Label htmlFor="code">Access code</Label>
               <Input
                 id="code"
-                placeholder="XXXXXX"
+                placeholder="XXXX-XXXX-XXXX"
                 value={code}
                 maxLength={32}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
