@@ -19,6 +19,11 @@ const categories = [
   { value: "uniform", label: "Uniform" },
   { value: "club", label: "Club" },
   { value: "textbook", label: "Textbook" },
+  { value: "notebook", label: "Notebooks / exercise books" },
+  { value: "books", label: "Books and learning materials" },
+  { value: "transport", label: "Transport" },
+  { value: "supplies", label: "School supplies" },
+  { value: "other", label: "Other charge" },
 ];
 
 const AdminFeesPage = () => {
@@ -28,6 +33,9 @@ const AdminFeesPage = () => {
   const [payments, setPayments] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [terms, setTerms] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [appliesToClass, setAppliesToClass] = useState("all");
+  const [appliesToTerm, setAppliesToTerm] = useState("all");
   const [selections, setSelections] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
@@ -39,21 +47,27 @@ const AdminFeesPage = () => {
   const [clubStudent, setClubStudent] = useState("");
   const [clubTerm, setClubTerm] = useState("");
   const [clubFee, setClubFee] = useState("");
+  const [optionalStudent, setOptionalStudent] = useState("");
+  const [optionalTerm, setOptionalTerm] = useState("");
+  const [optionalFee, setOptionalFee] = useState("");
 
   const clubItems = useMemo(() => feeItems.filter((f) => f.category === "club" && f.is_active), [feeItems]);
+  const optionalItems = useMemo(() => {\n    const pupil = students.find((s) => s.id === optionalStudent);\n    return feeItems.filter((f) => f.category !== "club" && f.is_active && !f.is_mandatory && (!f.class_id || f.class_id === pupil?.class_id) && (!f.term_id || f.term_id === optionalTerm));\n  }, [feeItems, students, optionalStudent, optionalTerm]);
 
   const fetchData = async () => {
-    const [{ data: items }, { data: pays }, { data: stu }, { data: trms }, { data: sels }] = await Promise.all([
-      supabase.from("fee_items").select("*").order("category").order("name"),
+    const [{ data: items }, { data: pays }, { data: stu }, { data: trms }, { data: sels }, { data: cls }] = await Promise.all([
+      supabase.from("fee_items").select("*, classes(name)").order("category").order("name"),
       supabase.from("receipts").select("*, students(first_name, last_name, student_id), invoices(serial)").order("created_at", { ascending: false }).limit(50),
-      supabase.from("students").select("id, first_name, last_name, student_id").eq("status", "active").order("first_name"),
+      supabase.from("students").select("id, first_name, last_name, student_id, class_id").eq("status", "active").order("first_name"),
       supabase.from("terms").select("id, name, is_current").order("term_number"),
       supabase.from("student_fee_selections").select("*, students(first_name, last_name, student_id), fee_items(name, category), terms(name)").order("selected_at", { ascending: false }).limit(300),
+      supabase.from("classes").select("id, name, level, arm").order("name"),
     ]);
     setFeeItems(items || []);
     setPayments(pays || []);
     setStudents(stu || []);
     setTerms(trms || []);
+    setClasses(cls || []);
     setSelections(sels || []);
     const current = (trms || []).find((t: any) => t.is_current);
     if (current) setClubTerm((prev) => prev || current.id);
@@ -64,17 +78,17 @@ const AdminFeesPage = () => {
   useEffect(() => { void fetchData(); }, []);
 
   const openAdd = () => {
-    setEditing(null); setName(""); setAmount(""); setCategory("general"); setMandatory(true); setActive(true); setDialogOpen(true);
+    setEditing(null); setName(""); setAmount(""); setCategory("general"); setMandatory(true); setActive(true); setAppliesToClass("all"); setAppliesToTerm("all"); setDialogOpen(true);
   };
 
   const openEdit = (item: any) => {
     setEditing(item); setName(item.name); setAmount(String(item.amount)); setCategory(item.category || "general");
-    setMandatory(Boolean(item.is_mandatory)); setActive(Boolean(item.is_active)); setDialogOpen(true);
+    setMandatory(Boolean(item.is_mandatory)); setActive(Boolean(item.is_active)); setAppliesToClass(item.class_id || "all"); setAppliesToTerm(item.term_id || "all"); setDialogOpen(true);
   };
 
   const handleSave = async () => {
     if (!name.trim() || amount === "" || Number(amount) < 0) { toast.error("Enter a fee name and valid amount"); return; }
-    const payload = { name: name.trim(), amount: Number(amount), category, is_mandatory: mandatory, is_active: active };
+    const payload = { name: name.trim(), amount: Number(amount), category, is_mandatory: mandatory, is_active: active, class_id: appliesToClass === "all" ? null : appliesToClass, term_id: appliesToTerm === "all" ? null : appliesToTerm };
     const result = editing
       ? await supabase.from("fee_items").update(payload).eq("id", editing.id)
       : await supabase.from("fee_items").insert(payload);
@@ -98,6 +112,17 @@ const AdminFeesPage = () => {
     const { error } = await supabase.from("student_fee_selections").insert({ student_id: clubStudent, term_id: clubTerm, fee_item_id: clubFee });
     if (error) { toast.error(error.message); return; }
     toast.success("Club selection saved"); fetchData();
+  };
+
+  const assignOptionalItem = async () => {
+    if (!optionalStudent || !optionalTerm || !optionalFee) { toast.error("Choose a pupil, term and optional item"); return; }
+    const { data: existing, error: checkError } = await supabase.from("student_fee_selections").select("id").eq("student_id", optionalStudent).eq("term_id", optionalTerm).eq("fee_item_id", optionalFee).maybeSingle();
+    if (checkError) { toast.error(checkError.message); return; }
+    if (existing) { toast.error("This optional item is already selected for this pupil and term."); return; }
+    const { error } = await supabase.from("student_fee_selections").insert({ student_id: optionalStudent, term_id: optionalTerm, fee_item_id: optionalFee });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Optional charge selected for this pupil and term");
+    await fetchData();
   };
 
   const removeClub = async (studentId: string, termId: string) => {
@@ -132,7 +157,7 @@ const AdminFeesPage = () => {
             <Button size="sm" onClick={openAdd}><Plus className="w-4 h-4 mr-1" /> Add fee</Button>
           </CardHeader>
           <CardContent className="p-0 overflow-x-auto"><Table>
-            <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Amount</TableHead><TableHead>Billing</TableHead><TableHead>Status</TableHead><TableHead /></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>Name</TableHead><TableHead>Category</TableHead><TableHead>Applies to</TableHead><TableHead>Amount</TableHead><TableHead>Billing</TableHead><TableHead>Status</TableHead><TableHead /></TableRow></TableHeader>
             <TableBody>
               {feeItems.map((item) => <TableRow key={item.id}>
                 <TableCell className="font-medium">{item.name}</TableCell>
@@ -145,9 +170,19 @@ const AdminFeesPage = () => {
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDelete(item.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
                 </TableCell>
               </TableRow>)}
-              {!feeItems.length && <TableRow><TableCell colSpan={6} className="text-center py-10 text-muted-foreground"><CreditCard className="w-8 h-8 mx-auto mb-2 opacity-20" />No fee items defined yet.</TableCell></TableRow>}
+              {!feeItems.length && <TableRow><TableCell colSpan={7} className="text-center py-10 text-muted-foreground"><CreditCard className="w-8 h-8 mx-auto mb-2 opacity-20" />No fee items defined yet.</TableCell></TableRow>}
             </TableBody>
           </Table></CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader><CardTitle className="text-sm font-semibold">Optional uniforms, books and supplies</CardTitle><p className="text-xs text-muted-foreground">Select one-off items for a particular pupil and term. These items are not added to invoices unless selected. Uniform prices remain unchanged and are not charged automatically each term.</p></CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-4">
+            <div className="sm:col-span-2"><Label className="text-xs">Pupil</Label><Select value={optionalStudent} onValueChange={setOptionalStudent}><SelectTrigger><SelectValue placeholder="Choose pupil" /></SelectTrigger><SelectContent>{students.map((s) => <SelectItem key={s.id} value={s.id}>{s.first_name} {s.last_name} · {s.student_id}</SelectItem>)}</SelectContent></Select></div>
+            <div><Label className="text-xs">Term</Label><Select value={optionalTerm} onValueChange={setOptionalTerm}><SelectTrigger><SelectValue placeholder="Term" /></SelectTrigger><SelectContent>{terms.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select></div>
+            <div><Label className="text-xs">Optional item</Label><Select value={optionalFee} onValueChange={setOptionalFee}><SelectTrigger><SelectValue placeholder="Choose item" /></SelectTrigger><SelectContent>{optionalItems.map((f) => <SelectItem key={f.id} value={f.id}>{f.name} · ₦{Number(f.amount).toLocaleString()}</SelectItem>)}</SelectContent></Select></div>
+            <div className="sm:col-span-4"><Button onClick={assignOptionalItem}>Add selected item to pupil's term</Button></div>
+          </CardContent>
         </Card>
 
         <Card>
@@ -182,6 +217,8 @@ const AdminFeesPage = () => {
           <div><Label className="text-xs">Fee name</Label><Input value={name} onChange={(e) => setName(e.target.value)} /></div>
           <div><Label className="text-xs">Amount (₦)</Label><Input type="number" min="0" value={amount} onChange={(e) => setAmount(e.target.value)} /></div>
           <div><Label className="text-xs">Category</Label><Select value={category} onValueChange={setCategory}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{categories.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent></Select></div>
+          <div><Label className="text-xs">Class / arm</Label><Select value={appliesToClass} onValueChange={setAppliesToClass}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All classes</SelectItem>{classes.map((cl) => <SelectItem key={cl.id} value={cl.id}>{cl.name}{cl.arm ? " — " + cl.arm : ""}</SelectItem>)}</SelectContent></Select><p className="mt-1 text-xs text-muted-foreground">Use this for class-specific textbooks and charges.</p></div>
+          <div><Label className="text-xs">Billing term</Label><Select value={appliesToTerm} onValueChange={setAppliesToTerm}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">Every term</SelectItem>{terms.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select></div>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={mandatory} onChange={(e) => setMandatory(e.target.checked)} /> Mandatory — include automatically on term invoices</label>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Active — available for billing/selection</label>
           <Button className="w-full" onClick={handleSave}>{editing ? "Save changes" : "Create fee"}</Button>

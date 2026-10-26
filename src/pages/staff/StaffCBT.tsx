@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { StaffLayout } from "@/components/layout/StaffLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +17,8 @@ import { Monitor, Plus, Clock, Users, Trash2, Eye } from "lucide-react";
 import { format } from "date-fns";
 
 const StaffCBT = () => {
+  const isAdminView = useLocation().pathname.startsWith("/admin/");
+  const PageLayout = isAdminView ? AdminLayout : StaffLayout;
   const { user } = useAuth();
   const [exams, setExams] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<any[]>([]);
@@ -264,7 +268,7 @@ const StaffCBT = () => {
           </div>
         )}
       </div>
-    </StaffLayout>
+    </PageLayout>
   );
 };
 

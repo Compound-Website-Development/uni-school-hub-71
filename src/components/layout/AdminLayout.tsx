@@ -8,7 +8,7 @@ import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { LucideIcon } from "lucide-react";
 import {
-  LogOut, ChevronRight, ExternalLink, LayoutDashboard, BarChart3, Activity,
+  LogOut, ChevronRight, ExternalLink, LayoutDashboard, BarChart3, Activity, CalendarDays,
   GraduationCap, BriefcaseBusiness, UserCheck, WalletCards, Receipt, Mail,
   ChartPie, Megaphone, FileSpreadsheet, Sparkles, ClipboardPenLine, HeartPulse,
   MonitorPlay, BusFront, LibraryBig, Route, DoorOpen, Boxes, ArrowLeftRight,
@@ -26,7 +26,7 @@ const sections=[
  {label:"Finance Portal",items:[["finance","Finance Dashboard","/admin/finance"],["finance","Fee Setup","/admin/fees"],["finance","Financial Intelligence","/admin/financial"],["book","Finance Reports","/admin/reports"]]},
  {label:"Communication",items:[["message","Message Templates","/admin/communication"],["message","Announcements","/admin/announcements"]]},
  {label:"AI & wellbeing",items:[["ai","Predictive Analytics","/admin/predictive"],["people","Behavioural Records","/admin/behavioral"],["people","Student Wellbeing","/admin/wellbeing"]]},
- {label:"Academics & transport",items:[["cbt","CBT Exams","/admin/cbt"],["bus","Driver & Bus Tracking","/admin/transport"]]},
+ {label:"Academics & transport",items:[["cbt","CBT Exams","/admin/cbt"],["people","Promotion History","/admin/progression"],["people","Staff & Class Oversight","/admin/oversight"],["bus","Driver & Bus Tracking","/admin/transport"]]},
  {label:"School operations",items:[["book","Library","/admin/library"],["bus","Transport Setup","/admin/transport"],["people","Visitors","/admin/visitors"],["finance","Inventory","/admin/inventory"],["calendar","Substitutions","/admin/substitutions"]]},
  {label:"Documents & system",items:[["book","ID Cards","/admin/id-cards"],["book","Certificates","/admin/certificates"],["message","Complaints","/admin/complaints"],["book","Admission Register","/admin/register-import"],["book","Bulk Upload","/admin/bulk-upload"],["people","Manage Users","/admin/users"],["book","Policy Documents","/admin/policies"],["book","All Documents","/admin/documents"],["settings","School Settings","/admin/settings"]]},
 ] as const;
@@ -52,6 +52,8 @@ const adminIconMap: Record<string, LucideIcon> = {
   "Behavioural Records": ClipboardPenLine,
   "Student Wellbeing": HeartPulse,
   "CBT Exams": MonitorPlay,
+  "Promotion History": GraduationCap,
+  "Staff & Class Oversight": CalendarDays,
   "Driver & Bus Tracking": BusFront,
   "Library": LibraryBig,
   "Transport Setup": Route,

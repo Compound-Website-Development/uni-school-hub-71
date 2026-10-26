@@ -9,6 +9,7 @@ import { Upload, FileText, CheckCircle, AlertCircle, Download } from "lucide-rea
 import { Progress } from "@/components/ui/progress";
 
 interface ParsedStudent {
+  student_id?: string;
   first_name: string;
   last_name: string;
   email?: string;
@@ -44,36 +45,53 @@ const AdminStudentUpload = () => {
     }
   };
 
+  // Parse quoted CSV fields correctly, including commas and escaped quotes.
   const parseCSV = (file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      const text = e.target?.result as string;
-      const lines = text.split('\n');
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/\s+/g, '_'));
-      
-      const students: ParsedStudent[] = [];
-      for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',').map(v => v.trim());
-        if (values.length >= 2 && values[0]) {
-          const student: ParsedStudent = {
-            first_name: values[headers.indexOf('first_name')] || values[0] || '',
-            last_name: values[headers.indexOf('last_name')] || values[1] || '',
-            email: values[headers.indexOf('email')] || undefined,
-            gender: values[headers.indexOf('gender')] || undefined,
-            date_of_birth: values[headers.indexOf('date_of_birth')] || values[headers.indexOf('dob')] || undefined,
-            guardian_name: values[headers.indexOf('guardian_name')] || values[headers.indexOf('parent_name')] || undefined,
-            guardian_phone: values[headers.indexOf('guardian_phone')] || values[headers.indexOf('parent_phone')] || undefined,
-            class_name: values[headers.indexOf('class')] || values[headers.indexOf('class_name')] || undefined,
-          };
-          students.push(student);
-        }
+      const source = String(e.target?.result ?? "").replace(/^\\uFEFF/, "");
+      const rows: string[][] = [];
+      let row: string[] = [];
+      let field = "";
+      let quoted = false;
+      for (let i = 0; i < source.length; i++) {
+        const ch = source[i];
+        if (ch === '"' && quoted && source[i + 1] === '"' ) { field += '"' ; i++; }
+        else if (ch === '"' ) quoted = !quoted;
+        else if (ch === "," && !quoted) { row.push(field.trim()); field = ""; }
+        else if ((ch === "\\n" || ch === "\\r") && !quoted) {
+          if (ch === "\\r" && source[i + 1] === "\\n") i++;
+          row.push(field.trim());
+          if (row.some((cell) => cell !== "")) rows.push(row);
+          row = []; field = "";
+        } else field += ch;
       }
-      
+      if (field.length || row.length) { row.push(field.trim()); if (row.some((cell) => cell !== "")) rows.push(row); }
+      if (rows.length < 2) {
+        setParsedData([]);
+        toast({ title: "No pupil rows found", description: "The CSV needs a header row and at least one pupil row.", variant: "destructive" });
+        return;
+      }
+      const headers = rows[0].map((h) => h.trim().toLowerCase().replace(/\\s+/g, "_"));
+      const get = (values: string[], ...keys: string[]) => {
+        const index = keys.map((key) => headers.indexOf(key)).find((i) => i >= 0);
+        return index === undefined ? "" : (values[index] ?? "").trim();
+      };
+      const students: ParsedStudent[] = rows.slice(1).map((values) => ({
+        student_id: get(values, "student_id", "admission_number", "admission_no") || undefined,
+        first_name: get(values, "first_name", "firstname") || values[0] || "",
+        last_name: get(values, "last_name", "lastname", "surname") || values[1] || "",
+        email: get(values, "email") || undefined,
+        gender: get(values, "gender") || undefined,
+        date_of_birth: get(values, "date_of_birth", "dob") || undefined,
+        guardian_name: get(values, "guardian_name", "parent_name") || undefined,
+        guardian_phone: get(values, "guardian_phone", "parent_phone") || undefined,
+        class_name: get(values, "class_name", "class", "arm") || undefined,
+      })).filter((student) => student.first_name || student.last_name);
+      const invalid = students.filter((student) => !student.first_name || !student.last_name);
+      if (invalid.length) toast({ title: "Some rows need attention", description: invalid.length + " pupil row(s) are missing a first or last name. Correct the CSV before importing.", variant: "destructive" });
       setParsedData(students);
-      toast({
-        title: "File Parsed",
-        description: `Found ${students.length} students in the file`,
-      });
+      toast({ title: "File parsed", description: "Found " + students.length + " pupil rows. Review duplicates and incomplete details before importing." });
     };
     reader.readAsText(file);
   };
@@ -102,21 +120,44 @@ const AdminStudentUpload = () => {
     let success = 0;
     let failed = 0;
 
-    // Fetch classes for mapping
-    const { data: classesData } = await supabase.from("classes").select("id, name");
-    const classMap = new Map(classesData?.map(c => [c.name.toLowerCase(), c.id]) || []);
+    // Validate existing records and class names before inserting anything.
+    const [{ data: classesData }, { data: existingStudents, error: existingError }] = await Promise.all([
+      supabase.from("classes").select("id, name, arm"),
+      supabase.from("students").select("first_name, last_name, guardian_phone, student_id"),
+    ]);
+    if (existingError) {
+      setIsUploading(false);
+      toast({ title: "Could not check existing pupils", description: existingError.message, variant: "destructive" });
+      return;
+    }
+    const normalise = (value?: string | null) => String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+    const classMap = new Map((classesData || []).flatMap(c => [[normalise(c.name), c.id] as [string, string], ...(c.arm ? [[normalise(c.name + " " + c.arm), c.id] as [string, string]] : [])]));
+    const existingSignatures = new Set((existingStudents || []).filter(s => normalise(s.guardian_phone)).map(s => [normalise(s.first_name), normalise(s.last_name), normalise(s.guardian_phone)].join("|")));
+    const existingIds = new Set((existingStudents || []).map(s => normalise(s.student_id)).filter(Boolean));
+    const duplicates = parsedData.filter(s => (normalise(s.guardian_phone) && existingSignatures.has([normalise(s.first_name), normalise(s.last_name), normalise(s.guardian_phone)].join("|"))) || (s.student_id && existingIds.has(normalise(s.student_id))));
+    if (duplicates.length) {
+      setIsUploading(false);
+      toast({ title: "Possible existing duplicates", description: duplicates.length + " imported pupil row(s) match an existing pupil or admission number. Review the records and correct the file; nothing was merged or deleted.", variant: "destructive" });
+      return;
+    }
+    const unknownClasses = parsedData.filter(s => s.class_name && !classMap.has(normalise(s.class_name)));
+    if (unknownClasses.length) {
+      setIsUploading(false);
+      toast({ title: "Class names need correction", description: unknownClasses.length + " row(s) refer to a class/arm that was not found. Correct the names before importing so pupils are not silently left unassigned.", variant: "destructive" });
+      return;
+    }
 
     for (let i = 0; i < parsedData.length; i++) {
       const student = parsedData[i];
       
       try {
         // Generate student ID
-        const studentId = `STU-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`;
+        const studentId = student.student_id?.trim() || `STU-${new Date().getFullYear()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
         
         // Find class ID if class name provided
         let classId = null;
         if (student.class_name) {
-          classId = classMap.get(student.class_name.toLowerCase()) || null;
+          classId = classMap.get(normalise(student.class_name)) || null;
         }
 
         const { error } = await supabase.from("students").insert({
@@ -152,7 +193,7 @@ const AdminStudentUpload = () => {
   };
 
   const downloadTemplate = () => {
-    const template = "first_name,last_name,email,gender,date_of_birth,guardian_name,guardian_phone,class_name\nJohn,Doe,john@example.com,male,2010-05-15,Jane Doe,+220123456789,Grade 7A";
+    const template = "student_id,first_name,last_name,email,gender,date_of_birth,guardian_name,guardian_phone,class_name\nADM-2026-001,John,Doe,john@example.com,male,2010-05-15,Jane Doe,+2348012345678,Grade 7A";
     const blob = new Blob([template], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
