@@ -71,9 +71,9 @@ export interface GradeBand {
 }
 
 export const GRADE_BANDS: GradeBand[] = [
+  // Official bands confirmed by Mr Joseph on 26 October 2026.
   { min: 90, max: 100, remark: "Outstanding" },
-  { min: 80, max: 89, remark: "Excellent" },
-  { min: 70, max: 79, remark: "Very Good" },
+  { min: 70, max: 89, remark: "Excellent" },
   { min: 60, max: 69, remark: "Very Good" },
   { min: 50, max: 59, remark: "Good" },
   { min: 40, max: 49, remark: "Fair" },
@@ -93,14 +93,8 @@ export function letterGradeForScore(score: number | null | undefined): string {
 
 export const PROMOTION_AVERAGE = 60;
 
-/** Approved per-term fee structure (Naira). Mirrors the fee_items seeded in the database. */
-export const FEE_STRUCTURE: { levels: string[]; tuition: number; pta: number; party: number; lesson: number }[] = [
-  { levels: ["Kindergarten One"], tuition: 70000, pta: 5000, party: 10000, lesson: 15000 },
-  { levels: ["Kindergarten Two"], tuition: 80000, pta: 5000, party: 10000, lesson: 15000 },
-  { levels: ["Nursery One", "Nursery Two"], tuition: 95000, pta: 5000, party: 10000, lesson: 15000 },
-  { levels: ["Grade One", "Grade Two", "Grade Three"], tuition: 115000, pta: 5000, party: 10000, lesson: 15000 },
-  { levels: ["Grade Four", "Grade Five", "Grade Six"], tuition: 120000, pta: 5000, party: 10000, lesson: 15000 },
-];
+/** School tuition amounts were not confirmed by management. Use the editable fee_items catalogue in Supabase; do not hardcode assumed tuition values here. */
+export const FEE_STRUCTURE: { levels: string[]; tuition: number; pta: number; party: number; lesson: number }[] = [];
 
 
 /** Continuous Assessment / Examination weighting used on the report card. */
