@@ -16,7 +16,6 @@ import {
   AFFECTIVE_TRAITS,
   ASSESSMENT_WEIGHTS,
   PSYCHOMOTOR_SKILLS,
-  letterGradeForScore,
   remarkForScore,
 } from "@/lib/schoolConfig";
 
