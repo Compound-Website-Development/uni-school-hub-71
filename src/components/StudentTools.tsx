@@ -35,7 +35,7 @@ export const StudentTools = ({ studentId }: { studentId?: string | null }) => {
   }, [calculatorEnabled]);
 
   const calculate = () => {
-    const normalized = expression.replaceAll("×", "*").replaceAll("÷", "/").replaceAll("−", "-");
+    const normalized = expression.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-");
     if (!normalized.trim()) return;
     if (!/^[0-9+\-*/().%\s]+$/.test(normalized)) {
       setAnswer("Use numbers and + − × ÷ only.");
