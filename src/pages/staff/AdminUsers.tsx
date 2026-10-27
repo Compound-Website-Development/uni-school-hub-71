@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { StaffLayout } from "@/components/layout/StaffLayout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
+import { useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +38,7 @@ interface Teacher {
 }
 
 const AdminUsers = () => {
+  const PageLayout = useLocation().pathname.startsWith("/admin") ? AdminLayout : StaffLayout;
   const { toast } = useToast();
   const { user } = useAuth();
   const [admins, setAdmins] = useState<AdminUser[]>([]);
@@ -180,7 +183,7 @@ const AdminUsers = () => {
   );
 
   return (
-    <StaffLayout title="Admin Management">
+    <PageLayout title="Admin Management">
       <div className="space-y-6">
         {/* Header */}
         <div>
@@ -361,7 +364,7 @@ const AdminUsers = () => {
           </Card>
         )}
       </div>
-    </StaffLayout>
+    </PageLayout>
   );
 };
 
