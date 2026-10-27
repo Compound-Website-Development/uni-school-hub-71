@@ -52,7 +52,10 @@ const AdminFeesPage = () => {
   const [optionalFee, setOptionalFee] = useState("");
 
   const clubItems = useMemo(() => feeItems.filter((f) => f.category === "club" && f.is_active), [feeItems]);
-  const optionalItems = useMemo(() => {\n    const pupil = students.find((s) => s.id === optionalStudent);\n    return feeItems.filter((f) => f.category !== "club" && f.is_active && !f.is_mandatory && (!f.class_id || f.class_id === pupil?.class_id) && (!f.term_id || f.term_id === optionalTerm));\n  }, [feeItems, students, optionalStudent, optionalTerm]);
+  const optionalItems = useMemo(() => {
+    const pupil = students.find((s) => s.id === optionalStudent);
+    return feeItems.filter((f) => f.category !== "club" && f.is_active && !f.is_mandatory && (!f.class_id || f.class_id === pupil?.class_id) && (!f.term_id || f.term_id === optionalTerm));
+  }, [feeItems, students, optionalStudent, optionalTerm]);
 
   const fetchData = async () => {
     const [{ data: items }, { data: pays }, { data: stu }, { data: trms }, { data: sels }, { data: cls }] = await Promise.all([
