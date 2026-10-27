@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
@@ -86,7 +86,7 @@ const AdminNavIcon = ({ label, portal = false }: { label: string; portal?: boole
 export const AdminLayout=({children,title}:AdminLayoutProps)=>{
  const [open,setOpen]=useState(false); const {signOut,teacherData}=useAuth(); useRealtimeNotifications(); const nav=useNavigate(); const loc=useLocation();
  const desktopNavRef = useRef<HTMLElement | null>(null);
- useEffect(() => {
+ useLayoutEffect(() => {
    const element = desktopNavRef.current;
    if (!element) return;
    const key = "imagemakers-admin-sidebar-scroll";
