@@ -109,7 +109,8 @@ const StaffCBT = () => {
   };
 
   return (
-    <StaffLayout title="CBT Management">
+    <PageLayout title="CBT Management">
+
       <div className="dashboard-surface dashboard-staff space-y-6 animate-fade-in">
         <section className="portal-hero">
           <div className="staff-art staff-art-cbt hidden md:block" aria-hidden="true"><span/><i/><b/></div>
