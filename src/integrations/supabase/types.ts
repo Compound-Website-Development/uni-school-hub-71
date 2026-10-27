@@ -2118,6 +2118,67 @@ export type Database = {
           },
         ]
       }
+      student_progression_history: {
+        Row: {
+          academic_session: string
+          created_at: string
+          decided_by: string
+          decision: string
+          decision_date: string
+          id: string
+          new_class_id: string | null
+          notes: string | null
+          previous_class_id: string | null
+          student_id: string
+        }
+        Insert: {
+          academic_session: string
+          created_at?: string
+          decided_by: string
+          decision: string
+          decision_date?: string
+          id?: string
+          new_class_id?: string | null
+          notes?: string | null
+          previous_class_id?: string | null
+          student_id: string
+        }
+        Update: {
+          academic_session?: string
+          created_at?: string
+          decided_by?: string
+          decision?: string
+          decision_date?: string
+          id?: string
+          new_class_id?: string | null
+          notes?: string | null
+          previous_class_id?: string | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_progression_history_new_class_id_fkey"
+            columns: ["new_class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_progression_history_previous_class_id_fkey"
+            columns: ["previous_class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_progression_history_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       students: {
         Row: {
           address: string | null
@@ -2916,6 +2977,17 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      record_student_progression: {
+        Args: {
+          _academic_session: string
+          _decision: string
+          _decision_date?: string
+          _new_class_id: string
+          _notes?: string
+          _student_id: string
+        }
+        Returns: string
       }
       send_message_to_admin: {
         Args: { _body: string; _subject: string }
