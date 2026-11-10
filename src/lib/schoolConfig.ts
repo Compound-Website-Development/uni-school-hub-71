@@ -1,5 +1,5 @@
 // Central school configuration for Imagemakers Nursery and Primary School.
-// Approved by School Management — update here to change it everywhere.
+// Confirmed school rules and reference information. Update here to change shared settings.
 
 export const SCHOOL = {
   name: "Imagemakers Nursery and Primary School",
@@ -13,10 +13,14 @@ export const SCHOOL = {
   session: "2026/2027 Academic Session",
   /** Campus coordinates (38E Nathan Street, Surulere, Lagos) used for geofenced staff clock-in. */
   coords: { lat: 6.5095, lng: 3.3596 },
-  /** Allowed clock-in radius from the campus, in metres. */
+  /**
+   * Existing configured radius. Management has confirmed the 07:30 clock-in
+   * time but has not yet confirmed the geofence radius. Do not describe 400 m
+   * as a school-approved policy until the school confirms it.
+   */
   geofenceRadiusM: 400,
-  /** Staff arriving after this time are marked late. */
-  clockInCutoff: "07:45",
+  /** School management confirmed 07:30 as the staff clock-in time on 9 Nov 2026. */
+  clockInCutoff: "07:30",
 };
 
 export interface TermInfo {
@@ -64,6 +68,23 @@ export const SUBJECTS = [
   "National Value",
 ];
 
+/** Specialist subjects the school identified as using a separate A–E letter scale. */
+export const SPECIALIST_LETTER_GRADE_SUBJECTS = [
+  "French",
+  "Diction",
+  "Coding",
+  "Abacus",
+  "Creative Art",
+  "Yoruba",
+];
+
+/**
+ * The A–E letters are confirmed for the specialist subjects above. The school
+ * has not supplied score boundaries or confirmed how these letters are entered
+ * alongside the standard CA/Exam result. Do not infer numeric thresholds.
+ */
+export const SPECIALIST_LETTER_GRADES = ["A", "B", "C", "D", "E"] as const;
+
 export interface GradeBand {
   min: number;
   max: number;
@@ -71,7 +92,7 @@ export interface GradeBand {
 }
 
 export const GRADE_BANDS: GradeBand[] = [
-  // Official bands confirmed by Mr Joseph on 26 October 2026.
+  // Official descriptive bands confirmed by Mr Joseph on 26 October 2026.
   { min: 90, max: 100, remark: "Outstanding" },
   { min: 70, max: 89, remark: "Excellent" },
   { min: 60, max: 69, remark: "Very Good" },
@@ -80,7 +101,11 @@ export const GRADE_BANDS: GradeBand[] = [
   { min: 0, max: 39, remark: "Poor" },
 ];
 
-/** Canonical letter scale stored alongside each calculated total in Supabase. */
+/**
+ * Existing general numeric-to-letter conversion. This A–F mapping has not
+ * been approved as the school's official grading scale. Specialist subjects
+ * use A–E, but their score boundaries and entry workflow remain to be confirmed.
+ */
 export function letterGradeForScore(score: number | null | undefined): string {
   if (score === null || score === undefined || Number.isNaN(score)) return "";
   if (score >= 90) return "A";
@@ -91,7 +116,8 @@ export function letterGradeForScore(score: number | null | undefined): string {
   return "F";
 }
 
-export const PROMOTION_AVERAGE = 60;
+/** School-approved minimum average for promotion, confirmed 9 November 2026. */
+export const PROMOTION_AVERAGE = 50;
 
 /** School tuition amounts were not confirmed by management. Use the editable fee_items catalogue in Supabase; do not hardcode assumed tuition values here. */
 export const FEE_STRUCTURE: { levels: string[]; tuition: number; pta: number; party: number; lesson: number }[] = [];
