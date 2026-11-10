@@ -40,6 +40,36 @@ interface TeacherData {
   department: string | null;
 }
 
+const PREVIEW_TEACHER_KEY = 'im_preview_teacher_id';
+const PREVIEW_STUDENT_KEY = 'im_preview_student_id';
+
+export const setAdminPreview = (teacherId?: string | null, studentId?: string | null) => {
+  if (teacherId !== undefined) teacherId ? localStorage.setItem(PREVIEW_TEACHER_KEY, teacherId) : localStorage.removeItem(PREVIEW_TEACHER_KEY);
+  if (studentId !== undefined) studentId ? localStorage.setItem(PREVIEW_STUDENT_KEY, studentId) : localStorage.removeItem(PREVIEW_STUDENT_KEY);
+};
+
+async function resolveAdminPreview(teacherRows: any[], needTeacher: boolean) {
+  const { data: classes } = await supabase.from('classes').select('id, class_teacher_id').not('class_teacher_id', 'is', null);
+  const savedT = localStorage.getItem(PREVIEW_TEACHER_KEY);
+  let cls = (classes || []).find((c: any) => c.class_teacher_id === savedT);
+  if (!cls && classes?.length) {
+    const counts = await Promise.all(classes.map(async (c: any) => {
+      const { count } = await supabase.from('students').select('id', { count: 'exact', head: true }).eq('class_id', c.id);
+      return { c, n: count || 0 };
+    }));
+    cls = counts.sort((a, b) => b.n - a.n)[0]?.c;
+  }
+  const teacher = cls ? teacherRows.find((t: any) => t.id === cls.class_teacher_id) || null : null;
+  const savedS = localStorage.getItem(PREVIEW_STUDENT_KEY);
+  let student: any = null;
+  if (savedS) student = (await supabase.from('students').select('*').eq('id', savedS).maybeSingle()).data;
+  if (!student && cls) {
+    student = (await supabase.from('students').select('*').eq('class_id', cls.id).eq('status', 'active').order('last_name').limit(1).maybeSingle()).data
+      || (await supabase.from('students').select('*').eq('class_id', cls.id).order('last_name').limit(1).maybeSingle()).data;
+  }
+  return { teacher: needTeacher ? teacher : null, student };
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -106,22 +136,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (teacher) setTeacherData(teacher as TeacherData);
 
           if (roleData.role === 'admin') {
-            // Admins carry a shadow student identity so they can open the student
-            // and parent portals with their own email — no second device needed.
             const { data: ownRecord } = await supabase
-              .from('students')
-              .select('*')
-              .eq('user_id', userId)
-              .maybeSingle();
-
+              .from('students').select('*').eq('user_id', userId).maybeSingle();
             if (ownRecord) {
               setStudentData(ownRecord as StudentData);
               setIsShadowIdentity(false);
             } else {
-              // Never impersonate a real pupil as an admin preview. Student pages
-              // render their isolated presentation fallback until the admin has a
-              // deliberately linked shadow student record.
-              setStudentData(null);
+              // Admin preview identity: borrow a real class teacher and one of
+              // their pupils so the staff, student and parent portals show live
+              // data. Read-only presentation; nothing is written as that person.
+              const preview = await resolveAdminPreview(teacherRows || [], !teacher);
+              if (preview.teacher && !teacher) setTeacherData(preview.teacher as TeacherData);
+              setStudentData((preview.student as StudentData) || null);
               setIsShadowIdentity(true);
             }
           }

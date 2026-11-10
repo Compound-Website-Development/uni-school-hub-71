@@ -1,3 +1,4 @@
+import { withAdminPreview } from "@/lib/adminPreview";
 import { useState, useEffect } from "react";
 import { ParentLayout } from "@/components/layout/ParentLayout";
 import { ProfileHero, InfoSection, InfoRow } from "@/components/profile/ProfileShared";
@@ -22,7 +23,7 @@ const ParentProfile = () => {
     supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle()
       .then(({ data }) => { if (data) setProfile(data); });
     supabase.from("parent_student_links").select("student_id").eq("parent_user_id", user.id)
-      .then(async ({ data }) => {
+      .then(r => withAdminPreview(r)).then(async ({ data }) => {
         if (data?.length) {
           const ids = data.map(l => l.student_id);
           const { data: kids } = await supabase.from("students").select("id, first_name, last_name, student_id, class_id").in("id", ids);

@@ -1,3 +1,4 @@
+import { withAdminPreview } from "@/lib/adminPreview";
 import { useState, useEffect } from "react";
 import { ParentLayout } from "@/components/layout/ParentLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,7 +46,7 @@ const ParentDashboard = () => {
       const { data: links } = await supabase
         .from("parent_student_links")
         .select("student_id")
-        .eq("parent_user_id", user.id);
+        .eq("parent_user_id", user.id).then(r => withAdminPreview(r));
 
       let studentIds: string[] = (links || []).map((l: any) => l.student_id);
 
