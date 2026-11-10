@@ -31,6 +31,7 @@ This is the implementation and acceptance checklist for the existing repository.
 - [x] Admin progression workflow and migration file are present in the merged codebase.
 - [ ] Verify the live Supabase progression table/RPC and RLS; the management connection timed out during the 10 November check.
 - [ ] Add parent access to progression history through linked-child authorisation; the current migration's own-pupil policy does not by itself establish parent access.
+- [ ] After an authorised class change, notify the pupil and linked parent/guardian of the new class and session through the approved in-app/announcement channel; do not reveal another pupil's records.
 - [ ] Verify progression history retains previous class, new class, session, decision, date, approver and reason; test promote/repeat/demote and prevent invalid class moves.
 - [ ] Keep 50% as qualification guidance only. Final decision remains authorised school staff's responsibility.
 
