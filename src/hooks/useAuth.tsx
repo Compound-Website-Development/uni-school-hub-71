@@ -147,6 +147,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               // data. Read-only presentation; nothing is written as that person.
               const preview = await resolveAdminPreview(teacherRows || [], !teacher);
               if (preview.teacher && !teacher) setTeacherData(preview.teacher as TeacherData);
+              (window as any).__imPreviewStudentId = preview.student?.id;
               setStudentData((preview.student as StudentData) || null);
               setIsShadowIdentity(true);
             }
