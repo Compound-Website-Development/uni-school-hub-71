@@ -1,3 +1,4 @@
+import { withAdminPreview } from "@/lib/adminPreview";
 import { useState, useEffect } from "react";
 import { ParentLayout } from "@/components/layout/ParentLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,7 +16,7 @@ const ParentAttendance = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
-      const { data: links } = await supabase.from("parent_student_links").select("student_id").eq("parent_user_id", user.id);
+      const { data: links } = await supabase.from("parent_student_links").select("student_id").eq("parent_user_id", user.id).then(r => withAdminPreview(r));
       if (links && links.length > 0) {
         const ids = links.map((l: any) => l.student_id);
         const [studentsRes, attendanceRes] = await Promise.all([
