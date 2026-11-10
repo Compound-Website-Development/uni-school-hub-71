@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.18"
   }
   public: {
     Tables: {
@@ -97,6 +97,7 @@ export type Database = {
       }
       admin_permissions: {
         Row: {
+          allowed_sections: string[] | null
           can_add_admins: boolean
           can_approve_grades: boolean
           can_manage_fees: boolean
@@ -106,10 +107,12 @@ export type Database = {
           can_view_reports: boolean
           created_at: string
           id: string
+          role_name: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          allowed_sections?: string[] | null
           can_add_admins?: boolean
           can_approve_grades?: boolean
           can_manage_fees?: boolean
@@ -119,10 +122,12 @@ export type Database = {
           can_view_reports?: boolean
           created_at?: string
           id?: string
+          role_name?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          allowed_sections?: string[] | null
           can_add_admins?: boolean
           can_approve_grades?: boolean
           can_manage_fees?: boolean
@@ -132,8 +137,63 @@ export type Database = {
           can_view_reports?: boolean
           created_at?: string
           id?: string
+          role_name?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      admin_role_templates: {
+        Row: {
+          allowed_sections: string[]
+          can_add_admins: boolean
+          can_approve_grades: boolean
+          can_manage_fees: boolean
+          can_manage_students: boolean
+          can_manage_teachers: boolean
+          can_upload_bulk_data: boolean
+          can_view_reports: boolean
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_system: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          allowed_sections?: string[]
+          can_add_admins?: boolean
+          can_approve_grades?: boolean
+          can_manage_fees?: boolean
+          can_manage_students?: boolean
+          can_manage_teachers?: boolean
+          can_upload_bulk_data?: boolean
+          can_view_reports?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          allowed_sections?: string[]
+          can_add_admins?: boolean
+          can_approve_grades?: boolean
+          can_manage_fees?: boolean
+          can_manage_students?: boolean
+          can_manage_teachers?: boolean
+          can_upload_bulk_data?: boolean
+          can_view_reports?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1209,6 +1269,7 @@ export type Database = {
           id: string
           invoice_id: string
           kind: string
+          priority: number
         }
         Insert: {
           amount?: number
@@ -1218,6 +1279,7 @@ export type Database = {
           id?: string
           invoice_id: string
           kind?: string
+          priority?: number
         }
         Update: {
           amount?: number
@@ -1227,6 +1289,7 @@ export type Database = {
           id?: string
           invoice_id?: string
           kind?: string
+          priority?: number
         }
         Relationships: [
           {
@@ -1763,6 +1826,45 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      receipt_allocations: {
+        Row: {
+          amount_allocated: number
+          created_at: string
+          id: string
+          invoice_line_id: string
+          receipt_id: string
+        }
+        Insert: {
+          amount_allocated: number
+          created_at?: string
+          id?: string
+          invoice_line_id: string
+          receipt_id: string
+        }
+        Update: {
+          amount_allocated?: number
+          created_at?: string
+          id?: string
+          invoice_line_id?: string
+          receipt_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipt_allocations_invoice_line_id_fkey"
+            columns: ["invoice_line_id"]
+            isOneToOne: false
+            referencedRelation: "invoice_lines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipt_allocations_receipt_id_fkey"
+            columns: ["receipt_id"]
+            isOneToOne: false
+            referencedRelation: "receipts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       receipts: {
         Row: {
@@ -2891,6 +2993,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_admin_role: {
+        Args: { _template_id: string; _user_id: string }
+        Returns: undefined
+      }
       can_manage_student: { Args: { _student_id: string }; Returns: boolean }
       can_view_student: { Args: { _student_id: string }; Returns: boolean }
       debtor_report: {
@@ -2909,6 +3015,7 @@ export type Database = {
           total: number
         }[]
       }
+      fee_priority: { Args: { _category: string }; Returns: number }
       generate_term_invoices: {
         Args: { _class_id?: string; _due_date?: string; _term_id: string }
         Returns: number
@@ -2925,6 +3032,7 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       next_invoice_serial: { Args: never; Returns: string }
       next_receipt_serial: { Args: never; Returns: string }
       public_student_profile: {
@@ -2989,6 +3097,7 @@ export type Database = {
         }
         Returns: string
       }
+      revoke_admin_role: { Args: { _user_id: string }; Returns: undefined }
       send_message_to_admin: {
         Args: { _body: string; _subject: string }
         Returns: {
@@ -3053,6 +3162,15 @@ export type Database = {
           total_points: number
         }[]
       }
+      teacher_public_names: {
+        Args: { _ids: string[] }
+        Returns: {
+          first_name: string
+          id: string
+          last_name: string
+          user_id: string
+        }[]
+      }
       teaches_class: {
         Args: { _class_id: string; _user_id: string }
         Returns: boolean
@@ -3066,6 +3184,16 @@ export type Database = {
           _value: number
         }
         Returns: string
+      }
+      verify_certificate_public: {
+        Args: { _serial: string }
+        Returns: {
+          admission_no: string
+          cert_type: string
+          issued_on: string
+          serial_number: string
+          student_name: string
+        }[]
       }
     }
     Enums: {
