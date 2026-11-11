@@ -33,14 +33,14 @@ const StudentExams = () => {
   const getSubmission = (examId: string) => submissions.find(s => s.exam_id === examId);
 
   return (
-    <StudentLayout title="Examinations">
+    <StudentLayout title="CBT Practice & Revision">
       <div className="student-exams-page dashboard-surface space-y-6 animate-fade-in">
         <section className="portal-hero">
           <div className="study-art study-art-cbt" aria-hidden="true"><span/><i/><b/></div>
           <div className="portal-hero-copy">
-            <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Computer-based testing</p>
-            <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-5xl">Your exam room, online.</h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">Use a school-approved computer or tablet. Your answers are saved while you work and objective papers are marked automatically when submitted.</p>
+            <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Practice &amp; revision</p>
+            <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-5xl">CBT Practice &amp; Revision Studio</h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">Use this web-based studio for self-paced drills and revision. It is not the official end-of-term examination platform. The planned offline Windows examination application is not available yet.</p>
           </div>
         </section>
 
@@ -52,8 +52,8 @@ const StudentExams = () => {
           <Card className="rounded-xl border-border/50 shadow-card">
             <CardContent className="p-12 text-center">
               <Monitor className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <p className="font-medium text-foreground">No Active Exams</p>
-              <p className="text-sm text-muted-foreground mt-1">Check back later for upcoming examinations.</p>
+              <p className="font-medium text-foreground">No Practice Papers Available</p>
+              <p className="text-sm text-muted-foreground mt-1">Your teacher has not published any practice papers yet.</p>
             </CardContent>
           </Card>
         ) : (
