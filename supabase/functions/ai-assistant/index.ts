@@ -84,8 +84,8 @@ serve(async (req) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured in Supabase Edge Function Secrets");
 
     const body = await req.json();
     const requestedType = typeof body?.type === "string" ? body.type : "homework";
@@ -107,19 +107,18 @@ serve(async (req) => {
 
     const useStreaming = type === "homework";
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const contents = messages.map((message) => ({
+      role: message.role === "assistant" ? "model" : "user",
+      parts: [{ text: message.content }],
+    }));
+    const endpoint = useStreaming ? "streamGenerateContent?alt=sse" : "generateContent";
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:${endpoint}`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
+      headers: { "x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...messages,
-        ],
-        stream: useStreaming,
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents,
+        generationConfig: { temperature: 0.4, maxOutputTokens: 2048 },
       }),
     });
 
@@ -130,14 +129,8 @@ serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "AI credits exhausted. Please contact the administrator." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
       const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+      console.error("Gemini API error:", response.status, t);
       return new Response(JSON.stringify({ error: "AI service temporarily unavailable" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -145,16 +138,33 @@ serve(async (req) => {
     }
 
     if (useStreaming) {
-      return new Response(response.body, {
-        headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+      const reader = response.body?.getReader();
+      const encoder = new TextEncoder();
+      const decoder = new TextDecoder();
+      const stream = new ReadableStream({
+        async pull(controller) {
+          if (!reader) { controller.enqueue(encoder.encode("data: [DONE]\\n\\n")); controller.close(); return; }
+          const { value, done } = await reader.read();
+          if (done) { controller.enqueue(encoder.encode("data: [DONE]\\n\\n")); controller.close(); return; }
+          const chunk = decoder.decode(value, { stream: true });
+          for (const line of chunk.split("\\n")) {
+            if (!line.startsWith("data:")) continue;
+            const raw = line.slice(5).trim();
+            if (!raw) continue;
+            try {
+              const event = JSON.parse(raw);
+              const text = (event.candidates?.[0]?.content?.parts || []).map((part: { text?: string }) => part.text || "").join("");
+              if (text) controller.enqueue(encoder.encode(`data: ${JSON.stringify({ choices: [{ delta: { content: text } }] })}\\n\\n`));
+            } catch { /* Ignore incomplete or non-JSON SSE frames. */ }
+          }
+        },
+        async cancel() { await reader?.cancel(); },
       });
-    } else {
-      const data = await response.json();
-      const comment = data.choices?.[0]?.message?.content || "Unable to generate comment.";
-      return new Response(JSON.stringify({ comment }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(stream, { headers: { ...corsHeaders, "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
     }
+    const data = await response.json();
+    const comment = (data.candidates?.[0]?.content?.parts || []).map((part: { text?: string }) => part.text || "").join("") || "Unable to generate comment.";
+    return new Response(JSON.stringify({ comment }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("ai-assistant error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {

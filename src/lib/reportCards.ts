@@ -62,7 +62,7 @@ export const loadReportCard = async (
   subjects: SubjectOption[],
   classes: { id: string; name: string }[],
 ): Promise<Partial<ReportCardData>> => {
-  const [{ data: grades }, { data: result }, { data: classRow }, { data: settings }] =
+  const [{ data: grades }, { data: result }, { data: classRow }, { data: settings }, { data: classLinks }] =
     await Promise.all([
       supabase
         .from("grades")
@@ -83,6 +83,9 @@ export const loadReportCard = async (
             .maybeSingle()
         : Promise.resolve({ data: null } as any),
       supabase.from("school_settings").select("key, value").eq("key", "head_teacher_name").maybeSingle(),
+      student.class_id
+        ? supabase.from("class_subjects").select("subject_id").eq("class_id", student.class_id)
+        : Promise.resolve({ data: [] } as any),
     ]);
 
   const classTeacher = (classRow as any)?.teachers;
@@ -95,8 +98,21 @@ export const loadReportCard = async (
     ca: g.continuous_assessment === null ? null : Number(g.continuous_assessment),
     exam: g.exam_score === null ? null : Number(g.exam_score),
   }));
-  const scoredNames = new Set(scored.map((s) => s.subject));
   const rows = scored.filter((s) => s.subject);
+  const assignedIds = (classLinks || []).map((link: any) => link.subject_id).filter(Boolean);
+  const classSubjects = assignedIds.length
+    ? subjects.filter((subject) => assignedIds.includes(subject.id))
+    : subjects.filter((subject) => [
+        "English Language", "Mathematics", "Basic Science", "Social Studies",
+        "Civic Education", "Computer Studies", "Agricultural Science", "Yoruba",
+        "CRK", "IRK", "Handwriting", "Physical & Health Education",
+      ].includes(subject.name));
+  const existingNames = new Set(rows.map((row) => row.subject.toLowerCase()));
+  const prefilledRows = [
+    ...classSubjects.filter((subject) => !existingNames.has(subject.name.toLowerCase()))
+      .map((subject) => ({ subject: subject.name, ca: null, exam: null })),
+    ...rows,
+  ];
 
   const r: any = result;
   return {
@@ -105,7 +121,7 @@ export const loadReportCard = async (
     gender: student.gender || "",
     age: ageFrom(student.date_of_birth),
     className: classes.find((c) => c.id === student.class_id)?.name || "",
-    subjects: rows,
+    subjects: prefilledRows,
     affective: r?.affective && Object.keys(r.affective).length
       ? r.affective
       : Object.fromEntries(AFFECTIVE_TRAITS.map((t) => [t, 0])),
@@ -133,6 +149,8 @@ export const saveReportCard = async (
   publish: boolean,
 ): Promise<{ error: string | null }> => {
   const byName = new Map(subjects.map((s) => [s.name.toLowerCase(), s.id]));
+  const invalid = data.subjects.find((s) => (s.ca !== null && (s.ca < 0 || s.ca > ASSESSMENT_WEIGHTS.ca)) || (s.exam !== null && (s.exam < 0 || s.exam > ASSESSMENT_WEIGHTS.exam)));
+  if (invalid) return { error: `Scores for ${invalid.subject || "a subject"} must be within CA 0–${ASSESSMENT_WEIGHTS.ca} and Exam 0–${ASSESSMENT_WEIGHTS.exam}.` };
   const scored = data.subjects.filter((s) => s.subject.trim() && (s.ca !== null || s.exam !== null));
 
   const missing = scored.filter((s) => !byName.has(s.subject.trim().toLowerCase()));

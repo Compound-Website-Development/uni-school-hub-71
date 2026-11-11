@@ -109,15 +109,15 @@ const StaffCBT = () => {
   };
 
   return (
-    <PageLayout title="CBT Management">
+    <PageLayout title="CBT Practice & Revision Studio">
 
       <div className="dashboard-surface dashboard-staff space-y-6 animate-fade-in">
         <section className="portal-hero">
           <div className="staff-art staff-art-cbt hidden md:block" aria-hidden="true"><span/><i/><b/></div>
           <div className="portal-hero-copy">
             <p className="text-[10px] font-extrabold uppercase tracking-[.22em] text-primary">Assessment studio</p>
-            <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-5xl">Build CBTs that students can actually take.</h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">Create objective exams, add answer choices, activate a paper, and let eligible students take it through the Student Portal. Marking happens server-side.</p>
+            <h1 className="portal-display mt-2 text-4xl font-extrabold md:text-5xl">Build practice papers for revision.</h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">Create objective practice papers, add answer choices and activate them for self-paced pupil revision in the web portal. This is not the official end-of-term examination system. The planned offline Windows examination application is not available yet.</p>
           </div>
           <div className="flex justify-end"><Dialog open={showCreate} onOpenChange={setShowCreate}>
             <DialogTrigger asChild>

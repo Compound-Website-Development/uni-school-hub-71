@@ -56,7 +56,8 @@ const StaffAttendance = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
-  const { userRole, teacherData } = useAuth();
+  const { userRole, teacherData, user, isShadowIdentity } = useAuth();
+  const today = format(new Date(), "yyyy-MM-dd");
   const [searchParams] = useSearchParams();
 
   // Fetch classes and today's schedule
@@ -204,28 +205,48 @@ const StaffAttendance = () => {
       return;
     }
 
+    if (selectedDate > today) {
+      toast({ title: "Future attendance is not allowed", description: "Choose today or an earlier date.", variant: "destructive" });
+      return;
+    }
+    if (isShadowIdentity) {
+      toast({ title: "Preview is read-only", description: "Attendance cannot be changed while viewing a preview.", variant: "destructive" });
+      return;
+    }
+
     setIsSaving(true);
 
     try {
-      // Delete existing attendance for this class and date
-      await supabase
-        .from("attendance")
-        .delete()
-        .eq("class_id", selectedClass)
-        .eq("date", selectedDate);
-
-      // Insert new attendance records
-      const records = Object.entries(attendance).map(([studentId, status]) => ({
-        student_id: studentId,
-        class_id: selectedClass,
-        date: selectedDate,
-        status,
-          marked_by: teacherData?.id || null,
-      }));
-
-      const { error } = await supabase.from("attendance").insert(records);
-
-      if (error) throw error;
+      const changes: Array<{ studentId: string; previous: string | null; next: string }> = [];
+      for (const [studentId, status] of Object.entries(attendance)) {
+        const { data: existing, error: lookupError } = await supabase
+          .from("attendance").select("id, status").eq("student_id", studentId).eq("date", selectedDate).maybeSingle();
+        if (lookupError) throw lookupError;
+        if (existing) {
+          if (existing.status !== status) {
+            const { error } = await supabase.from("attendance").update({
+              status, marked_by: teacherData?.id || null, edited: true,
+              updated_by: user?.id || null, updated_at: new Date().toISOString(),
+            }).eq("id", existing.id);
+            if (error) throw error;
+            changes.push({ studentId, previous: existing.status, next: status });
+          }
+        } else {
+          const { error } = await supabase.from("attendance").insert({
+            student_id: studentId, class_id: selectedClass, date: selectedDate, status,
+            marked_by: teacherData?.id || null, edited: false,
+          });
+          if (error) throw error;
+        }
+      }
+      if (changes.length) {
+        const { error: auditError } = await supabase.from("activity_logs").insert(changes.map(change => ({
+          user_id: user?.id || null, action: "attendance_edited", entity: "attendance",
+          entity_id: change.studentId,
+          details: JSON.stringify({ class_id: selectedClass, date: selectedDate, previous_status: change.previous, new_status: change.next, edited_at: new Date().toISOString() }),
+        })));
+        if (auditError) throw auditError;
+      }
 
       toast({
         title: "Success",
@@ -269,6 +290,7 @@ const StaffAttendance = () => {
   return (
     <StaffLayout title="Attendance">
       <div className="staff-tool-page staff-attendance-page space-y-6">
+        {isShadowIdentity && <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">Read-only admin preview. Attendance changes are disabled.</div>}
         {/* Today's Schedule Quick Select */}
         {todaySchedule.length > 0 && (
           <Card>
@@ -349,8 +371,9 @@ const StaffAttendance = () => {
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     type="date"
+                    max={today}
                     value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
+                    onChange={(e) => setSelectedDate(e.target.value <= today ? e.target.value : today)}
                     className="pl-10"
                   />
                 </div>
@@ -401,11 +424,11 @@ const StaffAttendance = () => {
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Student Attendance</CardTitle>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={markAllPresent}>
+                <Button variant="outline" size="sm" onClick={markAllPresent} disabled={isShadowIdentity}>
                   <Check className="w-4 h-4 mr-2" />
                   Mark All Present
                 </Button>
-                <Button onClick={saveAttendance} disabled={isSaving}>
+                <Button onClick={saveAttendance} disabled={isSaving || isShadowIdentity}>
                   {isSaving ? "Saving..." : "Save Attendance"}
                 </Button>
               </div>
