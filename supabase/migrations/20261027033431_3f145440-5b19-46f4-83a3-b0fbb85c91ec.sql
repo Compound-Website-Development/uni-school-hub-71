@@ -1,0 +1,1 @@
+revoke execute on function public.record_student_progression(uuid, uuid, text, text, date, text) from anon;

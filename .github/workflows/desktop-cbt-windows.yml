@@ -1,0 +1,60 @@
+name: Build Imagemakers CBT for Windows
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "desktop-cbt/**"
+      - ".github/workflows/desktop-cbt-windows.yml"
+    branches: [main, feat/desktop-cbt-wails-migration]
+  pull_request:
+    paths:
+      - "desktop-cbt/**"
+      - ".github/workflows/desktop-cbt-windows.yml"
+permissions:
+  contents: read
+jobs:
+  windows-x64:
+    # windows-latest moved to a newer Visual Studio toolchain that the
+    # Electron 37 native-module rebuild toolchain does not recognise yet.
+    runs-on: windows-2022
+    defaults:
+      run:
+        working-directory: desktop-cbt
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Keep node-gyp on a supported Python version instead of the newer
+      # Python bundled with the rolling windows-latest image.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Type-check and build renderer
+        run: npm run build
+      - name: Package Windows x64 installer
+        run: npm run package:win
+      - name: Generate signed demo exam files
+        run: node scripts/generate-demo-exams.cjs
+      - name: Assemble Windows bundle with demo exam files
+        shell: pwsh
+        run: |
+          $release = Join-Path $PWD "release"
+          $stage = Join-Path $release "bundle-staging"
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          Copy-Item (Join-Path $release "*.exe") $stage -ErrorAction Stop
+          Copy-Item (Join-Path $PWD "demo-exams") (Join-Path $stage "demo-exams") -Recurse -Force
+          $exe = Get-ChildItem $stage -Filter *.exe | Select-Object -First 1
+          $bytes = $exe.Length
+          $mib = [math]::Round($bytes / 1MB, 2)
+          Write-Host "Windows EXE size: $bytes bytes ($mib MiB)"
+          Compress-Archive -Path (Join-Path $stage "*") -DestinationPath (Join-Path $release "Imagemakers-CBT-Windows-Bundle.zip") -Force
+      - name: Upload Windows bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: imagemakers-cbt-windows-x64-with-demo-exams
+          path: desktop-cbt/release/Imagemakers-CBT-Windows-Bundle.zip
+          if-no-files-found: error
+          retention-days: 14

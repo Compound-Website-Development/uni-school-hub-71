@@ -1,0 +1,70 @@
+/* Imagemakers portal overrides: sky blue primary, navy, white, restrained gold. */
+.student-portal-shell,.parent-portal-shell,.staff-portal-shell{
+  --school-sky:#2f8fca;--school-sky-deep:#17648c;--school-sky-soft:#eaf6fb;
+  --school-navy:#17394c;--school-gold:#c9953d;
+}
+/* Student uses the existing liquid-glass bottom nav only. */
+.student-portal-shell .student-topnav{display:none!important}
+.student-portal-shell .portal-page-bg{
+  background:radial-gradient(circle at 12% 8%,rgba(47,143,202,.10),transparent 30%),
+             radial-gradient(circle at 88% 20%,rgba(201,149,61,.07),transparent 24%),#f7fbfd;
+}
+.student-portal-shell .portal-feature-card{border-color:#d7e9f4;background:rgba(255,255,255,.88)}
+.student-portal-shell .portal-feature-card:hover{border-color:#a9d5ea}
+.student-portal-shell .student-home .text-\[\#416b52\]{color:#17648c!important}
+
+/* Parent portal */
+.parent-portal-shell .portal-sidebar .portal-nav-item.active{background:#e8f6fc!important;color:#17648c!important}
+.parent-portal-shell .portal-sidebar .portal-nav-icon{color:#2f8fca!important}
+.parent-portal-shell .portal-page-content .text-success{color:#2f8fca!important}
+.parent-portal-shell .portal-page-content .bg-success{background:#e8f6fc!important}
+.parent-portal-shell .portal-page-content .bg-primary{background:#2f8fca!important}
+.parent-portal-shell .parent-hero-orb{
+  position:relative;width:220px;height:180px;margin-left:auto;border-radius:42px;overflow:hidden;
+  background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.95) 0 13%,transparent 14%),
+             radial-gradient(circle at 68% 28%,rgba(201,149,61,.55) 0 11%,transparent 12%),
+             radial-gradient(circle at 55% 62%,rgba(47,143,202,.45) 0 22%,transparent 23%),
+             linear-gradient(135deg,#eaf6fb,#fff);
+  box-shadow:inset 0 0 0 1px #d7e9f4,0 28px 60px -40px rgba(23,57,76,.45);
+}
+.parent-portal-shell .portal-feature-symbol{
+  display:grid;place-items:center;width:58px;height:58px;border-radius:18px;color:#2f8fca;
+  background:linear-gradient(145deg,#eaf6fb,#fff);border:1px solid #d7e9f4;
+}
+.parent-portal-shell .portal-feature-symbol svg{width:24px;height:24px}
+
+/* Staff portal */
+.staff-portal-shell{background:#f7fbfd!important}
+.staff-portal-shell .portal-sidebar,.staff-portal-shell .staff-school-sidebar{
+  background:linear-gradient(180deg,#f4fbfe,#eef7fb)!important;color:#17394c!important;
+  border-right:1px solid #cfe4ef!important;box-shadow:12px 0 34px -28px rgba(23,100,140,.35)!important;
+}
+.staff-portal-shell .portal-logo-card{background:rgba(255,255,255,.84)!important;border-color:#d7e9f4!important}
+.staff-portal-shell .portal-nav-item{color:#486a7b!important}
+.staff-portal-shell .portal-nav-item.active{
+  background:#e3f4fb!important;color:#17648c!important;box-shadow:inset 3px 0 0 #2f8fca!important;
+}
+.staff-portal-shell .portal-nav-icon{background:#fff!important;color:#2f8fca!important;border:1px solid #d7e9f4!important}
+.staff-portal-shell .portal-nav-item:hover{background:#eaf6fb!important;color:#17394c!important}
+.staff-portal-shell .portal-avatar{background:#dff2fa!important;color:#17648c!important}
+.staff-portal-shell .staff-workspace-content{
+  background:radial-gradient(circle at 90% 4%,rgba(47,143,202,.07),transparent 28%);
+}
+.staff-portal-shell .portal-hero{background:linear-gradient(135deg,#fff,#eef8fc 68%,#fff7e9)!important;border-color:#d7e9f4!important}
+.staff-portal-shell .portal-feature-card{border-color:#d7e9f4!important;background:rgba(255,255,255,.90)!important}
+.staff-portal-shell .portal-feature-card:nth-child(2n){background:linear-gradient(135deg,#fff,#fff9ef)!important}
+.staff-portal-shell .staff-tool-page>*,.staff-portal-shell .staff-tool-page .card{
+  border-color:#d7e9f4!important;
+}
+.staff-portal-shell .staff-tool-page table thead tr{background:#eaf6fb!important}
+.staff-portal-shell .staff-tool-page table tbody tr:hover{background:#f0f9fd!important}
+.staff-portal-shell .staff-tool-page .text-success,.staff-portal-shell .staff-tool-page .text-primary{color:#2f8fca!important}
+.staff-portal-shell .staff-tool-page .bg-success,.staff-portal-shell .staff-tool-page .bg-primary{background:#2f8fca!important}
+.staff-portal-shell .staff-tool-page .border-primary{border-color:#2f8fca!important}
+
+/* Replace green illustration tint without touching admin. */
+.staff-portal-shell .staff-art,.parent-portal-shell .portal-css-art{
+  background:linear-gradient(145deg,#eaf6fb,#fff7e9)!important;
+}
+.staff-portal-shell .staff-art span{background:#2f8fca!important}
+.staff-portal-shell .staff-art b{background:#c9953d!important}

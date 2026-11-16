@@ -1,0 +1,61 @@
+/* Imagemakers staff dashboard: operator-focused sky-blue visual language. */
+.dashboard-staff {
+  --staff-sky:#2da7dc;
+  --staff-sky-deep:#11698f;
+  --staff-ink:#173c50;
+}
+.dashboard-staff .portal-hero {
+  border:1px solid rgba(45,155,204,.18);
+  background:
+    radial-gradient(circle at 88% 12%, rgba(74,196,239,.16), transparent 24%),
+    linear-gradient(135deg,#f7fcff 0%,#e5f6ff 48%,#d2effd 100%);
+  box-shadow:0 28px 58px -45px rgba(20,105,140,.44);
+}
+.dashboard-staff .portal-hero-copy { position:relative; z-index:2; }
+.dashboard-staff .staff-art {
+  filter:drop-shadow(0 22px 28px rgba(26,110,146,.18));
+}
+.dashboard-staff .portal-surface {
+  border:1px solid rgba(46,145,188,.14);
+  background:rgba(255,255,255,.82);
+  box-shadow:0 20px 50px -44px rgba(23,95,126,.42);
+  backdrop-filter:blur(18px);
+}
+.dashboard-staff .staff-dashboard-link {
+  border:1px solid rgba(43,151,198,.15);
+  border-radius:20px;
+  background:linear-gradient(135deg,#fff,#f1faff);
+  box-shadow:0 20px 40px -38px rgba(23,95,126,.45);
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.dashboard-staff .staff-dashboard-link:hover {
+  transform:translateY(-3px);
+  border-color:rgba(41,151,201,.28);
+  box-shadow:0 28px 52px -40px rgba(23,95,126,.54);
+}
+.dashboard-staff .staff-dashboard-chip {
+  width:54px;
+  height:54px;
+  display:grid;
+  place-items:center;
+  border-radius:18px;
+  background:linear-gradient(145deg,#dff6ff,#b9e6f8);
+  color:#1777a2;
+}
+.dashboard-staff .staff-dashboard-number {
+  font-size:30px;
+  font-weight:900;
+  letter-spacing:-.06em;
+  color:#173c50;
+}
+.dashboard-staff .staff-dashboard-note {
+  font-size:10px;
+  line-height:1.55;
+  color:#758995;
+}
+.dashboard-staff .staff-utility {
+  border:1px solid rgba(45,143,185,.13);
+  background:#f3faff;
+  color:#24677f;
+}
+.dashboard-staff .staff-utility:hover { background:#e8f7ff; }

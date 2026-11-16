@@ -1,0 +1,27 @@
+const { contextBridge, ipcRenderer } = require("electron");
+contextBridge.exposeInMainWorld("cbt", Object.freeze({
+  getStatus: () => ipcRenderer.invoke("app:status"),
+  getDiagnostics: () => ipcRenderer.invoke("app:diagnostics"),
+  recover: () => ipcRenderer.invoke("app:recover"),
+  listPackages: () => ipcRenderer.invoke("packages:list"),
+  getActiveExam: () => ipcRenderer.invoke("station:get-active-exam"),
+  setActiveExam: (examId) => ipcRenderer.invoke("station:set-active-exam", examId),
+  importPackage: () => ipcRenderer.invoke("packages:import"),
+  getQueue: () => ipcRenderer.invoke("sync:queue"),
+  getStaffAuthStatus: () => ipcRenderer.invoke("auth:status"),
+  signInStaff: (email, password) => ipcRenderer.invoke("auth:sign-in", email, password),
+  signOutStaff: () => ipcRenderer.invoke("auth:sign-out"),
+  syncAttempts: () => ipcRenderer.invoke("sync:run"),
+  getExamPreview: (examId) => ipcRenderer.invoke("exam:preview", examId),
+  lookupCandidate: (examId, admissionNumber) => ipcRenderer.invoke("candidate:lookup", examId, admissionNumber),
+  startAttempt: (examId, admissionNumber, candidateName) => ipcRenderer.invoke("attempt:start", examId, admissionNumber, candidateName),
+  resumeAttempt: (attemptId, admissionNumber) => ipcRenderer.invoke("attempt:resume", attemptId, admissionNumber),
+  saveAnswer: (attemptId, admissionNumber, questionId, optionId) => ipcRenderer.invoke("attempt:answer", attemptId, admissionNumber, questionId, optionId),
+  submitAttempt: (attemptId, admissionNumber) => ipcRenderer.invoke("attempt:submit", attemptId, admissionNumber),
+  getResult: (attemptId, admissionNumber) => ipcRenderer.invoke("attempt:result", attemptId, admissionNumber),
+  supervisorPinStatus: () => ipcRenderer.invoke("supervisor:pin-status"),
+  setSupervisorPin: (pin) => ipcRenderer.invoke("supervisor:set-pin", pin),
+  unlockSupervisor: (pin) => ipcRenderer.invoke("supervisor:unlock", pin),
+  getResults: () => ipcRenderer.invoke("supervisor:results"),
+  lockSupervisor: () => ipcRenderer.invoke("supervisor:lock")
+}));

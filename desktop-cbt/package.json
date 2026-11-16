@@ -1,0 +1,72 @@
+{
+  "name": "imagemakers-cbt-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline-first Windows examination client for Imagemakers Nursery and Primary School",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && electron .\"",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "package:win": "npm run build && electron-builder --win nsis --x64",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "better-sqlite3": "11.10.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "7.6.13",
+    "@types/node": "22.16.5",
+    "@types/react": "18.3.23",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "4.7.0",
+    "concurrently": "9.2.1",
+    "electron": "37.2.6",
+    "electron-builder": "26.0.12",
+    "typescript": "5.8.3",
+    "vite": "6.3.5",
+    "wait-on": "8.0.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "lucide-react": "0.468.0"
+  },
+  "build": {
+    "appId": "ng.imagemakers.cbt",
+    "productName": "Imagemakers CBT",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json",
+      "!**/*.map",
+      "!**/*.d.ts"
+    ],
+    "asarUnpack": [
+      "node_modules/better-sqlite3/**/*"
+    ],
+    "npmRebuild": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Imagemakers-CBT-Setup-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "compression": "maximum"
+  }
+}
