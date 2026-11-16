@@ -1,0 +1,289 @@
+{
+  "payload": {
+    "schemaVersion": 1,
+    "id": "demo-p2-s-mathematics-v1",
+    "schoolId": "imagemakers-demo",
+    "sessionId": "demo-session",
+    "examId": "demo-p2-s-mathematics",
+    "version": 1,
+    "title": "Demo Mathematics Assessment",
+    "subject": "Mathematics",
+    "classId": "primary-2",
+    "className": "Primary 2",
+    "armId": "sapphire",
+    "armName": "Sapphire",
+    "opensAt": "2026-10-17T11:06:01.935Z",
+    "closesAt": "2027-11-16T11:06:01.935Z",
+    "durationSeconds": 600,
+    "instructions": "DEMO ONLY — answer all questions. You may move backwards and change an answer before submitting.",
+    "questions": [
+      {
+        "id": "demo-p2-s-mathematics-q1",
+        "prompt": "What is 7 + 5?",
+        "options": [
+          {
+            "id": "A",
+            "text": "10"
+          },
+          {
+            "id": "B",
+            "text": "11"
+          },
+          {
+            "id": "C",
+            "text": "12"
+          },
+          {
+            "id": "D",
+            "text": "13"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p2-s-mathematics-q2",
+        "prompt": "What is half of 18?",
+        "options": [
+          {
+            "id": "A",
+            "text": "7"
+          },
+          {
+            "id": "B",
+            "text": "8"
+          },
+          {
+            "id": "C",
+            "text": "9"
+          },
+          {
+            "id": "D",
+            "text": "10"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p2-s-mathematics-q3",
+        "prompt": "Which number is even?",
+        "options": [
+          {
+            "id": "A",
+            "text": "5"
+          },
+          {
+            "id": "B",
+            "text": "9"
+          },
+          {
+            "id": "C",
+            "text": "12"
+          },
+          {
+            "id": "D",
+            "text": "15"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p2-s-mathematics-q4",
+        "prompt": "How many sides has a triangle?",
+        "options": [
+          {
+            "id": "A",
+            "text": "2"
+          },
+          {
+            "id": "B",
+            "text": "3"
+          },
+          {
+            "id": "C",
+            "text": "4"
+          },
+          {
+            "id": "D",
+            "text": "5"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p2-s-mathematics-q5",
+        "prompt": "What is 4 × 3?",
+        "options": [
+          {
+            "id": "A",
+            "text": "7"
+          },
+          {
+            "id": "B",
+            "text": "10"
+          },
+          {
+            "id": "C",
+            "text": "12"
+          },
+          {
+            "id": "D",
+            "text": "14"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p2-s-mathematics-q6",
+        "prompt": "What is 20 − 8?",
+        "options": [
+          {
+            "id": "A",
+            "text": "10"
+          },
+          {
+            "id": "B",
+            "text": "11"
+          },
+          {
+            "id": "C",
+            "text": "12"
+          },
+          {
+            "id": "D",
+            "text": "13"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p2-s-mathematics-q7",
+        "prompt": "Which is the largest number?",
+        "options": [
+          {
+            "id": "A",
+            "text": "16"
+          },
+          {
+            "id": "B",
+            "text": "61"
+          },
+          {
+            "id": "C",
+            "text": "26"
+          },
+          {
+            "id": "D",
+            "text": "41"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p2-s-mathematics-q8",
+        "prompt": "How many minutes are in one hour?",
+        "options": [
+          {
+            "id": "A",
+            "text": "30"
+          },
+          {
+            "id": "B",
+            "text": "45"
+          },
+          {
+            "id": "C",
+            "text": "60"
+          },
+          {
+            "id": "D",
+            "text": "90"
+          }
+        ],
+        "points": 1
+      }
+    ],
+    "candidates": [
+      {
+        "studentId": "demo-student-P2-S-1",
+        "admissionNumber": "DEMO-P2-S-001",
+        "displayName": "Ada Okafor",
+        "classId": "primary-2",
+        "className": "Primary 2",
+        "armId": "sapphire",
+        "armName": "Sapphire"
+      },
+      {
+        "studentId": "demo-student-P2-S-2",
+        "admissionNumber": "DEMO-P2-S-002",
+        "displayName": "Daniel Bello",
+        "classId": "primary-2",
+        "className": "Primary 2",
+        "armId": "sapphire",
+        "armName": "Sapphire"
+      },
+      {
+        "studentId": "demo-student-P2-S-3",
+        "admissionNumber": "DEMO-P2-S-003",
+        "displayName": "Mary James",
+        "classId": "primary-2",
+        "className": "Primary 2",
+        "armId": "sapphire",
+        "armName": "Sapphire"
+      },
+      {
+        "studentId": "demo-student-P2-S-4",
+        "admissionNumber": "DEMO-P2-S-004",
+        "displayName": "Samuel Musa",
+        "classId": "primary-2",
+        "className": "Primary 2",
+        "armId": "sapphire",
+        "armName": "Sapphire"
+      }
+    ],
+    "answerKey": [
+      {
+        "questionId": "demo-p2-s-mathematics-q1",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p2-s-mathematics-q2",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p2-s-mathematics-q3",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p2-s-mathematics-q4",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p2-s-mathematics-q5",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p2-s-mathematics-q6",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p2-s-mathematics-q7",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p2-s-mathematics-q8",
+        "correctOptionId": "C",
+        "points": 1
+      }
+    ],
+    "demoPackage": true
+  },
+  "signature": "CAc4dHdbWnpsOI0hSrb7Jz88zl4WNkx326Jnf8q86OsRRHWOibsZo00z0FAlucwKnGrKI+Cph5VCqb0tKA3xAg==",
+  "packageHash": "5f817ea4d4f1f479e0b862d96784b700a75274512deee0ee6791c4d90632b6f3"
+}

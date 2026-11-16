@@ -104,6 +104,20 @@ const AdminUsers = () => {
     }
   };
 
+  const PRESETS: Record<string, Record<string, boolean>> = {
+    Bursar: { can_manage_fees: true, can_manage_students: false, can_upload_bulk_data: false, can_approve_grades: false, can_manage_teachers: false, can_view_reports: false, can_add_admins: false },
+    "Head Teacher": { can_manage_fees: false, can_manage_students: true, can_upload_bulk_data: true, can_approve_grades: true, can_manage_teachers: true, can_view_reports: true, can_add_admins: false },
+    "Assistant Teacher": { can_manage_fees: false, can_manage_students: true, can_upload_bulk_data: false, can_approve_grades: false, can_manage_teachers: false, can_view_reports: true, can_add_admins: false },
+    "ICT Coordinator": { can_manage_fees: false, can_manage_students: true, can_upload_bulk_data: true, can_approve_grades: false, can_manage_teachers: false, can_view_reports: true, can_add_admins: false },
+  };
+  const applyPreset = async (adminId: string, preset: string) => {
+    const values = PRESETS[preset];
+    const { error } = await supabase.from("admin_permissions").update(values as any).eq("id", adminId);
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    setAdmins((prev) => prev.map((a) => (a.id === adminId ? { ...a, ...values } : a)));
+    toast({ title: `${preset} preset applied`, description: "You can still switch individual permissions below." });
+  };
+
   const updatePermission = async (adminId: string, field: string, value: boolean) => {
     try {
       const { error } = await supabase
@@ -226,6 +240,7 @@ const AdminUsers = () => {
                       <Badge variant="outline" className="mb-3">Bursar</Badge>
                     )}
 
+                    {canManageAdmins && <div className="mb-3 flex flex-wrap gap-2"><span className="self-center text-xs font-semibold text-muted-foreground">Preset:</span>{Object.keys(PRESETS).map((p) => <Button key={p} size="sm" variant="outline" className="h-7 rounded-full text-xs" onClick={() => applyPreset(admin.id, p)}>{p}</Button>)}</div>}
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                       <div className="flex items-center justify-between">
                         <span className="text-sm text-muted-foreground">Manage Fees</span>

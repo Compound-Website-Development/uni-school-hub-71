@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, BellRing, BookOpen, CalendarDays, CheckCircle2, Clock3, MapPin, NotebookPen, RefreshCw, WalletCards } from "lucide-react";
 import { StudentLayout } from "@/components/layout/StudentLayout";
+import { AnnouncementTicker } from "@/components/AnnouncementTicker";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
@@ -150,6 +151,7 @@ const StudentDashboard = ({ scannedToken }: StudentDashboardProps) => {
   return (
     <StudentLayout title="Home" studentNameOverride={scannedProfile?.full_name} studentIdOverride={scannedProfile?.admission_no} publicView={Boolean(scannedToken)}>
       <main className="student-home space-y-5 md:space-y-7">
+        {!scannedToken && <AnnouncementTicker audience="student" />}
         {isShadowIdentity && (
           <div className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900">
             <BellRing className="h-4 w-4" />

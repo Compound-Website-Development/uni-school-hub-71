@@ -1,6 +1,8 @@
 import { withAdminPreview } from "@/lib/adminPreview";
 import { useState, useEffect } from "react";
 import { ParentLayout } from "@/components/layout/ParentLayout";
+import { AnnouncementTicker } from "@/components/AnnouncementTicker";
+import { TimetableViewer } from "@/components/timetable/TimetableEditor";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -157,6 +159,7 @@ const ParentDashboard = () => {
   return (
     <ParentLayout title="Dashboard">
       <div className="dashboard-surface dashboard-parent space-y-6 animate-fade-in">
+        <AnnouncementTicker audience="parent" />
         <section className="portal-hero">
           <div className="parent-hero-orb" aria-hidden="true"><span/><i/><b/></div>
           <div className="portal-hero-copy">
@@ -186,6 +189,12 @@ const ParentDashboard = () => {
           </Card>
         ) : (
           <>
+            {children.filter((c) => c.class_id).map((c) => (
+              <Card key={"tt" + c.id} className="border-border/50">
+                <CardHeader className="pb-2"><CardTitle className="text-sm font-bold">{c.first_name}'s class timetable</CardTitle></CardHeader>
+                <CardContent><TimetableViewer classId={c.class_id} /></CardContent>
+              </Card>
+            ))}
             {/* Child Cards with Stats */}
             {children.map((child) => {
               const avg = getAvgGrade(child.id);

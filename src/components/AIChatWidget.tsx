@@ -13,9 +13,13 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant
 
 export const AIChatWidget = () => {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>([
-    { role: "assistant", content: "Hi there! 👋 I'm your **Imagemakers AI Tutor**. I can explain lessons, give hints and work through examples with you. I will not simply do your homework for you." },
-  ]);
+  const GREETING: Msg = { role: "assistant", content: "Hi, I'm **Wiz**, the Imagemakers study owl. Tell me what you're learning and I'll give you hints, explain words and help you think it through. You do the answering — I do the cheering." };
+  const [messages, setMessages] = useState<Msg[]>(() => {
+    try { const saved = JSON.parse(localStorage.getItem("wiz-chat") || "[]"); if (Array.isArray(saved) && saved.length) return saved; } catch { /* ignore */ }
+    return [GREETING];
+  });
+  useEffect(() => { try { localStorage.setItem("wiz-chat", JSON.stringify(messages.slice(-40))); } catch { /* ignore */ } }, [messages]);
+  const clearChat = () => { localStorage.removeItem("wiz-chat"); setMessages([GREETING]); };
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -76,7 +80,7 @@ export const AIChatWidget = () => {
           apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
-          messages: [...messages.slice(1), userMsg].map((m) => ({ role: m.role, content: m.content })),
+          messages: [...messages.slice(1).slice(-20), userMsg].map((m) => ({ role: m.role, content: m.content })),
           type: "homework",
         }),
       });

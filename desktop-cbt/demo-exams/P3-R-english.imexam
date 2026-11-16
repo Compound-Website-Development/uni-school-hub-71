@@ -1,0 +1,289 @@
+{
+  "payload": {
+    "schemaVersion": 1,
+    "id": "demo-p3-r-english-v1",
+    "schoolId": "imagemakers-demo",
+    "sessionId": "demo-session",
+    "examId": "demo-p3-r-english",
+    "version": 1,
+    "title": "Demo English Assessment",
+    "subject": "English",
+    "classId": "primary-3",
+    "className": "Primary 3",
+    "armId": "ruby",
+    "armName": "Ruby",
+    "opensAt": "2026-10-17T11:06:01.935Z",
+    "closesAt": "2027-11-16T11:06:01.935Z",
+    "durationSeconds": 600,
+    "instructions": "DEMO ONLY — answer all questions. You may move backwards and change an answer before submitting.",
+    "questions": [
+      {
+        "id": "demo-p3-r-english-q1",
+        "prompt": "Choose the correctly spelt word.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Becaus"
+          },
+          {
+            "id": "B",
+            "text": "Because"
+          },
+          {
+            "id": "C",
+            "text": "Becose"
+          },
+          {
+            "id": "D",
+            "text": "Beacause"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-english-q2",
+        "prompt": "Which word is a noun?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Quickly"
+          },
+          {
+            "id": "B",
+            "text": "Run"
+          },
+          {
+            "id": "C",
+            "text": "Teacher"
+          },
+          {
+            "id": "D",
+            "text": "Beautiful"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-english-q3",
+        "prompt": "Choose the opposite of 'early'.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Soon"
+          },
+          {
+            "id": "B",
+            "text": "Late"
+          },
+          {
+            "id": "C",
+            "text": "Fast"
+          },
+          {
+            "id": "D",
+            "text": "First"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-english-q4",
+        "prompt": "Which punctuation ends a question?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Full stop"
+          },
+          {
+            "id": "B",
+            "text": "Comma"
+          },
+          {
+            "id": "C",
+            "text": "Question mark"
+          },
+          {
+            "id": "D",
+            "text": "Colon"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-english-q5",
+        "prompt": "Choose the plural of 'child'.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Childs"
+          },
+          {
+            "id": "B",
+            "text": "Childes"
+          },
+          {
+            "id": "C",
+            "text": "Children"
+          },
+          {
+            "id": "D",
+            "text": "Childrens"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-english-q6",
+        "prompt": "Which word is a verb?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Sing"
+          },
+          {
+            "id": "B",
+            "text": "Blue"
+          },
+          {
+            "id": "C",
+            "text": "Soft"
+          },
+          {
+            "id": "D",
+            "text": "Table"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-english-q7",
+        "prompt": "Complete: She ___ to school every day.",
+        "options": [
+          {
+            "id": "A",
+            "text": "go"
+          },
+          {
+            "id": "B",
+            "text": "goes"
+          },
+          {
+            "id": "C",
+            "text": "going"
+          },
+          {
+            "id": "D",
+            "text": "gone"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-english-q8",
+        "prompt": "Which is a proper noun?",
+        "options": [
+          {
+            "id": "A",
+            "text": "city"
+          },
+          {
+            "id": "B",
+            "text": "school"
+          },
+          {
+            "id": "C",
+            "text": "Lagos"
+          },
+          {
+            "id": "D",
+            "text": "river"
+          }
+        ],
+        "points": 1
+      }
+    ],
+    "candidates": [
+      {
+        "studentId": "demo-student-P3-R-1",
+        "admissionNumber": "DEMO-P3-R-001",
+        "displayName": "Ada Okafor",
+        "classId": "primary-3",
+        "className": "Primary 3",
+        "armId": "ruby",
+        "armName": "Ruby"
+      },
+      {
+        "studentId": "demo-student-P3-R-2",
+        "admissionNumber": "DEMO-P3-R-002",
+        "displayName": "Daniel Bello",
+        "classId": "primary-3",
+        "className": "Primary 3",
+        "armId": "ruby",
+        "armName": "Ruby"
+      },
+      {
+        "studentId": "demo-student-P3-R-3",
+        "admissionNumber": "DEMO-P3-R-003",
+        "displayName": "Mary James",
+        "classId": "primary-3",
+        "className": "Primary 3",
+        "armId": "ruby",
+        "armName": "Ruby"
+      },
+      {
+        "studentId": "demo-student-P3-R-4",
+        "admissionNumber": "DEMO-P3-R-004",
+        "displayName": "Samuel Musa",
+        "classId": "primary-3",
+        "className": "Primary 3",
+        "armId": "ruby",
+        "armName": "Ruby"
+      }
+    ],
+    "answerKey": [
+      {
+        "questionId": "demo-p3-r-english-q1",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-english-q2",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-english-q3",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-english-q4",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-english-q5",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-english-q6",
+        "correctOptionId": "A",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-english-q7",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-english-q8",
+        "correctOptionId": "C",
+        "points": 1
+      }
+    ],
+    "demoPackage": true
+  },
+  "signature": "oELz9eA0OTp8EbuubyNSb0R73+mgin0k+9gXIyB4tE4Px+VInFW9tpuzx3/aMuFGXNBUM3Lwx1+ZiLg0yUuSBQ==",
+  "packageHash": "a45d90fa71b83eccd168bdd0d8c1771c326fe3ca2e1e010bfb7bc4bde67c6a28"
+}

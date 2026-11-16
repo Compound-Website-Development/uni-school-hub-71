@@ -18,6 +18,7 @@ const items = [
  {icon:UsersRound,label:"Students",href:"/staff/students"},
  {icon:BookOpen,label:"Classes",href:"/staff/classes"},
  {icon:CalendarCheck,label:"Attendance",href:"/staff/attendance"},
+ {icon:CalendarCheck,label:"Timetable",href:"/staff/timetable"},
  {icon:Table2,label:"Gradebook",href:"/staff/gradebook"},
  {icon:MonitorPlay,label:"CBT Studio",href:"/staff/cbt"},
  {icon:NotebookPen,label:"Assignments",href:"/staff/assignments"},

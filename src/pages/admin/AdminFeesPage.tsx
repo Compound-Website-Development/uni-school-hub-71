@@ -128,6 +128,25 @@ const AdminFeesPage = () => {
     await fetchData();
   };
 
+  const [batchClass, setBatchClass] = useState("");
+  const [batchFee, setBatchFee] = useState("");
+  const [batchBusy, setBatchBusy] = useState(false);
+  const assignToClass = async () => {
+    const term = optionalTerm || clubTerm;
+    if (!batchClass || !batchFee || !term) { toast.error("Choose a class, term and item"); return; }
+    const pupils = students.filter((s) => s.class_id === batchClass);
+    if (!pupils.length) { toast.error("That class has no active pupils"); return; }
+    setBatchBusy(true);
+    const { data: existing } = await supabase.from("student_fee_selections").select("student_id").eq("term_id", term).eq("fee_item_id", batchFee).in("student_id", pupils.map((p) => p.id));
+    const have = new Set((existing || []).map((e: any) => e.student_id));
+    const rows = pupils.filter((p) => !have.has(p.id)).map((p) => ({ student_id: p.id, term_id: term, fee_item_id: batchFee }));
+    const { error } = rows.length ? await supabase.from("student_fee_selections").insert(rows) : { error: null };
+    setBatchBusy(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Added to ${rows.length} pupil${rows.length === 1 ? "" : "s"}${have.size ? ` (${have.size} already had it)` : ""}`);
+    await fetchData();
+  };
+
   const removeClub = async (studentId: string, termId: string) => {
     const { error } = await supabase.from("student_fee_selections").delete()
       .eq("student_id", studentId).eq("term_id", termId).in("fee_item_id", clubItems.map((f) => f.id));
@@ -153,6 +172,17 @@ const AdminFeesPage = () => {
           <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Active fees</p><p className="text-2xl font-bold">{feeItems.filter((f) => f.is_active).length}</p></CardContent></Card>
           <Card><CardContent className="p-4"><p className="text-xs text-muted-foreground">Recorded receipts</p><p className="text-2xl font-bold">₦{totalRevenue.toLocaleString()}</p></CardContent></Card>
         </div>
+
+        {canManageFees && <Card>
+          <CardHeader className="pb-3"><CardTitle className="text-sm font-semibold">Add an item to a whole class</CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">Pick a class and an optional item (textbooks, notebooks, uniform, club). Every active pupil in that class gets it on their term bill in one step. Pupils who already have it are skipped.</p></CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-4">
+            <Select value={batchClass} onValueChange={setBatchClass}><SelectTrigger><SelectValue placeholder="Class" /></SelectTrigger><SelectContent>{classes.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent></Select>
+            <Select value={optionalTerm || clubTerm} onValueChange={setOptionalTerm}><SelectTrigger><SelectValue placeholder="Term" /></SelectTrigger><SelectContent>{terms.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent></Select>
+            <Select value={batchFee} onValueChange={setBatchFee}><SelectTrigger><SelectValue placeholder="Item" /></SelectTrigger><SelectContent>{feeItems.filter((f) => f.is_active && !f.is_mandatory && (!f.class_id || f.class_id === batchClass)).map((f) => <SelectItem key={f.id} value={f.id}>{f.name} · ₦{Number(f.amount).toLocaleString()}</SelectItem>)}</SelectContent></Select>
+            <Button onClick={assignToClass} disabled={batchBusy}><UsersRound className="w-4 h-4 mr-1" />{batchBusy ? "Adding…" : "Add to whole class"}</Button>
+          </CardContent>
+        </Card>}
 
         <Card>
           <CardHeader className="pb-3 flex flex-row items-center justify-between">

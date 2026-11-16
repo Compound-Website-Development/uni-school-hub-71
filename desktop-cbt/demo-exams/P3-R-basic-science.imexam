@@ -1,0 +1,289 @@
+{
+  "payload": {
+    "schemaVersion": 1,
+    "id": "demo-p3-r-basic-science-v1",
+    "schoolId": "imagemakers-demo",
+    "sessionId": "demo-session",
+    "examId": "demo-p3-r-basic-science",
+    "version": 1,
+    "title": "Demo Basic Science Assessment",
+    "subject": "Basic Science",
+    "classId": "primary-3",
+    "className": "Primary 3",
+    "armId": "ruby",
+    "armName": "Ruby",
+    "opensAt": "2026-10-17T11:06:01.935Z",
+    "closesAt": "2027-11-16T11:06:01.935Z",
+    "durationSeconds": 600,
+    "instructions": "DEMO ONLY — answer all questions. You may move backwards and change an answer before submitting.",
+    "questions": [
+      {
+        "id": "demo-p3-r-basic-science-q1",
+        "prompt": "Which organ pumps blood around the body?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Lungs"
+          },
+          {
+            "id": "B",
+            "text": "Heart"
+          },
+          {
+            "id": "C",
+            "text": "Brain"
+          },
+          {
+            "id": "D",
+            "text": "Kidney"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-basic-science-q2",
+        "prompt": "Which of these is a source of light?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Stone"
+          },
+          {
+            "id": "B",
+            "text": "Sun"
+          },
+          {
+            "id": "C",
+            "text": "Chair"
+          },
+          {
+            "id": "D",
+            "text": "Book"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-basic-science-q3",
+        "prompt": "Plants make food mainly in their…",
+        "options": [
+          {
+            "id": "A",
+            "text": "Roots"
+          },
+          {
+            "id": "B",
+            "text": "Flowers"
+          },
+          {
+            "id": "C",
+            "text": "Leaves"
+          },
+          {
+            "id": "D",
+            "text": "Fruits"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-basic-science-q4",
+        "prompt": "Which animal is a mammal?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Lizard"
+          },
+          {
+            "id": "B",
+            "text": "Frog"
+          },
+          {
+            "id": "C",
+            "text": "Goat"
+          },
+          {
+            "id": "D",
+            "text": "Fish"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-basic-science-q5",
+        "prompt": "Water freezes into…",
+        "options": [
+          {
+            "id": "A",
+            "text": "Steam"
+          },
+          {
+            "id": "B",
+            "text": "Ice"
+          },
+          {
+            "id": "C",
+            "text": "Smoke"
+          },
+          {
+            "id": "D",
+            "text": "Sand"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-basic-science-q6",
+        "prompt": "Which sense organ helps us hear?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Eye"
+          },
+          {
+            "id": "B",
+            "text": "Ear"
+          },
+          {
+            "id": "C",
+            "text": "Nose"
+          },
+          {
+            "id": "D",
+            "text": "Tongue"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-basic-science-q7",
+        "prompt": "The Earth moves around the…",
+        "options": [
+          {
+            "id": "A",
+            "text": "Moon"
+          },
+          {
+            "id": "B",
+            "text": "Mars"
+          },
+          {
+            "id": "C",
+            "text": "Sun"
+          },
+          {
+            "id": "D",
+            "text": "Clouds"
+          }
+        ],
+        "points": 1
+      },
+      {
+        "id": "demo-p3-r-basic-science-q8",
+        "prompt": "Which material is attracted by a magnet?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Wood"
+          },
+          {
+            "id": "B",
+            "text": "Plastic"
+          },
+          {
+            "id": "C",
+            "text": "Iron"
+          },
+          {
+            "id": "D",
+            "text": "Paper"
+          }
+        ],
+        "points": 1
+      }
+    ],
+    "candidates": [
+      {
+        "studentId": "demo-student-P3-R-1",
+        "admissionNumber": "DEMO-P3-R-001",
+        "displayName": "Ada Okafor",
+        "classId": "primary-3",
+        "className": "Primary 3",
+        "armId": "ruby",
+        "armName": "Ruby"
+      },
+      {
+        "studentId": "demo-student-P3-R-2",
+        "admissionNumber": "DEMO-P3-R-002",
+        "displayName": "Daniel Bello",
+        "classId": "primary-3",
+        "className": "Primary 3",
+        "armId": "ruby",
+        "armName": "Ruby"
+      },
+      {
+        "studentId": "demo-student-P3-R-3",
+        "admissionNumber": "DEMO-P3-R-003",
+        "displayName": "Mary James",
+        "classId": "primary-3",
+        "className": "Primary 3",
+        "armId": "ruby",
+        "armName": "Ruby"
+      },
+      {
+        "studentId": "demo-student-P3-R-4",
+        "admissionNumber": "DEMO-P3-R-004",
+        "displayName": "Samuel Musa",
+        "classId": "primary-3",
+        "className": "Primary 3",
+        "armId": "ruby",
+        "armName": "Ruby"
+      }
+    ],
+    "answerKey": [
+      {
+        "questionId": "demo-p3-r-basic-science-q1",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-basic-science-q2",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-basic-science-q3",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-basic-science-q4",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-basic-science-q5",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-basic-science-q6",
+        "correctOptionId": "B",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-basic-science-q7",
+        "correctOptionId": "C",
+        "points": 1
+      },
+      {
+        "questionId": "demo-p3-r-basic-science-q8",
+        "correctOptionId": "C",
+        "points": 1
+      }
+    ],
+    "demoPackage": true
+  },
+  "signature": "Bvf/bmeVl5qd1srGOPm2jnohsOHcJdTEdXToihU4H8ku4iEDnO868harh30pzmH98wrNC5PFeTQC2A6OuhoPBg==",
+  "packageHash": "b1cfc9cba937f5de861143fc5725eb70f381ed2bbb4592943cdd08872d029281"
+}

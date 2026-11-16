@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useDraftCache } from "@/hooks/useDraftCache";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { StudentLayout } from "@/components/layout/StudentLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +21,7 @@ const StudentHomeworkDetail = () => {
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const draft = useDraftCache<string>(assignment?.id && !submission ? `homework:${assignment.id}` : null, content, (v) => { if (v) setContent(v); });
 
   useEffect(() => {
     const load = async () => {
@@ -53,6 +55,7 @@ const StudentHomeworkDetail = () => {
       toast({ title: "Could not submit", description: error.message, variant: "destructive" });
       return;
     }
+    draft.clear();
     setSubmission(data);
     setContent("");
     toast({ title: "Submitted", description: "Your teacher has received your work." });
@@ -123,6 +126,7 @@ const StudentHomeworkDetail = () => {
             <CardContent className="p-5 space-y-3">
               <h2 className="font-semibold text-foreground">Your Submission</h2>
               <Textarea rows={6} placeholder="Write your answer..." value={content} onChange={(e) => setContent(e.target.value)} className="rounded-xl" />
+              <p className="text-[11px] text-muted-foreground">{draft.restored ? "We restored your unsaved answer." : "Your answer is saved on this device as you type."}</p>
               <Button onClick={handleSubmit} disabled={!content.trim() || saving} className="w-full shadow-md">
                 {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
                 {overdue ? "Submit Late" : "Submit Now"}
