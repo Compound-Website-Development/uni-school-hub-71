@@ -8,9 +8,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { Bus, Plus, Loader2, Trash2, MapPin, UserRound, Users, ShieldCheck, Link2, Navigation } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { useTransportEnabled, TRANSPORT_SETTING_KEY } from "@/hooks/useTransportEnabled";
 
 const AdminTransport = () => {
   const { toast } = useToast();
+  const { enabled: transportOn, setEnabled: setTransportOn } = useTransportEnabled();
+  const toggleTransport = async (on: boolean) => {
+    const { error } = await supabase.from("school_settings").upsert({ key: TRANSPORT_SETTING_KEY, value: on ? "true" : "false" }, { onConflict: "key" });
+    if (error) { toast({ title: "Could not save", description: error.message, variant: "destructive" }); return; }
+    setTransportOn(on);
+    toast({ title: on ? "Transport switched on" : "Transport switched off", description: on ? "Parents linked to a route now see School Bus." : "School Bus is hidden from every parent." });
+  };
   const [routes, setRoutes] = useState<any[]>([]);
   const [drivers, setDrivers] = useState<any[]>([]);
   const [parents, setParents] = useState<any[]>([]);
@@ -115,6 +124,7 @@ const AdminTransport = () => {
           </div>
           <div className="portal-hero-art"><Bus className="absolute right-20 top-20 h-28 w-28 text-primary/20" /><Navigation className="absolute right-10 bottom-12 h-14 w-14 text-accent/30" /></div>
         </section>
+        <Card><CardContent className="flex items-center justify-between gap-4 p-5"><div><p className="font-semibold">School bus service</p><p className="text-sm text-muted-foreground">{transportOn ? "On — linked parents can see the School Bus page." : "Off — School Bus is hidden from all parents."}</p></div><Switch checked={transportOn} onCheckedChange={toggleTransport} aria-label="Turn school bus service on or off" /></CardContent></Card>
 
         <div className="grid gap-5 lg:grid-cols-3">
           <Card className="border-primary/15 shadow-lg">

@@ -154,6 +154,15 @@ const AdminRegisterImport = () => {
       return;
     }
     setSaving(true);
+    const ids = valid.map((r) => r.admission_no.trim()).filter(Boolean);
+    if (ids.length) {
+      const { data: clash } = await supabase.from("students").select("student_id").in("student_id", ids);
+      if (clash?.length) {
+        setSaving(false);
+        toast.error(`Already registered: ${clash.map((c: any) => c.student_id).join(", ")}. Change or remove those rows — nothing was saved.`);
+        return;
+      }
+    }
     const payload = valid.map((r, i) => {
       const { first, middle, last } = splitName(r.full_name);
       return {
@@ -183,9 +192,30 @@ const AdminRegisterImport = () => {
     setPaste("");
   };
 
+  const downloadTemplate = () => {
+    const csv = "Admission No,Full name,Date of birth (DD/MM/YYYY),Gender,Parent name,Parent phone,Address\nIMS/2026/0001,Adaeze Chioma Okafor,14/03/2019,Female,Mrs Okafor,08030000000,Lekki Lagos\n";
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "admission-register-template.csv";
+    a.click();
+  };
+
   return (
     <AdminLayout title="Admission Register Import">
       <div className="space-y-6 animate-fade-in">
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            ["1", "Pick the class", "Choose a class once — every row uses it unless you change one."],
+            ["2", "Type or paste", "Copy rows from Excel or type straight from the register book."],
+            ["3", "Check and save", `${readyCount} pupil${readyCount === 1 ? "" : "s"} ready. Repeated admission numbers are blocked.`],
+          ].map(([n, t, d]) => (
+            <div key={n} className="flex gap-3 rounded-2xl border border-border bg-card p-4">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-primary-foreground">{n}</span>
+              <div><p className="text-sm font-semibold">{t}</p><p className="text-xs text-muted-foreground">{d}</p></div>
+            </div>
+          ))}
+        </div>
+        <Button variant="outline" size="sm" onClick={downloadTemplate}>Download blank register sheet</Button>
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2"><BookUser className="w-6 h-6 text-primary" /> Digitise the admission register</h2>
           <p className="text-sm text-muted-foreground mt-1">

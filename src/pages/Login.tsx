@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getDeviceMode, setDeviceMode } from "@/lib/deviceMode";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +59,7 @@ const Login = () => {
   const [loginErrors, setLoginErrors] = useState<LoginErrors>({});
   
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [childDevice, setChildDevice] = useState(getDeviceMode() === "child");
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -68,12 +70,13 @@ const Login = () => {
         return;
       }
       if (!userRole) return;
+      if (childDevice && userRole === "parent") { toast({ title: "This is a pupil phone", description: "Parent accounts are switched off here. Tap 'Use as family phone' to change it.", variant: "destructive" }); void supabase.auth.signOut(); return; }
       if (userRole === "student") navigate("/student", { replace: true });
       else if (userRole === "admin") navigate("/admin", { replace: true });
       else if (userRole === "teacher") navigate("/staff", { replace: true });
       else if (userRole === "parent") navigate("/parent", { replace: true });
     }
-  }, [user, userRole, authLoading, navigate]);
+  }, [user, userRole, authLoading, navigate, childDevice]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,7 +133,8 @@ const Login = () => {
           <Link to="/">
             <img src={npsLogo} alt="Imagemakers Nursery and Primary School" className="h-16 mx-auto mb-4" />
           </Link>
-          <p className="text-muted-foreground">Staff &amp; student sign in</p>
+          <p className="text-muted-foreground">{childDevice ? "Pupil sign in" : "Staff & student sign in"}</p>
+          {childDevice && <div className="mt-3 rounded-xl border border-border bg-card p-3 text-xs text-muted-foreground">This phone is set up for a pupil. Sign in with your admission number. <button type="button" className="font-semibold text-primary underline" onClick={() => { setDeviceMode("family"); setChildDevice(false); }}>Use as family phone</button></div>}
         </div>
 
         <Card className="shadow-lg border-border">
@@ -146,7 +150,7 @@ const Login = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="you@school.com"
+                    placeholder={childDevice ? "Admission number login" : "you@school.com"}
                     value={loginForm.email}
                     onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                     className={cn("rounded-md", loginErrors.email && "border-destructive")}

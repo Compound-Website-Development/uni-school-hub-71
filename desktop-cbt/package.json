@@ -42,7 +42,9 @@
       "electron/**/*",
       "package.json",
       "!**/*.map",
-      "!**/*.d.ts"
+      "!**/*.d.ts",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,readme.md,test,tests,__tests__,docs,example,examples}",
+      "!**/node_modules/better-sqlite3/{deps,src,benchmark}/**"
     ],
     "asarUnpack": [
       "node_modules/better-sqlite3/**/*"
@@ -67,6 +69,16 @@
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": false
     },
-    "compression": "maximum"
+    "compression": "maximum",
+    "electronLanguages": [
+      "en-US",
+      "en-GB"
+    ],
+    "extraResources": [
+      {
+        "from": "demo-exams",
+        "to": "demo-exams"
+      }
+    ]
   }
 }

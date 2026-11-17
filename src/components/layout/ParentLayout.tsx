@@ -9,6 +9,9 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { LogOut, ChevronRight, LayoutDashboard, UsersRound, GraduationCap, ClipboardCheck, WalletCards, Mail, MessagesSquare, BusFront, UserCircle } from "lucide-react";
 import npsLogo from "@/assets/logo";
 import { cn } from "@/lib/utils";
+import { useTransportEnabled } from "@/hooks/useTransportEnabled";
+import { setDeviceMode } from "@/lib/deviceMode";
+import { Smartphone } from "lucide-react";
 import "@/styles/student-portal.css";
 
 interface ParentLayoutProps { children: ReactNode; title?: string; }
@@ -23,18 +26,22 @@ const items=[
  {icon:BusFront,label:"School Bus",href:"/parent/transport"},
  {icon:UserCircle,label:"My Profile",href:"/parent/profile"}
 ] as const;
-const mobileItems=[items[0],items[2],items[3],items[4],items[7]] as const;
+
 
 export const ParentLayout=({children,title}:ParentLayoutProps)=>{
  const [open,setOpen]=useState(false);
  const {signOut,user}=useAuth();
  useRealtimeNotifications();
+ const {enabled:transportOn}=useTransportEnabled();
+ const navItems=items.filter(i=>i.href!=="/parent/transport"||transportOn);
+ const mobileItems=transportOn?[items[0],items[2],items[3],items[4],items[7]]:[items[0],items[2],items[3],items[4],items[5]];
  const nav=useNavigate(); const loc=useLocation();
  const name=user?.user_metadata?.first_name?`${user.user_metadata.first_name} ${user.user_metadata.last_name||""}`:"Parent";
  const initials=name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
  const active=(href:string)=>loc.pathname===href||loc.pathname.startsWith(href+"/");
  const logout=async()=>{await signOut();nav("/login");};
- const Nav=({close}:{close?:()=>void})=><div className="space-y-1.5">{items.map(({icon:Icon,...item})=><Link key={item.href} to={item.href} onClick={close} className={cn("portal-nav-item group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-semibold transition-all",active(item.href)&&"active")}><span className="portal-nav-icon grid h-9 w-9 place-items-center rounded-xl"><Icon className="h-[18px] w-[18px] stroke-[1.8]"/></span><span className="flex-1 truncate">{item.label}</span>{active(item.href)&&<ChevronRight className="h-4 w-4 opacity-55"/>}</Link>)}</div>;
+ const handToChild=async()=>{if(!window.confirm("Set this phone up for your child? You will be signed out, and the sign-in page will open in pupil mode so your child signs in with their own admission number."))return;setDeviceMode("child");await signOut();nav("/login");};
+ const Nav=({close}:{close?:()=>void})=><div className="space-y-1.5">{navItems.map(({icon:Icon,...item})=><Link key={item.href} to={item.href} onClick={close} className={cn("portal-nav-item group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-semibold transition-all",active(item.href)&&"active")}><span className="portal-nav-icon grid h-9 w-9 place-items-center rounded-xl"><Icon className="h-[18px] w-[18px] stroke-[1.8]"/></span><span className="flex-1 truncate">{item.label}</span>{active(item.href)&&<ChevronRight className="h-4 w-4 opacity-55"/>}</Link>)}<button onClick={()=>{close?.();handToChild();}} className="portal-nav-item group flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-semibold"><span className="portal-nav-icon grid h-9 w-9 place-items-center rounded-xl"><Smartphone className="h-[18px] w-[18px] stroke-[1.8]"/></span><span className="flex-1 truncate text-left">My child has a phone</span></button></div>;
 
  return <div className="parent-portal-shell min-h-screen bg-background portal-page-bg">
    <MobileHeader title={title||"Parent Portal"} onMenuClick={()=>setOpen(true)}/>
@@ -50,7 +57,7 @@ export const ParentLayout=({children,title}:ParentLayoutProps)=>{
    </div>
    <div className="portal-page-content overflow-x-hidden px-3 pb-28 pt-2 md:hidden">{children}</div>
    <nav className="student-bottom-nav md:!hidden" aria-label="Parent quick navigation">
-     {mobileItems.map(({icon:Icon,label,href})=><Link key={href} to={href} className={cn("student-bottom-nav-item active:scale-95",active(href)&&(href!=="/parent"||loc.pathname==="/parent")&&"is-active")}><span className="student-bottom-nav-icon"><Icon className="h-[19px] w-[19px]" strokeWidth={1.9}/></span><span className="max-w-full truncate px-0.5">{label.replace("Children's ","").replace("Fees & Payments","Fees").replace("Dashboard","Home")}</span></Link>)}
+     {mobileItems.map(({icon:Icon,label,href})=><Link key={href} to={href} className={cn("student-bottom-nav-item active:scale-95",active(href)&&(href!=="/parent"||loc.pathname==="/parent")&&"is-active")}><span className="student-bottom-nav-icon"><Icon className="h-[19px] w-[19px]" strokeWidth={1.9}/></span><span className="max-w-full truncate px-0.5">{label.replace("Children's ","").replace("Fees & Payments","Fees").replace("Dashboard","Home").replace("School Bus","Bus")}</span></Link>)}
    </nav>
  </div>;
 };
