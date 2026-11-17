@@ -11,6 +11,17 @@ type Msg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`;
 
+const Owl = ({ className = "" }: { className?: string }) => (
+  <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
+    <path d="M10 14 L14 6 L19 12 Q24 10 29 12 L34 6 L38 14 Q42 22 40 32 Q36 42 24 42 Q12 42 8 32 Q6 22 10 14Z" fill="hsl(var(--primary))" />
+    <ellipse cx="24" cy="33" rx="9" ry="7" fill="hsl(var(--primary-foreground))" opacity=".85" />
+    <circle cx="17.5" cy="21" r="6" fill="hsl(var(--primary-foreground))" /><circle cx="30.5" cy="21" r="6" fill="hsl(var(--primary-foreground))" />
+    <circle cx="18.5" cy="21.5" r="2.8" fill="hsl(var(--foreground))" /><circle cx="29.5" cy="21.5" r="2.8" fill="hsl(var(--foreground))" />
+    <circle cx="19.3" cy="20.5" r=".9" fill="#fff" /><circle cx="30.3" cy="20.5" r=".9" fill="#fff" />
+    <path d="M22 26 L24 29.5 L26 26Z" fill="hsl(var(--accent))" />
+  </svg>
+);
+
 export const AIChatWidget = () => {
   const [open, setOpen] = useState(false);
   const GREETING: Msg = { role: "assistant", content: "Hi, I'm **Wiz**, the Imagemakers study owl. Tell me what you're learning and I'll give you hints, explain words and help you think it through. You do the answering — I do the cheering." };
@@ -156,26 +167,27 @@ export const AIChatWidget = () => {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-28 md:bottom-8 right-4 md:right-8 z-50 w-14 h-14 rounded-full bg-[#2f8fca] text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center hover:scale-105 active:scale-95"
-          aria-label="Open AI Tutor"
+          className="fixed bottom-28 md:bottom-8 right-4 md:right-8 z-50 w-16 h-16 rounded-full bg-card border-2 border-primary/30 shadow-lg hover:shadow-xl transition-all duration-300 grid place-items-center hover:-translate-y-1 hover:rotate-[-6deg] active:scale-95"
+          aria-label="Ask Wiz the study owl"
         >
-          <MessageCircle className="w-6 h-6" />
+          <Owl className="w-12 h-12" />
         </button>
 
       )}
 
       {/* Chat Panel */}
       {open && (
-        <div className="fixed bottom-28 md:bottom-8 right-4 md:right-8 z-50 w-[340px] md:w-[380px] h-[500px] bg-card rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-fade-up">
+        <div className="fixed bottom-28 md:bottom-8 right-4 md:right-8 z-50 w-[calc(100vw-2rem)] max-w-[380px] h-[min(520px,75vh)] bg-card rounded-2xl shadow-2xl border border-border flex flex-col overflow-hidden animate-fade-up">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-[#17648c] text-white rounded-t-2xl">
+          <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground rounded-t-2xl">
             <div className="flex items-center gap-2">
-              <Bot className="w-5 h-5" />
+              <span className="grid h-10 w-10 place-items-center rounded-full bg-card"><Owl className="h-8 w-8" /></span>
               <div>
-                <p className="font-semibold text-sm">Imagemakers AI Tutor</p>
-                <p className="text-[10px] text-primary-foreground/70">Study help • explanations • hints</p>
+                <p className="font-bold text-sm">Wiz the study owl</p>
+                <p className="text-[10px] opacity-80">Hints, not answers · remembers our chat</p>
               </div>
             </div>
+            <button onClick={clearChat} className="ml-auto mr-1 rounded-lg px-2 py-1 text-[10px] font-bold hover:bg-primary-foreground/20">New chat</button>
             <button onClick={() => setOpen(false)} className="p-1 rounded-lg hover:bg-primary-foreground/20 transition-colors">
               <X className="w-4 h-4" />
             </button>
@@ -188,7 +200,7 @@ export const AIChatWidget = () => {
                 <div key={i} className={cn("flex gap-2", msg.role === "user" ? "justify-end" : "justify-start")}>
                   {msg.role === "assistant" && (
                     <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                      <Bot className="w-4 h-4 text-primary" />
+                      <Owl className="w-6 h-6" />
                     </div>
                   )}
                   <div className={cn(
@@ -215,7 +227,7 @@ export const AIChatWidget = () => {
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex gap-2">
                   <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <Bot className="w-4 h-4 text-primary" />
+                    <Owl className="w-6 h-6" />
                   </div>
                   <div className="bg-muted rounded-2xl rounded-bl-md px-3 py-2">
                     <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
@@ -232,7 +244,7 @@ export const AIChatWidget = () => {
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask me to explain something..."
+                placeholder="What are you stuck on?"
                 className="flex-1 rounded-xl text-sm"
                 disabled={isLoading}
               />

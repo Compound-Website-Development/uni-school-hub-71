@@ -1,0 +1,2 @@
+- Class timetables live in `schedules` and are edited through `components/timetable/TimetableEditor` (admin: any class; teacher: only their assigned class) — one editor, many viewers, so pupils/parents always see the saved version.
+- In-progress form input uses `hooks/useDraftCache` (device storage, cleared on successful submit) so a dropped connection never loses work.
