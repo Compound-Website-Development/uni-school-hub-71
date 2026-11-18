@@ -412,35 +412,35 @@ const StaffAttendance = () => {
 
         {/* Stats Summary */}
         {selectedClass && students.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-5 gap-2 md:gap-4">
             <Card>
-              <CardContent className="pt-4 text-center">
-                <p className="text-2xl font-bold text-foreground">{stats.total}</p>
-                <p className="text-sm text-muted-foreground">Total</p>
+              <CardContent className="px-1 py-3 md:pt-4 text-center">
+                <p className="text-lg md:text-2xl font-bold text-foreground">{stats.total}</p>
+                <p className="text-[11px] md:text-sm text-muted-foreground">Total</p>
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="pt-4 text-center">
-                <p className="text-2xl font-bold text-success">{stats.present}</p>
-                <p className="text-sm text-muted-foreground">Present</p>
+              <CardContent className="px-1 py-3 md:pt-4 text-center">
+                <p className="text-lg md:text-2xl font-bold text-success">{stats.present}</p>
+                <p className="text-[11px] md:text-sm text-muted-foreground">Present</p>
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="pt-4 text-center">
-                <p className="text-2xl font-bold text-destructive">{stats.absent}</p>
-                <p className="text-sm text-muted-foreground">Absent</p>
+              <CardContent className="px-1 py-3 md:pt-4 text-center">
+                <p className="text-lg md:text-2xl font-bold text-destructive">{stats.absent}</p>
+                <p className="text-[11px] md:text-sm text-muted-foreground">Absent</p>
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="pt-4 text-center">
-                <p className="text-2xl font-bold text-warning">{stats.late}</p>
-                <p className="text-sm text-muted-foreground">Late</p>
+              <CardContent className="px-1 py-3 md:pt-4 text-center">
+                <p className="text-lg md:text-2xl font-bold text-warning">{stats.late}</p>
+                <p className="text-[11px] md:text-sm text-muted-foreground">Late</p>
               </CardContent>
             </Card>
             <Card>
-              <CardContent className="pt-4 text-center">
-                <p className="text-2xl font-bold text-muted-foreground">{stats.excused}</p>
-                <p className="text-sm text-muted-foreground">Excused</p>
+              <CardContent className="px-1 py-3 md:pt-4 text-center">
+                <p className="text-lg md:text-2xl font-bold text-muted-foreground">{stats.excused}</p>
+                <p className="text-[11px] md:text-sm text-muted-foreground">Excused</p>
               </CardContent>
             </Card>
           </div>
@@ -449,14 +449,14 @@ const StaffAttendance = () => {
         {/* Attendance List */}
         {selectedClass && (
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <CardTitle>Student Attendance</CardTitle>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={markAllPresent} disabled={isShadowIdentity}>
+              <div className="grid grid-cols-2 gap-2 sm:flex">
+                <Button variant="outline" size="sm" className="h-11 sm:h-9" onClick={markAllPresent} disabled={isShadowIdentity}>
                   <Check className="w-4 h-4 mr-2" />
-                  Mark All Present
+                  All Present
                 </Button>
-                <Button onClick={saveAttendance} disabled={isSaving || isShadowIdentity}>
+                <Button className="h-11 sm:h-9" onClick={saveAttendance} disabled={isSaving || isShadowIdentity}>
                   {isSaving ? "Saving..." : "Save Attendance"}
                 </Button>
               </div>
@@ -475,7 +475,7 @@ const StaffAttendance = () => {
                   {students.map((student) => (
                     <div
                       key={student.id}
-                      className="flex items-center justify-between p-4 rounded-lg border border-border"
+                      className="flex flex-col gap-3 p-3 sm:p-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-border"
                     >
                       <div>
                         <p className="font-medium text-foreground">
@@ -485,14 +485,14 @@ const StaffAttendance = () => {
                           {student.student_id}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between gap-2 sm:justify-end">
                         {getStatusBadge(attendance[student.id])}
                         {editedStudents.includes(student.id) && <Badge variant="outline">Edited</Badge>}
                         <div className="flex gap-1">
                           <Button
                             variant={attendance[student.id] === "present" ? "default" : "outline"}
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-10 w-10 sm:h-8 sm:w-8"
                             disabled={isShadowIdentity}
                             onClick={() => handleStatusChange(student.id, "present")}
                           >
@@ -501,7 +501,7 @@ const StaffAttendance = () => {
                           <Button
                             variant={attendance[student.id] === "absent" ? "destructive" : "outline"}
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-10 w-10 sm:h-8 sm:w-8"
                             disabled={isShadowIdentity}
                             onClick={() => handleStatusChange(student.id, "absent")}
                           >
@@ -510,7 +510,7 @@ const StaffAttendance = () => {
                           <Button
                             variant={attendance[student.id] === "late" ? "secondary" : "outline"}
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-10 w-10 sm:h-8 sm:w-8"
                             disabled={isShadowIdentity}
                             onClick={() => handleStatusChange(student.id, "late")}
                           >
@@ -519,7 +519,7 @@ const StaffAttendance = () => {
                           <Button
                             variant={attendance[student.id] === "excused" ? "secondary" : "outline"}
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-10 w-10 sm:h-8 sm:w-8"
                             disabled={isShadowIdentity}
                             onClick={() => handleStatusChange(student.id, "excused")}
                           >
