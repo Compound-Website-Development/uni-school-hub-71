@@ -10,7 +10,6 @@ import { LogOut, ChevronRight, LayoutDashboard, UsersRound, GraduationCap, Clipb
 import npsLogo from "@/assets/logo";
 import { cn } from "@/lib/utils";
 import { useTransportEnabled } from "@/hooks/useTransportEnabled";
-import { setDeviceMode } from "@/lib/deviceMode";
 import { Smartphone } from "lucide-react";
 import "@/styles/student-portal.css";
 
@@ -40,7 +39,7 @@ export const ParentLayout=({children,title}:ParentLayoutProps)=>{
  const initials=name.split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase();
  const active=(href:string)=>loc.pathname===href||loc.pathname.startsWith(href+"/");
  const logout=async()=>{await signOut();nav("/login");};
- const handToChild=async()=>{if(!window.confirm("Set this phone up for your child? You will be signed out, and the sign-in page will open in pupil mode so your child signs in with their own admission number."))return;setDeviceMode("child");await signOut();nav("/login");};
+ const handToChild=()=>{nav("/parent");setTimeout(()=>document.querySelector('[data-child-share]')?.scrollIntoView({behavior:'smooth',block:'center'}),300);};
  const Nav=({close}:{close?:()=>void})=><div className="space-y-1.5">{navItems.map(({icon:Icon,...item})=><Link key={item.href} to={item.href} onClick={close} className={cn("portal-nav-item group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-semibold transition-all",active(item.href)&&"active")}><span className="portal-nav-icon grid h-9 w-9 place-items-center rounded-xl"><Icon className="h-[18px] w-[18px] stroke-[1.8]"/></span><span className="flex-1 truncate">{item.label}</span>{active(item.href)&&<ChevronRight className="h-4 w-4 opacity-55"/>}</Link>)}<button onClick={()=>{close?.();handToChild();}} className="portal-nav-item group flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-[13px] font-semibold"><span className="portal-nav-icon grid h-9 w-9 place-items-center rounded-xl"><Smartphone className="h-[18px] w-[18px] stroke-[1.8]"/></span><span className="flex-1 truncate text-left">My child has a phone</span></button></div>;
 
  return <div className="parent-portal-shell min-h-screen bg-background portal-page-bg">

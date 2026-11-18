@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { format, isFuture, isToday, addDays } from "date-fns";
 import { useNavigate, Link } from "react-router-dom";
+import { ChildPhoneShare } from "@/components/parent/ChildPhoneShare";
 
 const ParentDashboard = () => {
   const { user, userRole } = useAuth();
@@ -239,6 +240,10 @@ const ParentDashboard = () => {
                         <span>{(childGrades[child.id] || []).length ? `${(childGrades[child.id] || []).length} subjects recorded` : "No grades recorded yet"}</span>
                         <span>{balance ? `Billed ₦${balance.billed.toLocaleString()} · Paid ₦${balance.paid.toLocaleString()}` : "No invoices recorded yet"}</span>
                       </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="sm" className="rounded-full" onClick={() => navigate(`/parent/child/${child.id}`)}><Monitor className="mr-1.5 h-4 w-4" />See {child.first_name}'s view</Button>
+                      <ChildPhoneShare child={child} />
                     </div>
                   </CardContent>
                 </Card>

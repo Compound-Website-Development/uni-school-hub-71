@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Apply from "./pages/Apply";
 import ResetPassword from "./pages/ResetPassword";
 import ParentAccess from "./pages/ParentAccess";
+import ParentChildView from "./pages/parent/ParentChildView";
 import StudentPortalEntry from "./pages/StudentPortalEntry";
 import OAuthConsent from "./pages/OAuthConsent";
 import PublicStudentProfile from "./pages/PublicStudentProfile";
@@ -118,6 +119,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/apply" element={<Apply />} />
             <Route path="/parent-access" element={<ParentAccess />} />
+            <Route path="/parent/child/:id" element={<ProtectedRoute allowedRoles={["parent"]}><ParentChildView /></ProtectedRoute>} />
             <Route path="/s/:token" element={<StudentPortalEntry />} />
             <Route path="/p/:token" element={<PublicStudentProfile />} />
             <Route path="/reset-password" element={<ResetPassword />} />
