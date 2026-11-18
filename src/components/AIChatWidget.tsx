@@ -24,7 +24,7 @@ const Owl = ({ className = "" }: { className?: string }) => (
 
 export const AIChatWidget = () => {
   const [open, setOpen] = useState(false);
-  const GREETING: Msg = { role: "assistant", content: "Hi, I'm **Wiz**, the Imagemakers study owl. Tell me what you're learning and I'll give you hints, explain words and help you think it through. You do the answering — I do the cheering." };
+  const GREETING: Msg = { role: "assistant", content: "Hello, I'm **MakerGPT**, your Imagemakers study helper. Tell me the subject and the topic, and I will explain it step by step so you can solve it yourself." };
   const [messages, setMessages] = useState<Msg[]>(() => {
     try { const saved = JSON.parse(localStorage.getItem("wiz-chat") || "[]"); if (Array.isArray(saved) && saved.length) return saved; } catch { /* ignore */ }
     return [GREETING];
