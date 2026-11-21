@@ -42,6 +42,8 @@ const MAX_MESSAGES = 30;
 const MAX_CONTENT_LENGTH = 4000;
 const MAX_STUDENT_DATA_LENGTH = 4000;
 const GEMINI_MODEL = "gemini-3.8-flash";
+const RETRYABLE_GEMINI_STATUSES = new Set([500, 502, 503, 504]);
+const GEMINI_RETRY_DELAYS_MS = [300, 800] as const;
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -127,18 +129,29 @@ serve(async (req) => {
     }
 
     const endpoint = useStreaming ? "streamGenerateContent?alt=sse" : "generateContent";
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:${endpoint}`, {
-      method: "POST",
-      headers: {
-        "x-goog-api-key": GEMINI_API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents,
-        generationConfig: { maxOutputTokens: 2048 },
-      }),
+    const requestUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:${endpoint}`;
+    const requestBody = JSON.stringify({
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      contents,
+      generationConfig: { maxOutputTokens: 2048 },
     });
+    let response: Response | null = null;
+    let attemptCount = 0;
+    for (let attempt = 0; attempt <= GEMINI_RETRY_DELAYS_MS.length; attempt += 1) {
+      attemptCount = attempt + 1;
+      response = await fetch(requestUrl, {
+        method: "POST",
+        headers: {
+          "x-goog-api-key": GEMINI_API_KEY,
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+      });
+      if (!RETRYABLE_GEMINI_STATUSES.has(response.status) || attempt === GEMINI_RETRY_DELAYS_MS.length) break;
+      const delayMs = GEMINI_RETRY_DELAYS_MS[attempt];
+      if (delayMs !== undefined) await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+    if (!response) throw new Error("Gemini did not return a response.");
 
     if (!response.ok) {
       const providerError = await response.text();
@@ -153,6 +166,7 @@ serve(async (req) => {
         model: GEMINI_MODEL,
         status: response.status,
         providerCode,
+        attempts: attemptCount,
       });
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
