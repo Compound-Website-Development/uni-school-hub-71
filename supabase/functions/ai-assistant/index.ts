@@ -41,9 +41,10 @@ Guidelines for student comments:
 const MAX_MESSAGES = 30;
 const MAX_CONTENT_LENGTH = 4000;
 const MAX_STUDENT_DATA_LENGTH = 4000;
-const GEMINI_MODEL = "gemini-3.8-flash";
-const RETRYABLE_GEMINI_STATUSES = new Set([500, 502, 503, 504]);
-const GEMINI_RETRY_DELAYS_MS = [300, 800] as const;
+// Tried in order; the next model is used when one is busy, failing or too slow.
+const GEMINI_MODELS = ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-4-hydrogen"] as const;
+const RETRYABLE_GEMINI_STATUSES = new Set([429, 500, 502, 503, 504]);
+const GEMINI_TIMEOUT_MS = 10000;
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -129,7 +130,6 @@ serve(async (req) => {
     }
 
     const endpoint = useStreaming ? "streamGenerateContent?alt=sse" : "generateContent";
-    const requestUrl = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:${endpoint}`;
     const requestBody = JSON.stringify({
       systemInstruction: { parts: [{ text: systemPrompt }] },
       contents,
@@ -137,21 +137,38 @@ serve(async (req) => {
     });
     let response: Response | null = null;
     let attemptCount = 0;
-    for (let attempt = 0; attempt <= GEMINI_RETRY_DELAYS_MS.length; attempt += 1) {
-      attemptCount = attempt + 1;
-      response = await fetch(requestUrl, {
-        method: "POST",
-        headers: {
-          "x-goog-api-key": GEMINI_API_KEY,
-          "Content-Type": "application/json",
-        },
-        body: requestBody,
-      });
-      if (!RETRYABLE_GEMINI_STATUSES.has(response.status) || attempt === GEMINI_RETRY_DELAYS_MS.length) break;
-      const delayMs = GEMINI_RETRY_DELAYS_MS[attempt];
-      if (delayMs !== undefined) await new Promise((resolve) => setTimeout(resolve, delayMs));
+    let GEMINI_MODEL: string = GEMINI_MODELS[0];
+    for (const model of GEMINI_MODELS) {
+      attemptCount += 1;
+      GEMINI_MODEL = model;
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+      try {
+        response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:${endpoint}`,
+          {
+            method: "POST",
+            headers: { "x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json" },
+            body: requestBody,
+            signal: controller.signal,
+          },
+        );
+        clearTimeout(timer);
+      } catch (err) {
+        clearTimeout(timer);
+        console.warn("Gemini request timed out or failed:", { model, error: String(err) });
+        response = null;
+        continue;
+      }
+      if (!RETRYABLE_GEMINI_STATUSES.has(response.status)) break;
+      console.warn("Gemini model busy, trying next:", { model, status: response.status });
     }
-    if (!response) throw new Error("Gemini did not return a response.");
+    if (!response) {
+      return new Response(JSON.stringify({ error: "The study helper is busy right now. Please try again shortly." }), {
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     if (!response.ok) {
       const providerError = await response.text();
