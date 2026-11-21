@@ -119,14 +119,14 @@ serve(async (req) => {
       const role = message.role === "assistant" ? "model" : "user";
       const previous = contents[contents.length - 1];
       if (previous?.role === role) {
-        previous.parts[0].text += `\\n\\n${message.content}`;
+        previous.parts[0].text += `\n\n${message.content}`;
       } else {
         contents.push({ role, parts: [{ text: message.content }] });
       }
     }
 
     const endpoint = useStreaming ? "streamGenerateContent?alt=sse" : "generateContent";
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:${endpoint}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:${endpoint}`, {
       method: "POST",
       headers: {
         "x-goog-api-key": GEMINI_API_KEY,
@@ -135,21 +135,25 @@ serve(async (req) => {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
         contents,
-        generationConfig: { temperature: 0.4, maxOutputTokens: 2048 },
+        generationConfig: { maxOutputTokens: 2048 },
       }),
     });
 
     if (!response.ok) {
+      const providerError = await response.text();
+      console.error("Gemini API request failed:", {
+        model: "gemini-3.8-flash",
+        status: response.status,
+        details: providerError.slice(0, 1200),
+      });
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const t = await response.text();
-      console.error("Gemini API error:", response.status, t);
-      return new Response(JSON.stringify({ error: "AI service temporarily unavailable" }), {
-        status: 500,
+      return new Response(JSON.stringify({ error: "The study helper is temporarily unavailable. Please try again shortly." }), {
+        status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -175,7 +179,7 @@ serve(async (req) => {
                 .join("");
               if (delta) {
                 controller.enqueue(encoder.encode(
-                  `data: ${JSON.stringify({ choices: [{ delta: { content: delta } }] })}\\n\\n`,
+                  `data: ${JSON.stringify({ choices: [{ delta: { content: delta } }] })}\n\n`,
                 ));
               }
             } catch (error) {
@@ -188,13 +192,13 @@ serve(async (req) => {
               const { value, done } = await upstream.read();
               if (done) break;
               buffer += decoder.decode(value, { stream: true });
-              const lines = buffer.split(/\\r?\\n/);
+              const lines = buffer.split(/\r?\n/);
               buffer = lines.pop() || "";
               lines.forEach(emitGeminiEvent);
             }
             buffer += decoder.decode();
             if (buffer.trim()) emitGeminiEvent(buffer);
-            controller.enqueue(encoder.encode("data: [DONE]\\n\\n"));
+            controller.enqueue(encoder.encode("data: [DONE]\n\n"));
             controller.close();
           } catch (error) {
             controller.error(error);
