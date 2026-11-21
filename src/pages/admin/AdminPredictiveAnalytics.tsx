@@ -32,7 +32,7 @@ interface AtRiskStudent {
 const AdminPredictiveAnalytics = () => {
   const [atRiskStudents, setAtRiskStudents] = useState<AtRiskStudent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isRefreshingRisk, setIsRefreshingRisk] = useState(false);
   const [filter, setFilter] = useState("all");
   const [stats, setStats] = useState({ total: 0, high: 0, medium: 0, low: 0 });
   const [selectedStudent, setSelectedStudent] = useState<AtRiskStudent | null>(null);
@@ -59,7 +59,7 @@ const AdminPredictiveAnalytics = () => {
     return "stable";
   };
 
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = async (): Promise<boolean> => {
     setIsLoading(true);
     try {
       const [studentsRes, gradesRes, attendanceRes, submissionsRes] = await Promise.all([
@@ -115,8 +115,10 @@ const AdminPredictiveAnalytics = () => {
         medium: sorted.filter((s) => s.riskScore >= 30 && s.riskScore < 60).length,
         low: sorted.filter((s) => s.riskScore > 0 && s.riskScore < 30).length,
       });
+      return true;
     } catch (error) {
       console.error("Error fetching analytics:", error);
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -154,13 +156,15 @@ const AdminPredictiveAnalytics = () => {
     }
   };
 
-  const runAIAnalysis = async () => {
-    setIsAnalyzing(true);
-    toast.info("Running AI analysis on student data...");
-    await new Promise((r) => setTimeout(r, 2000));
-    await fetchAnalytics();
-    toast.success("AI analysis complete! Risk scores updated.");
-    setIsAnalyzing(false);
+  const refreshRiskScores = async () => {
+    setIsRefreshingRisk(true);
+    try {
+      const refreshed = await fetchAnalytics();
+      if (refreshed) toast.success("Risk scores refreshed from current school records.");
+      else toast.error("Could not refresh risk scores. Please try again.");
+    } finally {
+      setIsRefreshingRisk(false);
+    }
   };
 
   const sendParentAlert = async (student: AtRiskStudent) => {
@@ -229,10 +233,10 @@ const AdminPredictiveAnalytics = () => {
             <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
               <Brain className="w-6 h-6 text-primary" /> Predictive Analytics Engine
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">AI-powered early warning system with automated intervention plans</p>
+            <p className="text-sm text-muted-foreground mt-1">Early warning scores from grades, attendance and assignment activity, with AI guidance for individual pupils.</p>
           </div>
-          <Button onClick={runAIAnalysis} disabled={isAnalyzing} className="gap-2">
-            <Zap className="w-4 h-4" /> {isAnalyzing ? "Analyzing..." : "Run AI Analysis"}
+          <Button onClick={refreshRiskScores} disabled={isRefreshingRisk} className="gap-2">
+            <Zap className="w-4 h-4" /> {isRefreshingRisk ? "Refreshing..." : "Refresh Risk Scores"}
           </Button>
         </div>
 

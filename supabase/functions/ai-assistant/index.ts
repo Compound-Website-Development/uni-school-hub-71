@@ -41,6 +41,7 @@ Guidelines for student comments:
 const MAX_MESSAGES = 30;
 const MAX_CONTENT_LENGTH = 4000;
 const MAX_STUDENT_DATA_LENGTH = 4000;
+const GEMINI_MODEL = "gemini-3.8-flash";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -126,7 +127,7 @@ serve(async (req) => {
     }
 
     const endpoint = useStreaming ? "streamGenerateContent?alt=sse" : "generateContent";
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:${endpoint}`, {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:${endpoint}`, {
       method: "POST",
       headers: {
         "x-goog-api-key": GEMINI_API_KEY,
@@ -141,10 +142,17 @@ serve(async (req) => {
 
     if (!response.ok) {
       const providerError = await response.text();
+      let providerCode: string | undefined;
+      try {
+        const errorPayload = JSON.parse(providerError);
+        if (typeof errorPayload?.error?.status === "string") providerCode = errorPayload.error.status;
+      } catch {
+        // Provider diagnostics can be non-JSON; do not log the raw response body.
+      }
       console.error("Gemini API request failed:", {
-        model: "gemini-3.8-flash",
+        model: GEMINI_MODEL,
         status: response.status,
-        details: providerError.slice(0, 1200),
+        providerCode,
       });
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }), {
@@ -152,7 +160,10 @@ serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      return new Response(JSON.stringify({ error: "The study helper is temporarily unavailable. Please try again shortly." }), {
+      const errorMessage = response.status === 401 || response.status === 403
+        ? "The AI connection needs attention. Please contact the school administrator."
+        : "The study helper is temporarily unavailable. Please try again shortly.";
+      return new Response(JSON.stringify({ error: errorMessage }), {
         status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

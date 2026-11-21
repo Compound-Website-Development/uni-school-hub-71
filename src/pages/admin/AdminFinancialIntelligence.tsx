@@ -90,6 +90,7 @@ const AdminFinancialIntelligence = () => {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${session?.access_token ?? ""}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
           },
           body: JSON.stringify({
             type: "report_comment",
@@ -108,6 +109,10 @@ const AdminFinancialIntelligence = () => {
         }
       );
       const data = await response.json();
+      if (!response.ok) {
+        toast.error(data.error || "Failed to generate forecast");
+        return;
+      }
       if (data.comment) {
         setAiInsight(data.comment);
         toast.success("AI financial forecast generated");
