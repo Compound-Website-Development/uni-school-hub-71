@@ -168,7 +168,7 @@ export const AIChatWidget = () => {
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-28 md:bottom-8 right-4 md:right-8 z-50 w-16 h-16 rounded-full bg-card border-2 border-primary/30 shadow-lg hover:shadow-xl transition-all duration-300 grid place-items-center hover:-translate-y-1 hover:rotate-[-6deg] active:scale-95"
-          aria-label="Ask Wiz the study owl"
+          aria-label="Open MakerGPT"
         >
           <Owl className="w-12 h-12" />
         </button>
@@ -183,7 +183,7 @@ export const AIChatWidget = () => {
             <div className="flex items-center gap-2">
               <span className="grid h-10 w-10 place-items-center rounded-full bg-card"><Owl className="h-8 w-8" /></span>
               <div>
-                <p className="font-bold text-sm">Wiz the study owl</p>
+                <p className="font-bold text-sm">MakerGPT</p>
                 <p className="text-[10px] opacity-80">Hints, not answers · remembers our chat</p>
               </div>
             </div>
