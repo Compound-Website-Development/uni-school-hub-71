@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { LogOut, ChevronRight, LayoutDashboard, UsersRound, ClipboardList, BookOpen, CalendarCheck, Table2, MonitorPlay, NotebookPen, FileBarChart2, GraduationCap, UserPlus, Mail, MessagesSquare, MessageCircle, CalendarClock, UserCircle } from "lucide-react";
 import npsLogo from "@/assets/logo";
 import { cn } from "@/lib/utils";
+import "@/styles/student-portal.css";
 
 interface StaffLayoutProps { children: ReactNode; title?: string; showSearch?: boolean; searchPlaceholder?: string; }
 
@@ -18,7 +19,7 @@ const items = [
  {icon:UsersRound,label:"Students",href:"/staff/students"},
  {icon:BookOpen,label:"Classes",href:"/staff/classes"},
  {icon:CalendarCheck,label:"Attendance",href:"/staff/attendance"},
- {icon:CalendarCheck,label:"Timetable",href:"/staff/timetable"},
+ {icon:CalendarClock,label:"Timetable",href:"/staff/timetable"},
  {icon:Table2,label:"Gradebook",href:"/staff/gradebook"},
  {icon:MonitorPlay,label:"CBT Studio",href:"/staff/cbt"},
  {icon:NotebookPen,label:"Assignments",href:"/staff/assignments"},
@@ -56,6 +57,7 @@ export const StaffLayout=({children,title}:StaffLayoutProps)=>{
      </aside>
      <main className="min-w-0 flex-1 overflow-y-auto"><div className="portal-page-content staff-workspace-content mx-auto w-full max-w-[1500px] p-4 md:p-6 lg:p-9">{children}</div></main>
    </div>
-   <div className="portal-page-content px-3 pb-6 md:hidden">{children}</div>
+   <div className="portal-page-content px-3 pb-28 md:hidden">{children}</div>
+   <nav className="student-bottom-nav" aria-label="Staff quick navigation">{[items[0],items[4],items[6],items[5],items[7]].map(({icon:Icon,label,href})=><Link key={href} to={href} className={cn("student-bottom-nav-item",active(href)&&(href!=="/staff"||loc.pathname==="/staff")&&"is-active")}><span className="student-bottom-nav-icon"><Icon className="h-[19px] w-[19px]" strokeWidth={1.9}/></span><span>{label==="CBT Studio"?"CBT":label==="Dashboard"?"Home":label}</span></Link>)}</nav>
  </div>;
 };
